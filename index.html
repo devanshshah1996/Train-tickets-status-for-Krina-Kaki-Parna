@@ -15,6 +15,11 @@
         tr:nth-child(even) { background-color: #f8fafc; }
         a { color: #2563eb; text-decoration: underline; font-weight: 700; }
         
+        .merged-train-cell { vertical-align: middle; background-color: #ffffff; }
+        tr:nth-child(even) .merged-train-cell { background-color: #ffffff; }
+        
+        .route-tag { color: #2563eb; font-weight: 700; font-size: 10.5px; display: block; margin-bottom: 2px; }
+        
         /* Passenger row formatting */
         .p-item { display: block; margin-bottom: 4px; line-height: 1.3; font-size: 10.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .p-item:last-child { margin-bottom: 0; }
@@ -24,18 +29,16 @@
         .badge-cnf { background-color: #dcfce7; color: #15803d; border: 1px solid #86efac; }
         .badge-wl { background-color: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
 
-        /* Class Badges (Subtle Visual Indications) */
-        .cls-badge { display: inline-block; padding: 1px 4px; border-radius: 3px; font-weight: 700; font-size: 9.5px; }
-        .cls-ec { background-color: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; } /* Purple Tint */
-        .cls-cc { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; } /* Blue Tint */
-        .cls-2a { background-color: #ccfbf1; color: #0f766e; border: 1px solid #99f6e4; } /* Teal Tint */
-        .cls-3a { background-color: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; } /* Orange Tint */
+        /* Class Badges */
+        .cls-badge { display: inline-block; padding: 1px 4px; border-radius: 3px; font-weight: 700; font-size: 9.5px; margin-left: 4px; }
+        .cls-ec { background-color: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+        .cls-cc { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .cls-2a { background-color: #ccfbf1; color: #0f766e; border: 1px solid #99f6e4; }
+        .cls-3a { background-color: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
 
-        th:nth-child(1), td:nth-child(1) { width: 23%; }
-        th:nth-child(2), td:nth-child(2) { width: 14%; }
-        th:nth-child(3), td:nth-child(3) { width: 17%; }
-        th:nth-child(4), td:nth-child(4) { width: 8%; }
-        th:nth-child(5), td:nth-child(5) { width: 38%; }
+        th:nth-child(1), td:nth-child(1) { width: 35%; }
+        th:nth-child(2), td:nth-child(2) { width: 25%; }
+        th:nth-child(3), td:nth-child(3) { width: 40%; }
     </style>
 </head>
 <body>
@@ -48,19 +51,19 @@
     <table>
         <thead>
             <tr>
-                <th>PNR</th>
-                <th>Time</th>
-                <th>Route</th>
-                <th>Class</th>
+                <th>Train</th>
+                <th>PNR & Class</th>
                 <th>Passengers & Status</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8153572764" target="_blank">8153572764</a></td>
-                <td>16-Sep, 15:55</td>
-                <td>MMCT to ST</td>
-                <td><span class="cls-badge cls-ec">EC</span></td>
+                <td rowspan="3" class="merged-train-cell">
+                    <span class="route-tag">MMCT to ST</span>
+                    <strong>20961 Vande Bharat Exp</strong><br>
+                    <span style="color: #64748b; font-size: 10px;">16-Sep, 15:55</span>
+                </td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8153572764" target="_blank">8153572764</a> <span class="cls-badge cls-ec">EC</span></td>
                 <td>
                     <span class="p-item">RP Shah <span class="badge badge-cnf">CNF</span></span>
                     <span class="p-item">Rajesh Shah <span class="badge badge-cnf">CNF</span></span>
@@ -71,10 +74,7 @@
                 </td>
             </tr>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8653572791" target="_blank">8653572791</a></td>
-                <td>16-Sep, 15:55</td>
-                <td>MMCT to ST</td>
-                <td><span class="cls-badge cls-ec">EC</span></td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8653572791" target="_blank">8653572791</a> <span class="cls-badge cls-ec">EC</span></td>
                 <td>
                     <span class="p-item">Jaru Khakhalri <span class="badge badge-wl">PQWL 4</span></span>
                     <span class="p-item">Aadesh Shah <span class="badge badge-wl">PQWL 5</span></span>
@@ -82,17 +82,16 @@
                 </td>
             </tr>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8253679056" target="_blank">8253679056</a></td>
-                <td>16-Sep, 15:55</td>
-                <td>MMCT to ST</td>
-                <td><span class="cls-badge cls-cc">CC</span></td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8253679056" target="_blank">8253679056</a> <span class="cls-badge cls-cc">CC</span></td>
                 <td><span class="p-item">Kishore Dhami <span class="badge badge-wl">PQWL 19</span></span></td>
             </tr>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8653178661" target="_blank">8653178661</a></td>
-                <td>16-Sep, 17:00</td>
-                <td>MMCT to ST</td>
-                <td><span class="cls-badge cls-2a">2A</span></td>
+                <td rowspan="6" class="merged-train-cell">
+                    <span class="route-tag">MMCT to ST</span>
+                    <strong>12951 Ndls Tejas Raj</strong><br>
+                    <span style="color: #64748b; font-size: 10px;">16-Sep, 17:00</span>
+                </td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8653178661" target="_blank">8653178661</a> <span class="cls-badge cls-2a">2A</span></td>
                 <td>
                     <span class="p-item">Shreshthi Shah <span class="badge badge-wl">PQWL 6</span></span>
                     <span class="p-item">Ramniklal Shah <span class="badge badge-wl">PQWL 7</span></span>
@@ -101,10 +100,7 @@
                 </td>
             </tr>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8834028259" target="_blank">8834028259</a></td>
-                <td>16-Sep, 17:00</td>
-                <td>MMCT to ST</td>
-                <td><span class="cls-badge cls-2a">2A</span></td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8834028259" target="_blank">8834028259</a> <span class="cls-badge cls-2a">2A</span></td>
                 <td>
                     <span class="p-item">Aadesh Shah <span class="badge badge-wl">PQWL 12</span></span>
                     <span class="p-item">Nirjara Shah <span class="badge badge-wl">PQWL 13</span></span>
@@ -112,38 +108,28 @@
                 </td>
             </tr>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8253347670" target="_blank">8253347670</a></td>
-                <td>16-Sep, 17:00</td>
-                <td>MMCT to ST</td>
-                <td><span class="cls-badge cls-2a">2A</span></td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8253347670" target="_blank">8253347670</a> <span class="cls-badge cls-2a">2A</span></td>
                 <td><span class="p-item">Jaru Khakhalri <span class="badge badge-wl">PQWL 16</span></span></td>
             </tr>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8253611686" target="_blank">8253611686</a></td>
-                <td>16-Sep, 17:00</td>
-                <td>MMCT to ST</td>
-                <td><span class="cls-badge cls-2a">2A</span></td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8253611686" target="_blank">8253611686</a> <span class="cls-badge cls-2a">2A</span></td>
                 <td><span class="p-item">Sarojini Anni <span class="badge badge-wl">PQWL 26</span></span></td>
             </tr>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8753672164" target="_blank">8753672164</a></td>
-                <td>16-Sep, 17:00</td>
-                <td>MMCT to ST</td>
-                <td><span class="cls-badge cls-2a">2A</span></td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8753672164" target="_blank">8753672164</a> <span class="cls-badge cls-2a">2A</span></td>
                 <td><span class="p-item">Kishore Dhami <span class="badge badge-wl">PQWL 36</span></span></td>
             </tr>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8834426195" target="_blank">8834426195</a></td>
-                <td>16-Sep, 17:00</td>
-                <td>MMCT to ST</td>
-                <td><span class="cls-badge cls-3a">3A</span></td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8834426195" target="_blank">8834426195</a> <span class="cls-badge cls-3a">3A</span></td>
                 <td><span class="p-item">Sandip Chavan <span class="badge badge-wl">PQWL 48</span></span></td>
             </tr>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8553688686" target="_blank">8553688686</a></td>
-                <td>16-Sep, 18:43</td>
-                <td>BDTS to ST</td>
-                <td><span class="cls-badge cls-3a">3A</span></td>
+                <td class="merged-train-cell">
+                    <span class="route-tag">BDTS to ST</span>
+                    <strong>12903 Golden Temple</strong><br>
+                    <span style="color: #64748b; font-size: 10px;">16-Sep, 18:43</span>
+                </td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8553688686" target="_blank">8553688686</a> <span class="cls-badge cls-3a">3A</span></td>
                 <td><span class="p-item">Sandip Chavan <span class="badge badge-wl">PQWL 66</span></span></td>
             </tr>
         </tbody>
@@ -153,19 +139,19 @@
     <table>
         <thead>
             <tr>
-                <th>PNR</th>
-                <th>Time</th>
-                <th>Route</th>
-                <th>Class</th>
+                <th>Train</th>
+                <th>PNR & Class</th>
                 <th>Passengers & Status</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8153176105" target="_blank">8153176105</a></td>
-                <td>17-Sep, 17:08</td>
-                <td>ST to MMCT</td>
-                <td><span class="cls-badge cls-ec">EC</span></td>
+                <td rowspan="5" class="merged-train-cell">
+                    <span class="route-tag">ST to MMCT</span>
+                    <strong>20902 Vande Bharat Exp</strong><br>
+                    <span style="color: #64748b; font-size: 10px;">17-Sep, 17:08</span>
+                </td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8153176105" target="_blank">8153176105</a> <span class="cls-badge cls-ec">EC</span></td>
                 <td>
                     <span class="p-item">Shreshthi Shah <span class="badge badge-wl">RLWL 16</span></span>
                     <span class="p-item">Ramniklal Shah <span class="badge badge-wl">RLWL 17</span></span>
@@ -174,10 +160,7 @@
                 </td>
             </tr>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8153176421" target="_blank">8153176421</a></td>
-                <td>17-Sep, 17:08</td>
-                <td>ST to MMCT (From ADI)</td>
-                <td><span class="cls-badge cls-ec">EC</span></td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8153176421" target="_blank">8153176421</a> <span class="cls-badge cls-ec">EC</span></td>
                 <td>
                     <span class="p-item">Shreshthi Shah <span class="badge badge-wl">WL 15</span></span>
                     <span class="p-item">Ramniklal Shah <span class="badge badge-wl">WL 16</span></span>
@@ -186,10 +169,7 @@
                 </td>
             </tr>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8453279980" target="_blank">8453279980</a></td>
-                <td>17-Sep, 17:08</td>
-                <td>ST to MMCT (From ADI)</td>
-                <td><span class="cls-badge cls-ec">EC</span></td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8453279980" target="_blank">8453279980</a> <span class="cls-badge cls-ec">EC</span></td>
                 <td>
                     <span class="p-item">Aadesh Shah <span class="badge badge-wl">WL 21</span></span>
                     <span class="p-item">Nirjara Shah <span class="badge badge-wl">WL 22</span></span>
@@ -197,24 +177,20 @@
                 </td>
             </tr>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8553347662" target="_blank">8553347662</a></td>
-                <td>17-Sep, 17:08</td>
-                <td>ST to MMCT (From ADI)</td>
-                <td><span class="cls-badge cls-cc">CC</span></td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8553347662" target="_blank">8553347662</a> <span class="cls-badge cls-cc">CC</span></td>
                 <td><span class="p-item">Jaru Khakhalri <span class="badge badge-wl">WL 49</span></span></td>
             </tr>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8153611739" target="_blank">8153611739</a></td>
-                <td>17-Sep, 17:08</td>
-                <td>ST to MMCT (From ADI)</td>
-                <td><span class="cls-badge cls-cc">CC</span></td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8153611739" target="_blank">8153611739</a> <span class="cls-badge cls-cc">CC</span></td>
                 <td><span class="p-item">Sarojini <span class="badge badge-wl">WL 107</span></span></td>
             </tr>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8753176017" target="_blank">8753176017</a></td>
-                <td>17-Sep, 18:15</td>
-                <td>ST to MMCT</td>
-                <td><span class="cls-badge cls-ec">EC</span></td>
+                <td rowspan="6" class="merged-train-cell">
+                    <span class="route-tag">ST to MMCT</span>
+                    <strong>12952 Ndls Tejas Raj</strong><br>
+                    <span style="color: #64748b; font-size: 10px;">17-Sep, 18:15</span>
+                </td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8753176017" target="_blank">8753176017</a> <span class="cls-badge cls-ec">EC</span></td>
                 <td>
                     <span class="p-item">Ramniklal Shah <span class="badge badge-cnf">CNF</span></span>
                     <span class="p-item">Rajesh Shah <span class="badge badge-cnf">CNF</span></span>
@@ -223,10 +199,7 @@
                 </td>
             </tr>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8553279567" target="_blank">8553279567</a></td>
-                <td>17-Sep, 18:15</td>
-                <td>ST to MMCT</td>
-                <td><span class="cls-badge cls-ec">EC</span></td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8553279567" target="_blank">8553279567</a> <span class="cls-badge cls-ec">EC</span></td>
                 <td>
                     <span class="p-item">Aadesh Shah <span class="badge badge-cnf">CNF</span></span>
                     <span class="p-item">Nirjara Shah <span class="badge badge-wl">RLWL 1</span></span>
@@ -234,17 +207,11 @@
                 </td>
             </tr>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8941564008" target="_blank">8941564008</a></td>
-                <td>17-Sep, 18:15</td>
-                <td>ST to MMCT</td>
-                <td><span class="cls-badge cls-ec">EC</span></td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8941564008" target="_blank">8941564008</a> <span class="cls-badge cls-ec">EC</span></td>
                 <td><span class="p-item">Jaru Khakhalri <span class="badge badge-wl">RLWL 8</span></span></td>
             </tr>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8353612901" target="_blank">8353612901</a></td>
-                <td>17-Sep, 18:15</td>
-                <td>ST to MMCT (From ADI)</td>
-                <td><span class="cls-badge cls-ec">EC</span></td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8353612901" target="_blank">8353612901</a> <span class="cls-badge cls-ec">EC</span></td>
                 <td>
                     <span class="p-item">Aadesh Shah <span class="badge badge-wl">WL 24</span></span>
                     <span class="p-item">Jaru Khakhalri <span class="badge badge-wl">WL 25</span></span>
@@ -252,24 +219,20 @@
                 </td>
             </tr>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8453676513" target="_blank">8453676513</a></td>
-                <td>17-Sep, 18:15</td>
-                <td>ST to MMCT (From ADI)</td>
-                <td><span class="cls-badge cls-cc">CC</span></td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8453676513" target="_blank">8453676513</a> <span class="cls-badge cls-cc">CC</span></td>
                 <td><span class="p-item">Kishore Dhami <span class="badge badge-wl">WL 75</span></span></td>
             </tr>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/8653675505" target="_blank">8653675505</a></td>
-                <td>17-Sep, 18:15</td>
-                <td>ST to MMCT (From ADI)</td>
-                <td><span class="cls-badge cls-cc">CC</span></td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/8653675505" target="_blank">8653675505</a> <span class="cls-badge cls-cc">CC</span></td>
                 <td><span class="p-item">Sandip Chavan <span class="badge badge-wl">WL 80</span></span></td>
             </tr>
             <tr>
-                <td><a href="https://www.confirmtkt.com/pnr-status/2843849668" target="_blank">2843849668</a></td>
-                <td>17-Sep, 19:46</td>
-                <td>ST to BDTS</td>
-                <td><span class="cls-badge cls-3a">3A</span></td>
+                <td class="merged-train-cell">
+                    <span class="route-tag">ST to BDTS</span>
+                    <strong>12904 Golden Temple</strong><br>
+                    <span style="color: #64748b; font-size: 10px;">17-Sep, 19:46</span>
+                </td>
+                <td><a href="https://www.confirmtkt.com/pnr-status/2843849668" target="_blank">2843849668</a> <span class="cls-badge cls-3a">3A</span></td>
                 <td><span class="p-item">Sandip Chavan <span class="badge badge-wl">RLWL 47</span></span></td>
             </tr>
         </tbody>
