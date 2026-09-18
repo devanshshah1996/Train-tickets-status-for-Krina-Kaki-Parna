@@ -2,271 +2,852 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invitee List & WhatsApp Manager</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Invitee List Manager</title>
+    <style>
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --text-light: #94a3b8;
+            --primary: #059669;
+            --primary-hover: #047857;
+            --primary-light: #ecfdf5;
+            --border: #e2e8f0;
+            --border-focus: #10b981;
+            --wa-green: #25d366;
+            --wa-hover: #128c7e;
+            --danger: #ef4444;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-full: 9999px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 16px 12px 60px 12px;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .app-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .app-title {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--text-main);
+        }
+
+        .app-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Top Overview Card */
+        .overview-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 14px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-wrapper {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 12px 10px 38px;
+            font-size: 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            outline: none;
+            background: #f8fafc;
+            color: var(--text-main);
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            background: #ffffff;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        }
+
+        .stat-chips {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .grand-badge {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid #d1fae5;
+            padding: 6px 12px;
+            border-radius: var(--radius-full);
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .action-button-reset {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 11px;
+            cursor: pointer;
+            text-decoration: underline;
+            padding: 4px;
+        }
+
+        /* Main Tabs */
+        .tabs-nav {
+            display: flex;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 14px;
+            gap: 4px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 8px;
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: -2px;
+            transition: all 0.15s ease;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .sub-filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .sub-pill {
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-muted);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s ease;
+        }
+
+        .sub-pill.active {
+            background: #0f172a;
+            color: #ffffff;
+            border-color: #0f172a;
+        }
+
+        /* Section Headings */
+        .subsection-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 4px 6px 4px;
+            margin-top: 14px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .subsection-title {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .subsection-count {
+            font-size: 11px;
+            font-weight: 700;
+            background: #e2e8f0;
+            color: #334155;
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+        }
+
+        /* Invitee List & Card Items */
+        .card-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .invitee-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: border-color 0.15s ease;
+        }
+
+        .invitee-card:hover {
+            border-color: #cbd5e1;
+        }
+
+        .card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .invitee-name-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .qty-badge {
+            background: #f1f5f9;
+            color: #1e293b;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            flex-shrink: 0;
+        }
+
+        .invitee-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            white-space: normal;
+            word-break: break-word;
+            line-height: 1.35;
+        }
+
+        .card-bottom {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .phone-input-wrap {
+            flex: 1;
+            position: relative;
+        }
+
+        .phone-input {
+            width: 100%;
+            padding: 7px 10px;
+            font-size: 13px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            outline: none;
+            background: #fff;
+            color: var(--text-main);
+            transition: all 0.15s ease;
+        }
+
+        .phone-input:focus {
+            border-color: var(--border-focus);
+            background: #ffffff;
+        }
+
+        .phone-input::placeholder {
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        .wa-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background-color: var(--wa-green);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 8px 14px;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background-color 0.15s ease, transform 0.05s ease;
+        }
+
+        .wa-btn:active {
+            transform: scale(0.97);
+        }
+
+        .wa-btn:hover {
+            background-color: var(--wa-hover);
+        }
+
+        .wa-btn.disabled {
+            background-color: #e2e8f0;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 15px;
+            color: var(--text-light);
+            font-size: 13px;
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            border: 1px dashed var(--border);
+        }
+
+        /* Modal Styles (Safe Alert Replacement) */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-backdrop.show {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #ffffff;
+            border-radius: var(--radius-lg);
+            max-width: 320px;
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .modal-text {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 18px;
+            line-height: 1.4;
+        }
+
+        .modal-btn {
+            width: 100%;
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            color: #ffffff;
+            padding: 9px 18px;
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.25s ease;
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
 </head>
-<body class="bg-slate-50 min-h-screen text-slate-800">
-    <div class="max-w-4xl mx-auto px-4 py-8">
-        <!-- Header -->
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Invitee List Manager</h1>
-            <p class="text-slate-500 mt-1">Alphabetized attendee list with direct WhatsApp messaging</p>
-        </header>
+<body>
+<div class="container">
+    <header class="app-header">
+        <h1 class="app-title">Invitee List Manager</h1>
+        <p class="app-subtitle">Alphabetized guest register & instant WhatsApp messaging</p>
+    </header>
 
-        <!-- Search and Stats Bar -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="relative w-full sm:w-72">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </span>
-                <input type="text" id="searchInput" placeholder="Search invitees alphabetically..." class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm">
+    <div class="overview-card">
+        <div class="search-wrapper">
+            <span class="search-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </span>
+            <input type="text" id="searchInput" class="search-input" placeholder="Search by name or mobile number..." autocomplete="off">
+        </div>
+        <div class="stat-chips">
+            <div class="grand-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                Total: <span id="grandTotalText">106</span> People
             </div>
-            <div class="flex items-center gap-3 text-sm font-medium w-full sm:w-auto justify-end">
-                <div class="bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg border border-emerald-100">
-                    Total People: <span id="grandTotal" class="font-bold">106</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tabs Navigation -->
-        <div class="flex border-b border-slate-200 mb-6">
-            <button onclick="switchTab('building')" id="tab-building" class="flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-emerald-600 text-emerald-600 transition-colors flex items-center justify-center gap-2">
-                <i class="fa-solid fa-building"></i> Building (<span id="buildingCount">54</span> ppl)
-            </button>
-            <button onclick="switchTab('family')" id="tab-family" class="flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-colors flex items-center justify-center gap-2">
-                <i class="fa-solid fa-users"></i> Family (<span id="familyCount">52</span> ppl)
-            </button>
-        </div>
-
-        <!-- Tab Contents -->
-        <div id="content-building" class="tab-content space-y-3">
-            <!-- Rendered via JS -->
-        </div>
-        <div id="content-family" class="tab-content space-y-3 hidden">
-            <!-- Rendered via JS -->
+            <button class="action-button-reset" id="resetBtn" title="Reset numbers to default">Reset saved edits</button>
         </div>
     </div>
 
-    <!-- Custom Modal for Notifications (No alerts) -->
-    <div id="customModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 px-4">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-100 text-center animate-in fade-in zoom-in duration-200">
-            <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-            </div>
-            <h3 id="modalTitle" class="text-lg font-bold text-slate-900 mb-2">Notice</h3>
-            <p id="modalMessage" class="text-sm text-slate-600 mb-6">Please enter a valid mobile number first.</p>
-            <button onclick="closeModal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-xl transition-colors text-sm">
-                OK
-            </button>
-        </div>
+    <!-- Main Tabs -->
+    <nav class="tabs-nav" aria-label="Guest Category Navigation">
+        <button class="tab-btn active" id="tabBtn-bf" onclick="setMainTab('bf')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                <line x1="9" y1="22" x2="9" y2="22.01"></line>
+                <line x1="15" y1="22" x2="15" y2="22.01"></line>
+                <line x1="9" y1="6" x2="9" y2="6.01"></line>
+                <line x1="15" y1="6" x2="15" y2="6.01"></line>
+                <line x1="9" y1="10" x2="9" y2="10.01"></line>
+                <line x1="15" y1="10" x2="15" y2="10.01"></line>
+                <line x1="9" y1="14" x2="9" y2="14.01"></line>
+                <line x1="15" y1="14" x2="15" y2="14.01"></line>
+                <line x1="9" y1="18" x2="9" y2="18.01"></line>
+                <line x1="15" y1="18" x2="15" y2="18.01"></line>
+            </svg>
+            <span>Building & Friends (<span id="bfTotalCount">54</span>)</span>
+        </button>
+        <button class="tab-btn" id="tabBtn-family" onclick="setMainTab('family')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <span>Family (<span id="familyTotalCount">52</span>)</span>
+        </button>
+    </nav>
+
+    <!-- Sub-Filter Bar (Shown inside Building & Friends) -->
+    <div id="subFilterContainer" class="sub-filter-bar">
+        <button class="sub-pill active" id="subPill-all" onclick="setSubFilter('all')">All (54)</button>
+        <button class="sub-pill" id="subPill-building" onclick="setSubFilter('building')">🏢 Building (29)</button>
+        <button class="sub-pill" id="subPill-friends" onclick="setSubFilter('friends')">🤝 Friends (25)</button>
     </div>
 
-    <script>
-        const defaultData = {
-            building: [
-                { name: "Aakash Bhansali", qty: 2, phone: "9820053865" },
-                { name: "Sameerbhai", qty: 2, phone: "9619861613" },
-                { name: "Sanket Jogani", qty: 2, phone: "9820088101" },
-                { name: "Lata Aunty + Minaben", qty: 2, phone: "" },
-                { name: "Deepakbhai Munilal (29th flr)", qty: 4, phone: "7699979997" },
-                { name: "Apurva + Mummy", qty: 3, phone: "9967911330" },
-                { name: "Ashit Shah", qty: 2, phone: "9833110915" },
-                { name: "Bilav Parmani", qty: 2, phone: "9833071274" },
-                { name: "Nisha -Pinakin", qty: 2, phone: "9820071201" },
-                { name: "Girishbhai Ladhani", qty: 2, phone: "9820070107" },
-                { name: "Vaibhav and Pooja 11th Flr", qty: 2, phone: "" },
-                { name: "Kiran Babulal", qty: 2, phone: "9820069706" },
-                { name: "Raju Sumtilal", qty: 2, phone: "9820059997" },
-                { name: "Smitesh", qty: 2, phone: "9820036372" },
-                { name: "Atulbhai Jogani", qty: 1, phone: "9821074842" },
-                { name: "Nipa Anil Ranka", qty: 2, phone: "9820397770" },
-                { name: "Ami", qty: 1, phone: "9833485170" },
-                { name: "Rimpi", qty: 1, phone: "9321120621" },
-                { name: "Ashish & Malika Goyal 20th flr The Residence", qty: 2, phone: "" },
-                { name: "Modi 13th flr The Residence", qty: 2, phone: "" },
-                { name: "Sapana patrwala", qty: 1, phone: "" },
-                { name: "Bela dnr", qty: 1, phone: "" },
-                { name: "Meeta saurin", qty: 2, phone: "" },
-                { name: "Seemaben Rajeshbhai Maneklal", qty: 1, phone: "9820044724" },
-                { name: "Smitabhābhi", qty: 1, phone: "" },
-                { name: "Reenaben Tusharbhai Champaklal", qty: 2, phone: "" },
-                { name: "Rupal - Sanjay Ghadiyali", qty: 2, phone: "9821460106" },
-                { name: "Shaileshbhai Ajbani", qty: 2, phone: "9820215966" },
-                { name: "Atulbhai Rajaram", qty: 2, phone: "" }
-            ],
-            family: [
-                { name: "Sandipbhai Padechia", qty: 2, phone: "9820046167" },
-                { name: "Aadeshkumar Dilipbhai", qty: 2, phone: "9819232268" },
-                { name: "Pundribhai Ambalal Shah", qty: 2, phone: "9820960207" },
-                { name: "Sharmeshbhai Pundrikbhai", qty: 3, phone: "9323201239" },
-                { name: "Deveshkumar Shah", qty: 4, phone: "9821110490" },
-                { name: "Jiteshkumar Shah", qty: 2, phone: "9820036738" },
-                { name: "Dilipbhai Maneklal", qty: 2, phone: "9820032268" },
-                { name: "Parinbhai Sevantilal", qty: 3, phone: "9820291416" },
-                { name: "Jimitkumar Kunjita", qty: 2, phone: "9773669471" },
-                { name: "Arjav Kumar & Pritiben", qty: 2, phone: "" },
-                { name: "Vijaykumar Babulal", qty: 4, phone: "9820031848" },
-                { name: "Vikeshbhai Rameshbhai", qty: 3, phone: "9820331200" },
-                { name: "Rushinkumar Aditi", qty: 2, phone: "9820765552" },
-                { name: "Sudhibhai Chhotalal", qty: 3, phone: "9820036411" },
-                { name: "Rupeshbhai Chhotlal", qty: 4, phone: "9223251111" },
-                { name: "Shrenikkumar Shirishbhai", qty: 2, phone: "9819280511" },
-                { name: "Girishbhai Jayantilal", qty: 2, phone: "" },
-                { name: "Sandipbhai Jayantilal", qty: 2, phone: "" },
-                { name: "Dineshbhai Amthalal", qty: 2, phone: "" },
-                { name: "Yomeshbhai Dineshbhai", qty: 2, phone: "" },
-                { name: "Nimeshbhai Mahendrabhai", qty: 2, phone: "" }
-            ]
-        };
+    <!-- Content Area -->
+    <div id="listContainer">
+        <!-- Rendered dynamically -->
+    </div>
+</div>
 
-        function sortAlphabetically(data) {
-            data.building.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'accent', numeric: true }));
-            data.family.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'accent', numeric: true }));
-        }
+<!-- Modal Message Dialog -->
+<div class="modal-backdrop" id="customModal">
+    <div class="modal-box">
+        <h3 class="modal-title" id="modalTitle">Missing Phone Number</h3>
+        <p class="modal-text" id="modalMessage">Please input a valid 10-digit mobile number before starting a WhatsApp chat.</p>
+        <button class="modal-btn" onclick="closeModal()">Got it</button>
+    </div>
+</div>
 
-        let inviteeData = defaultData;
-        try {
-            const saved = localStorage.getItem('inviteeData');
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                if (parsed && parsed.building && parsed.family) {
-                    inviteeData = parsed;
-                }
-            }
-        } catch (e) {
-            console.error('Could not load from localStorage, using default data', e);
-        }
+<!-- Toast notification popup -->
+<div class="toast" id="toastMessage">Phone number saved</div>
 
-        // Ensure alphabetical ordering upon load
-        sortAlphabetically(inviteeData);
+<script>
+// Raw data strictly partitioned and pre-sorted alphabetically
+const INITIAL_DATA = {
+    building: [
+        { id: "b1", name: "Aakash Bhansali", qty: 2, phone: "9820053865" },
+        { id: "b2", name: "Apurva + Mummy", qty: 3, phone: "9967911330" },
+        { id: "b3", name: "Ashish & Malika Goyal 20th flr The Residence", qty: 2, phone: "" },
+        { id: "b4", name: "Ashit Shah", qty: 2, phone: "9833110915" },
+        { id: "b5", name: "Bilav Parmani", qty: 2, phone: "9833071274" },
+        { id: "b6", name: "Deepakbhai Munilal (29th flr)", qty: 4, phone: "7699979997" },
+        { id: "b7", name: "Girishbhai Ladhani", qty: 2, phone: "9820070107" },
+        { id: "b8", name: "Lata Aunty + Minaben", qty: 2, phone: "" },
+        { id: "b9", name: "Modi 13th flr The Residence", qty: 2, phone: "" },
+        { id: "b10", name: "Nisha -Pinakin", qty: 2, phone: "9820071201" },
+        { id: "b11", name: "Sameerbhai", qty: 2, phone: "9619861613" },
+        { id: "b12", name: "Sanket Jogani", qty: 2, phone: "9820088101" },
+        { id: "b13", name: "Vaibhav and Pooja 11th Flr", qty: 2, phone: "" }
+    ],
+    friends: [
+        { id: "fr1", name: "Ami", qty: 1, phone: "9833485170" },
+        { id: "fr2", name: "Atulbhai Jogani", qty: 1, phone: "9821074842" },
+        { id: "fr3", name: "Atulbhai Rajaram", qty: 2, phone: "" },
+        { id: "fr4", name: "Bela dnr", qty: 1, phone: "" },
+        { id: "fr5", name: "Kiran Babulal", qty: 2, phone: "9820069706" },
+        { id: "fr6", name: "Meeta saurin", qty: 2, phone: "" },
+        { id: "fr7", name: "Nipa Anil Ranka", qty: 2, phone: "9820397770" },
+        { id: "fr8", name: "Raju Sumtilal", qty: 2, phone: "9820059997" },
+        { id: "fr9", name: "Reenaben Tusharbhai Champaklal", qty: 2, phone: "" },
+        { id: "fr10", name: "Rimpi", qty: 1, phone: "9321120621" },
+        { id: "fr11", name: "Rupal - Sanjay Ghadiyali", qty: 2, phone: "9821460106" },
+        { id: "fr12", name: "Sapana patrwala", qty: 1, phone: "" },
+        { id: "fr13", name: "Seemaben Rajeshbhai Maneklal", qty: 1, phone: "9820044724" },
+        { id: "fr14", name: "Shaileshbhai Ajbani", qty: 2, phone: "9820215966" },
+        { id: "fr15", name: "Smitabhābhi", qty: 1, phone: "" },
+        { id: "fr16", name: "Smitesh", qty: 2, phone: "9820036372" }
+    ],
+    family: [
+        { id: "fa1", name: "Aadeshkumar Dilipbhai", qty: 2, phone: "9819232268" },
+        { id: "fa2", name: "Arjav Kumar & Pritiben", qty: 2, phone: "" },
+        { id: "fa3", name: "Deveshkumar Shah", qty: 4, phone: "9821110490" },
+        { id: "fa4", name: "Dilipbhai Maneklal", qty: 2, phone: "9820032268" },
+        { id: "fa5", name: "Dineshbhai Amthalal", qty: 2, phone: "" },
+        { id: "fa6", name: "Girishbhai Jayantilal", qty: 2, phone: "" },
+        { id: "fa7", name: "Jimitkumar Kunjita", qty: 2, phone: "9773669471" },
+        { id: "fa8", name: "Jiteshkumar Shah", qty: 2, phone: "9820036738" },
+        { id: "fa9", name: "Nimeshbhai Mahendrabhai", qty: 2, phone: "" },
+        { id: "fa10", name: "Parinbhai Sevantilal", qty: 3, phone: "9820291416" },
+        { id: "fa11", name: "Pundribhai Ambalal Shah", qty: 2, phone: "9820960207" },
+        { id: "fa12", name: "Rupeshbhai Chhotlal", qty: 4, phone: "9223251111" },
+        { id: "fa13", name: "Rushinkumar Aditi", qty: 2, phone: "9820765552" },
+        { id: "fa14", name: "Sandipbhai Jayantilal", qty: 2, phone: "" },
+        { id: "fa15", name: "Sandipbhai Padechia", qty: 2, phone: "9820046167" },
+        { id: "fa16", name: "Sharmeshbhai Pundrikbhai", qty: 3, phone: "9323201239" },
+        { id: "fa17", name: "Shrenikkumar Shirishbhai", qty: 2, phone: "9819280511" },
+        { id: "fa18", name: "Sudhibhai Chhotalal", qty: 3, phone: "9820036411" },
+        { id: "fa19", name: "Vijaykumar Babulal", qty: 4, phone: "9820031848" },
+        { id: "fa20", name: "Vikeshbhai Rameshbhai", qty: 3, phone: "9820331200" },
+        { id: "fa21", name: "Yomeshbhai Dineshbhai", qty: 2, phone: "" }
+    ]
+};
 
-        function saveData() {
-            try {
-                sortAlphabetically(inviteeData);
-                localStorage.setItem('inviteeData', JSON.stringify(inviteeData));
-            } catch (e) {
-                console.error('Could not save to localStorage', e);
-            }
-            render();
-        }
+// Sort alphabetically by name
+function sortAlphabetical(arr) {
+    return arr.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base', numeric: true }));
+}
 
-        function switchTab(tab) {
-            const bBtn = document.getElementById('tab-building');
-            const fBtn = document.getElementById('tab-family');
-            const bCont = document.getElementById('content-building');
-            const fCont = document.getElementById('content-family');
+// Ensure each array is sorted
+sortAlphabetical(INITIAL_DATA.building);
+sortAlphabetical(INITIAL_DATA.friends);
+sortAlphabetical(INITIAL_DATA.family);
 
-            if (tab === 'building') {
-                bBtn.className = "flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-emerald-600 text-emerald-600 transition-colors flex items-center justify-center gap-2";
-                fBtn.className = "flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-colors flex items-center justify-center gap-2";
-                bCont.classList.remove('hidden');
-                fCont.classList.add('hidden');
-            } else {
-                fBtn.className = "flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-emerald-600 text-emerald-600 transition-colors flex items-center justify-center gap-2";
-                bBtn.className = "flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-colors flex items-center justify-center gap-2";
-                fCont.classList.remove('hidden');
-                bCont.classList.add('hidden');
-            }
-        }
+const STORAGE_KEY = "invitee_registry_v3";
+let guestState = JSON.parse(JSON.stringify(INITIAL_DATA));
 
-        function updatePhone(category, index, newPhone) {
-            inviteeData[category][index].phone = newPhone.trim();
-            saveData();
-        }
-
-        function showModal(message) {
-            document.getElementById('modalMessage').innerText = message;
-            document.getElementById('customModal').classList.remove('hidden');
-            document.getElementById('customModal').classList.add('flex');
-        }
-
-        function closeModal() {
-            document.getElementById('customModal').classList.add('hidden');
-            document.getElementById('customModal').classList.remove('flex');
-        }
-
-        function render() {
-            const searchInput = document.getElementById('searchInput');
-            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
-
-            // Calculate totals
-            let bPpl = inviteeData.building.reduce((acc, item) => acc + (Number(item.qty) || 0), 0);
-            let fPpl = inviteeData.family.reduce((acc, item) => acc + (Number(item.qty) || 0), 0);
-            
-            const bCountEl = document.getElementById('buildingCount');
-            const fCountEl = document.getElementById('familyCount');
-            const grandTotalEl = document.getElementById('grandTotal');
-
-            if (bCountEl) bCountEl.innerText = bPpl;
-            if (fCountEl) fCountEl.innerText = fPpl;
-            if (grandTotalEl) grandTotalEl.innerText = bPpl + fPpl;
-
-            // Render Building
-            const bContainer = document.getElementById('content-building');
-            if (bContainer) {
-                bContainer.innerHTML = '';
-                inviteeData.building.forEach((item, index) => {
-                    if (searchTerm && !item.name.toLowerCase().includes(searchTerm)) return;
-                    bContainer.appendChild(createCard('building', item, index));
+function loadState() {
+    try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed && parsed.building && parsed.friends && parsed.family) {
+                // Merge saved phones into the fresh initial list
+                ["building", "friends", "family"].forEach(group => {
+                    const savedMap = new Map((parsed[group] || []).map(item => [item.name, item.phone]));
+                    guestState[group].forEach(item => {
+                        if (savedMap.has(item.name)) {
+                            item.phone = savedMap.get(item.name);
+                        }
+                    });
                 });
-                if (bContainer.children.length === 0) {
-                    bContainer.innerHTML = '<div class="text-center py-8 text-slate-400 text-sm bg-white rounded-xl border border-slate-200">No matching guests found</div>';
-                }
-            }
-
-            // Render Family
-            const fContainer = document.getElementById('content-family');
-            if (fContainer) {
-                fContainer.innerHTML = '';
-                inviteeData.family.forEach((item, index) => {
-                    if (searchTerm && !item.name.toLowerCase().includes(searchTerm)) return;
-                    fContainer.appendChild(createCard('family', item, index));
-                });
-                if (fContainer.children.length === 0) {
-                    fContainer.innerHTML = '<div class="text-center py-8 text-slate-400 text-sm bg-white rounded-xl border border-slate-200">No matching guests found</div>';
-                }
             }
         }
+    } catch (err) {
+        console.warn("Storage access restricted or unavailable:", err);
+    }
+}
 
-        function createCard(category, item, index) {
-            const div = document.createElement('div');
-            div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:border-slate-300 transition-all";
-            
-            const cleanPhone = (item.phone || '').replace(/\D/g, '');
-            const hasPhone = cleanPhone.length >= 10;
-            const waLink = hasPhone ? `https://wa.me/91${cleanPhone}` : '#';
+function persistState() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(guestState));
+    } catch (err) {
+        console.warn("Could not save to localStorage:", err);
+    }
+}
 
-            div.innerHTML = `
-                <div class="flex items-center gap-3 flex-1">
-                    <span class="bg-slate-100 text-slate-700 font-bold text-xs px-2.5 py-1 rounded-md shrink-0">
-                        ${item.qty} ppl
-                    </span>
-                    <span class="font-medium text-slate-900 text-sm">${item.name}</span>
+let activeMainTab = "bf"; // "bf" (Building & Friends) or "family"
+let activeSubFilter = "all"; // "all", "building", "friends"
+
+function setMainTab(tab) {
+    activeMainTab = tab;
+    document.getElementById("tabBtn-bf").classList.toggle("active", tab === "bf");
+    document.getElementById("tabBtn-family").classList.toggle("active", tab === "family");
+    
+    // Sub-filters are only relevant inside the Building & Friends tab
+    document.getElementById("subFilterContainer").style.display = (tab === "bf") ? "flex" : "none";
+    render();
+}
+
+function setSubFilter(filter) {
+    activeSubFilter = filter;
+    document.getElementById("subPill-all").classList.toggle("active", filter === "all");
+    document.getElementById("subPill-building").classList.toggle("active", filter === "building");
+    document.getElementById("subPill-friends").classList.toggle("active", filter === "friends");
+    render();
+}
+
+function showToast(msg) {
+    const toast = document.getElementById("toastMessage");
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2000);
+}
+
+function showModal(title, msg) {
+    document.getElementById("modalTitle").textContent = title;
+    document.getElementById("modalMessage").textContent = msg;
+    document.getElementById("customModal").classList.add("show");
+}
+
+function closeModal() {
+    document.getElementById("customModal").classList.remove("show");
+}
+
+function onPhoneChange(group, id, newPhone) {
+    const cleanPhone = newPhone.trim();
+    const item = guestState[group].find(g => g.id === id);
+    if (item) {
+        item.phone = cleanPhone;
+        persistState();
+        showToast(`Updated phone for ${item.name}`);
+        // Re-render card buttons without full DOM disruption
+        updateCardWaButton(id, cleanPhone);
+    }
+}
+
+function updateCardWaButton(id, phone) {
+    const digits = phone.replace(/\D/g, "");
+    const isValid = digits.length >= 10;
+    const btn = document.getElementById(`wa-btn-${id}`);
+    if (btn) {
+        btn.className = `wa-btn ${isValid ? "" : "disabled"}`;
+        btn.setAttribute("data-phone", digits);
+    }
+}
+
+function handleWhatsAppClick(id, guestName) {
+    const item = [...guestState.building, ...guestState.friends, ...guestState.family].find(g => g.id === id);
+    const phone = item ? item.phone : "";
+    const cleanPhone = (phone || "").replace(/\D/g, "");
+    
+    if (!cleanPhone || cleanPhone.length < 10) {
+        showModal(
+            "Phone Number Required",
+            `Please type a valid 10-digit mobile number for ${guestName} in the text box first.`
+        );
+        return;
+    }
+    
+    // Normalize to 10-digit format for India (+91)
+    const formatted = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
+    const url = `https://wa.me/${formatted}`;
+    window.open(url, "_blank");
+}
+
+function createCardHtml(item, group) {
+    const digits = (item.phone || "").replace(/\D/g, "");
+    const isValid = digits.length >= 10;
+    const escapedName = item.name.replace(/'/g, "\\'");
+
+    return `
+        <div class="invitee-card">
+            <div class="card-top">
+                <div class="invitee-name-group">
+                    <span class="qty-badge">${item.qty} ${item.qty === 1 ? 'person' : 'ppl'}</span>
+                    <span class="invitee-name">${item.name}</span>
                 </div>
-                <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
-                    <div class="flex items-center gap-1">
-                        <input type="text" placeholder="Enter mobile no." value="${item.phone || ''}" 
-                            onchange="updatePhone('${category}', ${index}, this.value)"
-                            class="text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 w-32 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                    </div>
-                    <a href="${waLink}" ${hasPhone ? 'target="_blank"' : ''} onclick="${hasPhone ? '' : 'showModal(\'Please enter a valid 10-digit mobile number before sending a WhatsApp message.\'); return false;'}"
-                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${hasPhone ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm' : 'bg-slate-100 text-slate-400 cursor-pointer'}">
-                        <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
-                    </a>
+            </div>
+            <div class="card-bottom">
+                <div class="phone-input-wrap">
+                    <input 
+                        type="tel" 
+                        class="phone-input" 
+                        placeholder="Add mobile no." 
+                        value="${item.phone || ''}" 
+                        onchange="onPhoneChange('${group}', '${item.id}', this.value)"
+                        aria-label="Phone number for ${item.name}"
+                    >
                 </div>
-            `;
-            return div;
+                <button 
+                    id="wa-btn-${item.id}"
+                    type="button" 
+                    class="wa-btn ${isValid ? '' : 'disabled'}"
+                    onclick="handleWhatsAppClick('${item.id}', '${escapedName}')"
+                    title="Send WhatsApp message"
+                >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.97.529 1.768.814 2.8.814h.005c3.182 0 5.767-2.586 5.768-5.766 0-1.54-.599-2.989-1.688-4.078-1.09-1.089-2.54-1.688-4.089-1.688zm9.969 5.766c0 5.485-4.467 9.949-9.972 9.949-1.745 0-3.37-.45-4.805-1.238l-5.223 1.351 1.396-5.097c-.896-1.503-1.37-3.23-1.37-5.011 0-5.484 4.468-9.949 9.974-9.949 2.663 0 5.166 1.036 7.049 2.92 1.884 1.883 2.951 4.387 2.951 7.075z"/>
+                    </svg>
+                    WhatsApp
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function renderSubsection(title, badgeCount, items, group) {
+    if (items.length === 0) return '';
+    return `
+        <div class="subsection-header">
+            <span class="subsection-title">
+                ${title}
+            </span>
+            <span class="subsection-count">${badgeCount} ppl</span>
+        </div>
+        <div class="card-list">
+            ${items.map(item => createCardHtml(item, group)).join('')}
+        </div>
+    `;
+}
+
+function render() {
+    const searchVal = (document.getElementById("searchInput").value || "").trim().toLowerCase();
+    const container = document.getElementById("listContainer");
+
+    // Dynamic counts
+    const bCount = guestState.building.reduce((acc, i) => acc + i.qty, 0);
+    const frCount = guestState.friends.reduce((acc, i) => acc + i.qty, 0);
+    const faCount = guestState.family.reduce((acc, i) => acc + i.qty, 0);
+
+    // Update badges
+    document.getElementById("bfTotalCount").textContent = bCount + frCount;
+    document.getElementById("familyTotalCount").textContent = faCount;
+    document.getElementById("grandTotalText").textContent = bCount + frCount + faCount;
+    document.getElementById("subPill-all").textContent = `All (${bCount + frCount})`;
+    document.getElementById("subPill-building").textContent = `🏢 Building (${bCount})`;
+    document.getElementById("subPill-friends").textContent = `🤝 Friends (${frCount})`;
+
+    // Filter by search
+    const matchesSearch = (item) => {
+        if (!searchVal) return true;
+        const n = item.name.toLowerCase();
+        const p = (item.phone || '').toLowerCase();
+        return n.includes(searchVal) || p.includes(searchVal);
+    };
+
+    let html = '';
+
+    if (activeMainTab === "bf") {
+        const filteredBuilding = guestState.building.filter(matchesSearch);
+        const filteredFriends = guestState.friends.filter(matchesSearch);
+
+        const filteredBCount = filteredBuilding.reduce((acc, i) => acc + i.qty, 0);
+        const filteredFrCount = filteredFriends.reduce((acc, i) => acc + i.qty, 0);
+
+        if (activeSubFilter === "all" || activeSubFilter === "building") {
+            html += renderSubsection("🏢 Building (The Residence)", filteredBCount, filteredBuilding, "building");
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const searchInput = document.getElementById('searchInput');
-            if (searchInput) {
-                searchInput.addEventListener('input', render);
-            }
+        if (activeSubFilter === "all" || activeSubFilter === "friends") {
+            html += renderSubsection("🤝 Friends", filteredFrCount, filteredFriends, "friends");
+        }
+
+        if ((activeSubFilter === "building" && filteredBuilding.length === 0) ||
+            (activeSubFilter === "friends" && filteredFriends.length === 0) ||
+            (activeSubFilter === "all" && filteredBuilding.length === 0 && filteredFriends.length === 0)) {
+            html = `<div class="empty-state">No matching guests found.</div>`;
+        }
+    } else {
+        const filteredFamily = guestState.family.filter(matchesSearch);
+        const filteredFaCount = filteredFamily.reduce((acc, i) => acc + i.qty, 0);
+
+        html += renderSubsection("👨‍👩‍👦 Family", filteredFaCount, filteredFamily, "family");
+
+        if (filteredFamily.length === 0) {
+            html = `<div class="empty-state">No matching family members found.</div>`;
+        }
+    }
+
+    container.innerHTML = html;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadState();
+    render();
+
+    document.getElementById("searchInput").addEventListener("input", render);
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+        if (confirm("Reset all phone numbers back to initial values?")) {
+            localStorage.removeItem(STORAGE_KEY);
+            guestState = JSON.parse(JSON.stringify(INITIAL_DATA));
             render();
-        });
-    </script>
+            showToast("Reset to initial list");
+        }
+    });
+});
+
+// Run immediate render in case DOM is already ready
+if (document.readyState === "complete" || document.readyState === "interactive") {
+    loadState();
+    render();
+}
+</script>
 </body>
 </html>
