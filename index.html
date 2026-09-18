@@ -540,19 +540,20 @@
 const INITIAL_DATA = {
     building: [
         { id: "b1", name: "Aakash Bhansali", qty: 2, phone: "9820053865" },
-        { id: "b2", name: "Apurva + Mummy", qty: 3, phone: "9967911330" },
-        { id: "b3", name: "Ashish & Malika Goyal 20th flr The Residence", qty: 2, phone: "" },
+        { id: "b2", name: "Apurva + Mummy (2+1)", qty: 3, phone: "9967911330" },
+        { id: "b3", name: "Ashish Goel (20th flr The Residence)", qty: 1, phone: "9920230000" },
         { id: "b4", name: "Ashit Shah", qty: 2, phone: "9833110915" },
         { id: "b5", name: "Bilav Parmani", qty: 2, phone: "9833071274" },
         { id: "b6", name: "Deepakbhai Munilal (29th flr)", qty: 4, phone: "7699979997" },
         { id: "b7", name: "Girishbhai Ladhani", qty: 2, phone: "9820070107" },
-        { id: "b8", name: "Lata Aunty + Minaben", qty: 2, phone: "" },
-        { id: "b9", name: "Modi 13th flr The Residence", qty: 2, phone: "" },
-        { id: "b10", name: "Nisha -Pinakin", qty: 2, phone: "9820071201" },
-        { id: "b11", name: "Sameerbhai", qty: 2, phone: "9619861613" },
-        { id: "b12", name: "Sanket Jogani", qty: 2, phone: "9820088101" },
-        { id: "b13", name: "Shailesh Jogani", qty: 2, phone: "" },
-        { id: "b14", name: "Vaibhav and Pooja 11th Flr", qty: 2, phone: "" }
+        { id: "b8", name: "Jay Modi (13th flr The Residence)", qty: 2, phone: "9820037891" },
+        { id: "b9", name: "Lata Aunty + Minaben", qty: 2, phone: "" },
+        { id: "b10", name: "Mallika Goyal (20th flr The Residence)", qty: 1, phone: "" },
+        { id: "b11", name: "Nisha -Pinakin", qty: 2, phone: "9820071201" },
+        { id: "b12", name: "Sameerbhai", qty: 2, phone: "9619861613" },
+        { id: "b13", name: "Sanket Jogani", qty: 2, phone: "9820088101" },
+        { id: "b14", name: "Shailesh Jogani", qty: 2, phone: "9820003462" },
+        { id: "b15", name: "Vaibhav and Pooja 11th Flr", qty: 2, phone: "" }
     ],
     friends: [
         { id: "fr1", name: "Ami", qty: 1, phone: "9833485170" },
@@ -598,7 +599,6 @@ const INITIAL_DATA = {
     ]
 };
 
-// Alphabetical sort helper
 function sortAlphabetical(arr) {
     return arr.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base', numeric: true }));
 }
@@ -607,7 +607,7 @@ sortAlphabetical(INITIAL_DATA.building);
 sortAlphabetical(INITIAL_DATA.friends);
 sortAlphabetical(INITIAL_DATA.family);
 
-const STORAGE_KEY = "invitee_registry_v4";
+const STORAGE_KEY = "invitee_list_v5";
 let guestState = JSON.parse(JSON.stringify(INITIAL_DATA));
 
 function loadState() {
@@ -617,9 +617,11 @@ function loadState() {
             const parsed = JSON.parse(stored);
             if (parsed && parsed.building && parsed.friends && parsed.family) {
                 ["building", "friends", "family"].forEach(group => {
-                    const savedMap = new Map((parsed[group] || []).map(item => [item.name, item.phone]));
+                    const savedMap = new Map((parsed[group] || []).map(item => [item.id || item.name, item.phone]));
                     guestState[group].forEach(item => {
-                        if (savedMap.has(item.name)) {
+                        if (savedMap.has(item.id)) {
+                            item.phone = savedMap.get(item.id);
+                        } else if (savedMap.has(item.name)) {
                             item.phone = savedMap.get(item.name);
                         }
                     });
@@ -699,13 +701,12 @@ function onPhoneChange(group, id, newPhone) {
     if (item) {
         item.phone = cleanPhone;
         persistState();
-        showToast(`Saved phone for ${item.name}`);
         updateCardWaButton(id, cleanPhone);
     }
 }
 
 function updateCardWaButton(id, phone) {
-    const digits = phone.replace(/\D/g, "");
+    const digits = (phone || "").replace(/\D/g, "");
     const isValid = digits.length >= 10;
     const btn = document.getElementById(`wa-btn-${id}`);
     if (btn) {
@@ -722,7 +723,7 @@ function handleWhatsAppClick(id, guestName) {
     if (!cleanPhone || cleanPhone.length < 10) {
         showModal(
             "Phone Number Required",
-            `Please type a valid 10-digit mobile number for ${guestName} in the text field first.`
+            `Please type a valid 10-digit mobile number for ${guestName} in the text box before opening WhatsApp.`
         );
         return;
     }
