@@ -19,11 +19,12 @@
             --wa-green: #25d366;
             --wa-hover: #128c7e;
             --danger: #ef4444;
+            --radius-sm: 6px;
             --radius-md: 10px;
             --radius-lg: 14px;
             --radius-full: 9999px;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
         }
 
         * {
@@ -38,7 +39,7 @@
             background-color: var(--bg-primary);
             color: var(--text-main);
             min-height: 100vh;
-            padding: 16px 12px 60px 12px;
+            padding: 16px 12px 64px 12px;
         }
 
         .container {
@@ -46,10 +47,9 @@
             margin: 0 auto;
         }
 
-        /* Header */
         .app-header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .app-title {
@@ -65,7 +65,6 @@
             margin-top: 4px;
         }
 
-        /* Top Overview Card */
         .overview-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -126,20 +125,19 @@
             font-weight: 700;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
 
         .action-button-reset {
             background: none;
             border: none;
             color: var(--text-muted);
-            font-size: 11px;
+            font-size: 12px;
             cursor: pointer;
             text-decoration: underline;
             padding: 4px;
         }
 
-        /* Main Tabs */
         .tabs-nav {
             display: flex;
             border-bottom: 2px solid var(--border);
@@ -149,7 +147,7 @@
 
         .tab-btn {
             flex: 1;
-            padding: 12px 8px;
+            padding: 12px 6px;
             font-size: 14px;
             font-weight: 700;
             text-align: center;
@@ -174,7 +172,7 @@
         .sub-filter-bar {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             margin-bottom: 16px;
             overflow-x: auto;
             padding-bottom: 4px;
@@ -200,12 +198,11 @@
             border-color: #0f172a;
         }
 
-        /* Section Headings */
         .subsection-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 4px 6px 4px;
+            padding: 10px 4px 6px 4px;
             margin-top: 14px;
             margin-bottom: 8px;
             border-bottom: 1px solid var(--border);
@@ -231,7 +228,6 @@
             border-radius: var(--radius-full);
         }
 
-        /* Invitee List & Card Items */
         .card-list {
             display: flex;
             flex-direction: column;
@@ -275,7 +271,7 @@
             font-size: 11px;
             font-weight: 800;
             padding: 3px 8px;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             border: 1px solid #e2e8f0;
             flex-shrink: 0;
         }
@@ -284,7 +280,6 @@
             font-size: 14px;
             font-weight: 600;
             color: var(--text-main);
-            white-space: normal;
             word-break: break-word;
             line-height: 1.35;
         }
@@ -297,17 +292,16 @@
 
         .phone-input-wrap {
             flex: 1;
-            position: relative;
         }
 
         .phone-input {
             width: 100%;
-            padding: 7px 10px;
+            padding: 8px 10px;
             font-size: 13px;
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
             outline: none;
-            background: #fff;
+            background: #ffffff;
             color: var(--text-main);
             transition: all 0.15s ease;
         }
@@ -351,20 +345,19 @@
         .wa-btn.disabled {
             background-color: #e2e8f0;
             color: #94a3b8;
-            cursor: not-allowed;
         }
 
         .empty-state {
             text-align: center;
-            padding: 30px 15px;
+            padding: 36px 16px;
             color: var(--text-light);
             font-size: 13px;
             background: var(--bg-card);
             border-radius: var(--radius-md);
             border: 1px dashed var(--border);
+            margin-top: 10px;
         }
 
-        /* Modal Styles (Safe Alert Replacement) */
         .modal-backdrop {
             position: fixed;
             inset: 0;
@@ -386,7 +379,7 @@
             border-radius: var(--radius-lg);
             max-width: 320px;
             width: 100%;
-            padding: 20px;
+            padding: 22px;
             text-align: center;
             box-shadow: var(--shadow-md);
         }
@@ -401,12 +394,17 @@
         .modal-text {
             font-size: 13px;
             color: var(--text-muted);
-            margin-bottom: 18px;
-            line-height: 1.4;
+            margin-bottom: 20px;
+            line-height: 1.45;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
         }
 
         .modal-btn {
-            width: 100%;
+            flex: 1;
             background: var(--primary);
             color: #ffffff;
             border: none;
@@ -417,7 +415,11 @@
             cursor: pointer;
         }
 
-        /* Toast notification */
+        .modal-btn-cancel {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
         .toast {
             position: fixed;
             bottom: 20px;
@@ -425,7 +427,7 @@
             transform: translateX(-50%) translateY(100px);
             background: #1e293b;
             color: #ffffff;
-            padding: 9px 18px;
+            padding: 10px 18px;
             border-radius: var(--radius-full);
             font-size: 12px;
             font-weight: 600;
@@ -441,10 +443,11 @@
     </style>
 </head>
 <body>
+
 <div class="container">
     <header class="app-header">
         <h1 class="app-title">Invitee List Manager</h1>
-        <p class="app-subtitle">Alphabetized guest register & instant WhatsApp messaging</p>
+        <p class="app-subtitle">Alphabetized guest register & direct WhatsApp messaging</p>
     </header>
 
     <div class="overview-card">
@@ -465,13 +468,12 @@
                     <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                     <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                 </svg>
-                Total: <span id="grandTotalText">106</span> People
+                Total: <span id="grandTotalText">107</span> People
             </div>
-            <button class="action-button-reset" id="resetBtn" title="Reset numbers to default">Reset saved edits</button>
+            <button class="action-button-reset" id="resetBtn" title="Reset numbers to defaults">Reset saved edits</button>
         </div>
     </div>
 
-    <!-- Main Tabs -->
     <nav class="tabs-nav" aria-label="Guest Category Navigation">
         <button class="tab-btn active" id="tabBtn-bf" onclick="setMainTab('bf')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -487,7 +489,7 @@
                 <line x1="9" y1="18" x2="9" y2="18.01"></line>
                 <line x1="15" y1="18" x2="15" y2="18.01"></line>
             </svg>
-            <span>Building & Friends (<span id="bfTotalCount">54</span>)</span>
+            <span>Building & Friends (<span id="bfTotalCount">55</span>)</span>
         </button>
         <button class="tab-btn" id="tabBtn-family" onclick="setMainTab('family')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -500,33 +502,41 @@
         </button>
     </nav>
 
-    <!-- Sub-Filter Bar (Shown inside Building & Friends) -->
     <div id="subFilterContainer" class="sub-filter-bar">
-        <button class="sub-pill active" id="subPill-all" onclick="setSubFilter('all')">All (54)</button>
+        <button class="sub-pill active" id="subPill-all" onclick="setSubFilter('all')">All (55)</button>
         <button class="sub-pill" id="subPill-building" onclick="setSubFilter('building')">🏢 Building (29)</button>
-        <button class="sub-pill" id="subPill-friends" onclick="setSubFilter('friends')">🤝 Friends (25)</button>
+        <button class="sub-pill" id="subPill-friends" onclick="setSubFilter('friends')">🤝 Friends (26)</button>
     </div>
 
-    <!-- Content Area -->
-    <div id="listContainer">
-        <!-- Rendered dynamically -->
-    </div>
+    <!-- Invitee Card Container -->
+    <div id="listContainer"></div>
 </div>
 
-<!-- Modal Message Dialog -->
+<!-- Modal for Alerts & Missing Phone Notices -->
 <div class="modal-backdrop" id="customModal">
     <div class="modal-box">
-        <h3 class="modal-title" id="modalTitle">Missing Phone Number</h3>
-        <p class="modal-text" id="modalMessage">Please input a valid 10-digit mobile number before starting a WhatsApp chat.</p>
+        <h3 class="modal-title" id="modalTitle">Phone Number Required</h3>
+        <p class="modal-text" id="modalMessage">Please enter a valid 10-digit mobile number before starting a WhatsApp chat.</p>
         <button class="modal-btn" onclick="closeModal()">Got it</button>
     </div>
 </div>
 
-<!-- Toast notification popup -->
-<div class="toast" id="toastMessage">Phone number saved</div>
+<!-- Modal for Reset Confirmation (Replaces window.confirm) -->
+<div class="modal-backdrop" id="confirmModal">
+    <div class="modal-box">
+        <h3 class="modal-title">Reset Edits?</h3>
+        <p class="modal-text">All manually typed mobile numbers will be restored to their original values.</p>
+        <div class="modal-actions">
+            <button class="modal-btn modal-btn-cancel" onclick="closeConfirmModal()">Cancel</button>
+            <button class="modal-btn" onclick="executeReset()">Yes, Reset</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Popup -->
+<div class="toast" id="toastMessage">Updated successfully</div>
 
 <script>
-// Raw data strictly partitioned and pre-sorted alphabetically
 const INITIAL_DATA = {
     building: [
         { id: "b1", name: "Aakash Bhansali", qty: 2, phone: "9820053865" },
@@ -551,15 +561,16 @@ const INITIAL_DATA = {
         { id: "fr5", name: "Kiran Babulal", qty: 2, phone: "9820069706" },
         { id: "fr6", name: "Meeta saurin", qty: 2, phone: "" },
         { id: "fr7", name: "Nipa Anil Ranka", qty: 2, phone: "9820397770" },
-        { id: "fr8", name: "Raju Sumtilal", qty: 2, phone: "9820059997" },
-        { id: "fr9", name: "Reenaben Tusharbhai Champaklal", qty: 2, phone: "" },
-        { id: "fr10", name: "Rimpi", qty: 1, phone: "9321120621" },
-        { id: "fr11", name: "Rupal - Sanjay Ghadiyali", qty: 2, phone: "9821460106" },
-        { id: "fr12", name: "Sapana patrwala", qty: 1, phone: "" },
-        { id: "fr13", name: "Seemaben Rajeshbhai Maneklal", qty: 1, phone: "9820044724" },
-        { id: "fr14", name: "Shaileshbhai Ajbani", qty: 2, phone: "9820215966" },
-        { id: "fr15", name: "Smitabhābhi", qty: 1, phone: "" },
-        { id: "fr16", name: "Smitesh", qty: 2, phone: "9820036372" }
+        { id: "fr8", name: "Prerna 704", qty: 1, phone: "" },
+        { id: "fr9", name: "Raju Sumtilal", qty: 2, phone: "9820059997" },
+        { id: "fr10", name: "Reenaben Tusharbhai Champaklal", qty: 2, phone: "" },
+        { id: "fr11", name: "Rimpi", qty: 1, phone: "9321120621" },
+        { id: "fr12", name: "Rupal - Sanjay Ghadiyali", qty: 2, phone: "9821460106" },
+        { id: "fr13", name: "Sapana patrwala", qty: 1, phone: "" },
+        { id: "fr14", name: "Seemaben Rajeshbhai Maneklal", qty: 1, phone: "9820044724" },
+        { id: "fr15", name: "Shaileshbhai Ajbani", qty: 2, phone: "9820215966" },
+        { id: "fr16", name: "Smitabhābhi", qty: 1, phone: "" },
+        { id: "fr17", name: "Smitesh", qty: 2, phone: "9820036372" }
     ],
     family: [
         { id: "fa1", name: "Aadeshkumar Dilipbhai", qty: 2, phone: "9819232268" },
@@ -586,17 +597,16 @@ const INITIAL_DATA = {
     ]
 };
 
-// Sort alphabetically by name
+// Alphabetical sort helper
 function sortAlphabetical(arr) {
     return arr.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base', numeric: true }));
 }
 
-// Ensure each array is sorted
 sortAlphabetical(INITIAL_DATA.building);
 sortAlphabetical(INITIAL_DATA.friends);
 sortAlphabetical(INITIAL_DATA.family);
 
-const STORAGE_KEY = "invitee_registry_v3";
+const STORAGE_KEY = "invitee_registry_v4";
 let guestState = JSON.parse(JSON.stringify(INITIAL_DATA));
 
 function loadState() {
@@ -605,7 +615,6 @@ function loadState() {
         if (stored) {
             const parsed = JSON.parse(stored);
             if (parsed && parsed.building && parsed.friends && parsed.family) {
-                // Merge saved phones into the fresh initial list
                 ["building", "friends", "family"].forEach(group => {
                     const savedMap = new Map((parsed[group] || []).map(item => [item.name, item.phone]));
                     guestState[group].forEach(item => {
@@ -617,7 +626,7 @@ function loadState() {
             }
         }
     } catch (err) {
-        console.warn("Storage access restricted or unavailable:", err);
+        console.warn("Storage access restricted:", err);
     }
 }
 
@@ -629,15 +638,13 @@ function persistState() {
     }
 }
 
-let activeMainTab = "bf"; // "bf" (Building & Friends) or "family"
-let activeSubFilter = "all"; // "all", "building", "friends"
+let activeMainTab = "bf";
+let activeSubFilter = "all";
 
 function setMainTab(tab) {
     activeMainTab = tab;
     document.getElementById("tabBtn-bf").classList.toggle("active", tab === "bf");
     document.getElementById("tabBtn-family").classList.toggle("active", tab === "family");
-    
-    // Sub-filters are only relevant inside the Building & Friends tab
     document.getElementById("subFilterContainer").style.display = (tab === "bf") ? "flex" : "none";
     render();
 }
@@ -654,9 +661,7 @@ function showToast(msg) {
     const toast = document.getElementById("toastMessage");
     toast.textContent = msg;
     toast.classList.add("show");
-    setTimeout(() => {
-        toast.classList.remove("show");
-    }, 2000);
+    setTimeout(() => toast.classList.remove("show"), 2000);
 }
 
 function showModal(title, msg) {
@@ -669,14 +674,31 @@ function closeModal() {
     document.getElementById("customModal").classList.remove("show");
 }
 
+function promptReset() {
+    document.getElementById("confirmModal").classList.add("show");
+}
+
+function closeConfirmModal() {
+    document.getElementById("confirmModal").classList.remove("show");
+}
+
+function executeReset() {
+    closeConfirmModal();
+    try {
+        localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {}
+    guestState = JSON.parse(JSON.stringify(INITIAL_DATA));
+    render();
+    showToast("Reset all phone numbers to defaults");
+}
+
 function onPhoneChange(group, id, newPhone) {
     const cleanPhone = newPhone.trim();
     const item = guestState[group].find(g => g.id === id);
     if (item) {
         item.phone = cleanPhone;
         persistState();
-        showToast(`Updated phone for ${item.name}`);
-        // Re-render card buttons without full DOM disruption
+        showToast(`Saved phone for ${item.name}`);
         updateCardWaButton(id, cleanPhone);
     }
 }
@@ -687,24 +709,23 @@ function updateCardWaButton(id, phone) {
     const btn = document.getElementById(`wa-btn-${id}`);
     if (btn) {
         btn.className = `wa-btn ${isValid ? "" : "disabled"}`;
-        btn.setAttribute("data-phone", digits);
     }
 }
 
 function handleWhatsAppClick(id, guestName) {
-    const item = [...guestState.building, ...guestState.friends, ...guestState.family].find(g => g.id === id);
+    const allGuests = [...guestState.building, ...guestState.friends, ...guestState.family];
+    const item = allGuests.find(g => g.id === id);
     const phone = item ? item.phone : "";
     const cleanPhone = (phone || "").replace(/\D/g, "");
-    
+
     if (!cleanPhone || cleanPhone.length < 10) {
         showModal(
             "Phone Number Required",
-            `Please type a valid 10-digit mobile number for ${guestName} in the text box first.`
+            `Please type a valid 10-digit mobile number for ${guestName} in the text field first.`
         );
         return;
     }
-    
-    // Normalize to 10-digit format for India (+91)
+
     const formatted = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
     const url = `https://wa.me/${formatted}`;
     window.open(url, "_blank");
@@ -730,7 +751,7 @@ function createCardHtml(item, group) {
                         class="phone-input" 
                         placeholder="Add mobile no." 
                         value="${item.phone || ''}" 
-                        onchange="onPhoneChange('${group}', '${item.id}', this.value)"
+                        oninput="onPhoneChange('${group}', '${item.id}', this.value)"
                         aria-label="Phone number for ${item.name}"
                     >
                 </div>
@@ -755,9 +776,7 @@ function renderSubsection(title, badgeCount, items, group) {
     if (items.length === 0) return '';
     return `
         <div class="subsection-header">
-            <span class="subsection-title">
-                ${title}
-            </span>
+            <span class="subsection-title">${title}</span>
             <span class="subsection-count">${badgeCount} ppl</span>
         </div>
         <div class="card-list">
@@ -770,12 +789,10 @@ function render() {
     const searchVal = (document.getElementById("searchInput").value || "").trim().toLowerCase();
     const container = document.getElementById("listContainer");
 
-    // Dynamic counts
     const bCount = guestState.building.reduce((acc, i) => acc + i.qty, 0);
     const frCount = guestState.friends.reduce((acc, i) => acc + i.qty, 0);
     const faCount = guestState.family.reduce((acc, i) => acc + i.qty, 0);
 
-    // Update badges
     document.getElementById("bfTotalCount").textContent = bCount + frCount;
     document.getElementById("familyTotalCount").textContent = faCount;
     document.getElementById("grandTotalText").textContent = bCount + frCount + faCount;
@@ -783,12 +800,9 @@ function render() {
     document.getElementById("subPill-building").textContent = `🏢 Building (${bCount})`;
     document.getElementById("subPill-friends").textContent = `🤝 Friends (${frCount})`;
 
-    // Filter by search
     const matchesSearch = (item) => {
         if (!searchVal) return true;
-        const n = item.name.toLowerCase();
-        const p = (item.phone || '').toLowerCase();
-        return n.includes(searchVal) || p.includes(searchVal);
+        return item.name.toLowerCase().includes(searchVal) || (item.phone || '').toLowerCase().includes(searchVal);
     };
 
     let html = '';
@@ -832,18 +846,9 @@ document.addEventListener("DOMContentLoaded", () => {
     render();
 
     document.getElementById("searchInput").addEventListener("input", render);
-
-    document.getElementById("resetBtn").addEventListener("click", () => {
-        if (confirm("Reset all phone numbers back to initial values?")) {
-            localStorage.removeItem(STORAGE_KEY);
-            guestState = JSON.parse(JSON.stringify(INITIAL_DATA));
-            render();
-            showToast("Reset to initial list");
-        }
-    });
+    document.getElementById("resetBtn").addEventListener("click", promptReset);
 });
 
-// Run immediate render in case DOM is already ready
 if (document.readyState === "complete" || document.readyState === "interactive") {
     loadState();
     render();
