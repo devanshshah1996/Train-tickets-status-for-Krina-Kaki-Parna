@@ -1,171 +1,263 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Invitee List & WhatsApp Manager</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitee List & WhatsApp Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-800">
-<div class="max-w-4xl mx-auto px-4 py-8">
-<!-- Header -->
-<header class="mb-8 text-center">
-<h1 class="text-3xl font-bold text-slate-900 tracking-tight">Invitee List Manager</h1>
-<p class="text-slate-500 mt-1">Manage attendees and send direct WhatsApp messages</p>
-</header>
-<!-- Search and Stats Bar -->
-<div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-<div class="relative w-full sm:w-72">
-<span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
-<i class="fa-solid fa-magnifying-glass"></i>
-</span>
-<input type="text" id="searchInput" placeholder="Search invitees..." class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm">
-</div>
-<div class="flex items-center gap-3 text-sm font-medium w-full sm:w-auto justify-end">
-<div class="bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg border border-emerald-100">
-Total People: <span id="grandTotal" class="font-bold">106</span>
-</div>
-</div>
-</div>
-<!-- Tabs Navigation -->
-<div class="flex border-b border-slate-200 mb-6">
-<button onclick="switchTab('building')" id="tab-building" class="flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-emerald-600 text-emerald-600 transition-colors flex items-center justify-center gap-2">
-<i class="fa-solid fa-building"></i> Building (<span id="buildingCount">54</span> ppl)
-</button>
-<button onclick="switchTab('family')" id="tab-family" class="flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-colors flex items-center justify-center gap-2">
-<i class="fa-solid fa-users"></i> Family (<span id="familyCount">52</span> ppl)
-</button>
-</div>
-<!-- Tab Contents -->
-<div id="content-building" class="tab-content space-y-3">
-<!-- Rendered via JS -->
-</div>
-<div id="content-family" class="tab-content space-y-3 hidden">
-<!-- Rendered via JS -->
-</div>
-</div>
-<script>
-// Initial dataset with pre-populated phone numbers from images
-const defaultData = {
-building: [
-{ name: "Aakash Bhansali", qty: 2, phone: "9820053865" },
-{ name: "Sameerbhai", qty: 2, phone: "9619861613" },
-{ name: "Sanket Jogani", qty: 2, phone: "9820088101" },
-{ name: "Lata Aunty + Minaben", qty: 2, phone: "" },
-{ name: "Deepakbhai Munilal (29th flr)", qty: 4, phone: "7699979997" },
-{ name: "Apurva + Mummy", qty: 3, phone: "9967911330" },
-{ name: "Ashit Shah", qty: 2, phone: "9833110915" },
-{ name: "Bilav Parmani", qty: 2, phone: "9833071274" },
-{ name: "Nisha -Pinakin", qty: 2, phone: "9820071201" },
-{ name: "Girishbhai Ladhani", qty: 2, phone: "9820070107" },
-{ name: "Vaibhav and Pooja 11th Flr", qty: 2, phone: "" },
-{ name: "Kiran Babulal", qty: 2, phone: "9820069706" },
-{ name: "Raju Sumtilal", qty: 2, phone: "9820059997" },
-{ name: "Smitesh", qty: 2, phone: "9820036372" },
-{ name: "Atulbhai Jogani", qty: 1, phone: "9821074842" },
-{ name: "Nipa Anil Ranka", qty: 2, phone: "9820397770" },
-{ name: "Ami", qty: 1, phone: "9833485170" },
-{ name: "Rimpi", qty: 1, phone: "9321120621" },
-{ name: "Ashish & Malika Goyal 20th flr The Residence", qty: 2, phone: "" },
-{ name: "Modi 13th flr The Residence", qty: 2, phone: "" },
-{ name: "Sapana patrwala", qty: 1, phone: "" },
-{ name: "Bela dnr", qty: 1, phone: "" },
-{ name: "Meeta saurin", qty: 2, phone: "" },
-{ name: "Seemaben Rajeshbhai Maneklal", qty: 1, phone: "9820044724" },
-{ name: "Smitabhābhi", qty: 1, phone: "" },
-{ name: "Reenaben Tusharbhai Champaklal", qty: 2, phone: "" },
-{ name: "Rupal - Sanjay Ghadiyali", qty: 2, phone: "9821460106" },
-{ name: "Shaileshbhai Ajbani", qty: 2, phone: "9820215966" },
-{ name: "Atulbhai Rajaram", qty: 2, phone: "" }
-],
-family: [
-{ name: "Sandipbhai Padechia", qty: 2, phone: "9820046167" },
-{ name: "Aadeshkumar Dilipbhai", qty: 2, phone: "9819232268" },
-{ name: "Pundribhai Ambalal Shah", qty: 2, phone: "9820960207" },
-{ name: "Sharmeshbhai Pundrikbhai", qty: 3, phone: "9323201239" },
-{ name: "Deveshkumar Shah", qty: 4, phone: "9821110490" },
-{ name: "Jiteshkumar Shah", qty: 2, phone: "9820036738" },
-{ name: "Dilipbhai Maneklal", qty: 2, phone: "9820032268" },
-{ name: "Parinbhai Sevantilal", qty: 3, phone: "9820291416" },
-{ name: "Jimitkumar Kunjita", qty: 2, phone: "9773669471" },
-{ name: "Arjav Kumar & Pritiben", qty: 2, phone: "" },
-{ name: "Vijaykumar Babulal", qty: 4, phone: "9820031848" },
-{ name: "Vikeshbhai Rameshbhai", qty: 3, phone: "9820331200" },
-{ name: "Rushinkumar Aditi", qty: 2, phone: "9820765552" },
-{ name: "Sudhibhai Chhotalal", qty: 3, phone: "9820036411" },
-{ name: "Rupeshbhai Chhotlal", qty: 4, phone: "9223251111" },
-{ name: "Shrenikkumar Shirishbhai", qty: 2, phone: "9819280511" },
-{ name: "Girishbhai Jayantilal", qty: 2, phone: "" },
-{ name: "Sandipbhai Jayantilal", qty: 2, phone: "" },
-{ name: "Dineshbhai Amthalal", qty: 2, phone: "" },
-{ name: "Yomeshbhai Dineshbhai", qty: 2, phone: "" },
-{ name: "Nimeshbhai Mahendrabhai", qty: 2, phone: "" }
-]
-};
-// Load saved state or default
-let inviteeData = JSON.parse(localStorage.getItem('inviteeData')) || defaultData;
-let activeTab = 'building';
-function saveData() {
-localStorage.setItem('inviteeData', JSON.stringify(inviteeData));
-render();
-}
-function switchTab(tab) {
-activeTab = tab;
-const bBtn = document.getElementById('tab-building');
-const fBtn = document.getElementById('tab-family');
-const bCont = document.getElementById('content-building');
-const fCont = document.getElementById('content-family');
-if (tab === 'building') {
-bBtn.className = "flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-emerald-600 text-emerald-600 transition-colors flex items-center justify-center gap-2";
-fBtn.className = "flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-colors flex items-center justify-center gap-2";
-bCont.classList.remove('hidden');
-fCont.classList.add('hidden');
-} else {
-fBtn.className = "flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-emerald-600 text-emerald-600 transition-colors flex items-center justify-center gap-2";
-bBtn.className = "flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-colors flex items-center justify-center gap-2";
-fCont.classList.remove('hidden');
-bCont.classList.add('hidden');
-}
-}
-function updatePhone(category, index, newPhone) {
-inviteeData[category][index].phone = newPhone.trim();
-saveData();
-}
-function render() {
-const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-// Calculate totals
-let bPpl = inviteeData.building.reduce((acc, item) => acc + item.qty, 0);
-let fPpl = inviteeData.family.reduce((acc, item) => acc + item.qty, 0);
-document.getElementById('buildingCount').innerText = bPpl;
-document.getElementById('familyCount').innerText = fPpl;
-document.getElementById('grandTotal').innerText = bPpl + fPpl;
-// Render Building
-const bContainer = document.getElementById('content-building');
-bContainer.innerHTML = '';
-inviteeData.building.forEach((item, index) => {
-if (!item.name.toLowerCase().includes(searchTerm)) return;
-bContainer.appendChild(createCard('building', item, index));
-});
-// Render Family
-const fContainer = document.getElementById('content-family');
-fContainer.innerHTML = '';
-inviteeData.family.forEach((item, index) => {
-if (!item.name.toLowerCase().includes(searchTerm)) return;
-fContainer.appendChild(createCard('family', item, index));
-});
-}
-function createCard(category, item, index) {
-const div = document.createElement('div');
-div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:border-slate-300 transition-all";
-const cleanPhone = item.phone.replace(/\D/g, '');
-const hasPhone = cleanPhone.length >= 10;
-const waLink = hasPhone ? ⁠https://wa.me/91${cleanPhone}⁠ : '#';
-div.innerHTML = ⁠<div class="flex items-center gap-3 flex-1"> <span class="bg-slate-100 text-slate-700 font-bold text-xs px-2.5 py-1 rounded-md shrink-0"> ${item.qty} ppl </span> <span class="font-medium text-slate-900">${item.name}</span> </div> <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end"> <div class="flex items-center gap-1"> <input type="text" placeholder="Enter mobile no." value="${item.phone}"  onchange="updatePhone('${category}', ${index}, this.value)" class="text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 w-32 focus:outline-none focus:ring-2 focus:ring-emerald-500"> </div> <a href="${waLink}" target="${hasPhone ? '_blank' : '_self'}" onclick="${hasPhone ? '' : 'alert(\'Please enter a valid mobile number first.\'); return false;'}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${hasPhone ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm' : 'bg-slate-100 text-slate-400 cursor-not-allowed'}"> <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp </a> </div>⁠;
-return div;
-}
-document.getElementById('searchInput').addEventListener('input', render);
-render();
-</script>
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Invitee List Manager</h1>
+            <p class="text-slate-500 mt-1">Manage attendees and send direct WhatsApp messages</p>
+        </header>
+
+        <!-- Search and Stats Bar -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="relative w-full sm:w-72">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input type="text" id="searchInput" placeholder="Search invitees..." class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm">
+            </div>
+            <div class="flex items-center gap-3 text-sm font-medium w-full sm:w-auto justify-end">
+                <div class="bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg border border-emerald-100">
+                    Total People: <span id="grandTotal" class="font-bold">106</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="flex border-b border-slate-200 mb-6">
+            <button onclick="switchTab('building')" id="tab-building" class="flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-emerald-600 text-emerald-600 transition-colors flex items-center justify-center gap-2">
+                <i class="fa-solid fa-building"></i> Building (<span id="buildingCount">54</span> ppl)
+            </button>
+            <button onclick="switchTab('family')" id="tab-family" class="flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-colors flex items-center justify-center gap-2">
+                <i class="fa-solid fa-users"></i> Family (<span id="familyCount">52</span> ppl)
+            </button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div id="content-building" class="tab-content space-y-3">
+            <!-- Rendered via JS -->
+        </div>
+        <div id="content-family" class="tab-content space-y-3 hidden">
+            <!-- Rendered via JS -->
+        </div>
+    </div>
+
+    <!-- Custom Modal for Notifications (No alerts) -->
+    <div id="customModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 px-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-100 text-center animate-in fade-in zoom-in duration-200">
+            <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 id="modalTitle" class="text-lg font-bold text-slate-900 mb-2">Notice</h3>
+            <p id="modalMessage" class="text-sm text-slate-600 mb-6">Please enter a valid mobile number first.</p>
+            <button onclick="closeModal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-xl transition-colors text-sm">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const defaultData = {
+            building: [
+                { name: "Aakash Bhansali", qty: 2, phone: "9820053865" },
+                { name: "Sameerbhai", qty: 2, phone: "9619861613" },
+                { name: "Sanket Jogani", qty: 2, phone: "9820088101" },
+                { name: "Lata Aunty + Minaben", qty: 2, phone: "" },
+                { name: "Deepakbhai Munilal (29th flr)", qty: 4, phone: "7699979997" },
+                { name: "Apurva + Mummy", qty: 3, phone: "9967911330" },
+                { name: "Ashit Shah", qty: 2, phone: "9833110915" },
+                { name: "Bilav Parmani", qty: 2, phone: "9833071274" },
+                { name: "Nisha -Pinakin", qty: 2, phone: "9820071201" },
+                { name: "Girishbhai Ladhani", qty: 2, phone: "9820070107" },
+                { name: "Vaibhav and Pooja 11th Flr", qty: 2, phone: "" },
+                { name: "Kiran Babulal", qty: 2, phone: "9820069706" },
+                { name: "Raju Sumtilal", qty: 2, phone: "9820059997" },
+                { name: "Smitesh", qty: 2, phone: "9820036372" },
+                { name: "Atulbhai Jogani", qty: 1, phone: "9821074842" },
+                { name: "Nipa Anil Ranka", qty: 2, phone: "9820397770" },
+                { name: "Ami", qty: 1, phone: "9833485170" },
+                { name: "Rimpi", qty: 1, phone: "9321120621" },
+                { name: "Ashish & Malika Goyal 20th flr The Residence", qty: 2, phone: "" },
+                { name: "Modi 13th flr The Residence", qty: 2, phone: "" },
+                { name: "Sapana patrwala", qty: 1, phone: "" },
+                { name: "Bela dnr", qty: 1, phone: "" },
+                { name: "Meeta saurin", qty: 2, phone: "" },
+                { name: "Seemaben Rajeshbhai Maneklal", qty: 1, phone: "9820044724" },
+                { name: "Smitabhābhi", qty: 1, phone: "" },
+                { name: "Reenaben Tusharbhai Champaklal", qty: 2, phone: "" },
+                { name: "Rupal - Sanjay Ghadiyali", qty: 2, phone: "9821460106" },
+                { name: "Shaileshbhai Ajbani", qty: 2, phone: "9820215966" },
+                { name: "Atulbhai Rajaram", qty: 2, phone: "" }
+            ],
+            family: [
+                { name: "Sandipbhai Padechia", qty: 2, phone: "9820046167" },
+                { name: "Aadeshkumar Dilipbhai", qty: 2, phone: "9819232268" },
+                { name: "Pundribhai Ambalal Shah", qty: 2, phone: "9820960207" },
+                { name: "Sharmeshbhai Pundrikbhai", qty: 3, phone: "9323201239" },
+                { name: "Deveshkumar Shah", qty: 4, phone: "9821110490" },
+                { name: "Jiteshkumar Shah", qty: 2, phone: "9820036738" },
+                { name: "Dilipbhai Maneklal", qty: 2, phone: "9820032268" },
+                { name: "Parinbhai Sevantilal", qty: 3, phone: "9820291416" },
+                { name: "Jimitkumar Kunjita", qty: 2, phone: "9773669471" },
+                { name: "Arjav Kumar & Pritiben", qty: 2, phone: "" },
+                { name: "Vijaykumar Babulal", qty: 4, phone: "9820031848" },
+                { name: "Vikeshbhai Rameshbhai", qty: 3, phone: "9820331200" },
+                { name: "Rushinkumar Aditi", qty: 2, phone: "9820765552" },
+                { name: "Sudhibhai Chhotalal", qty: 3, phone: "9820036411" },
+                { name: "Rupeshbhai Chhotlal", qty: 4, phone: "9223251111" },
+                { name: "Shrenikkumar Shirishbhai", qty: 2, phone: "9819280511" },
+                { name: "Girishbhai Jayantilal", qty: 2, phone: "" },
+                { name: "Sandipbhai Jayantilal", qty: 2, phone: "" },
+                { name: "Dineshbhai Amthalal", qty: 2, phone: "" },
+                { name: "Yomeshbhai Dineshbhai", qty: 2, phone: "" },
+                { name: "Nimeshbhai Mahendrabhai", qty: 2, phone: "" }
+            ]
+        };
+
+        let inviteeData = defaultData;
+        try {
+            const saved = localStorage.getItem('inviteeData');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (parsed && parsed.building && parsed.family) {
+                    inviteeData = parsed;
+                }
+            }
+        } catch (e) {
+            console.error('Could not load from localStorage, using default data', e);
+        }
+
+        function saveData() {
+            try {
+                localStorage.setItem('inviteeData', JSON.stringify(inviteeData));
+            } catch (e) {
+                console.error('Could not save to localStorage', e);
+            }
+            render();
+        }
+
+        function switchTab(tab) {
+            const bBtn = document.getElementById('tab-building');
+            const fBtn = document.getElementById('tab-family');
+            const bCont = document.getElementById('content-building');
+            const fCont = document.getElementById('content-family');
+
+            if (tab === 'building') {
+                bBtn.className = "flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-emerald-600 text-emerald-600 transition-colors flex items-center justify-center gap-2";
+                fBtn.className = "flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-colors flex items-center justify-center gap-2";
+                bCont.classList.remove('hidden');
+                fCont.classList.add('hidden');
+            } else {
+                fBtn.className = "flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-emerald-600 text-emerald-600 transition-colors flex items-center justify-center gap-2";
+                bBtn.className = "flex-1 py-3 px-4 text-center font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-colors flex items-center justify-center gap-2";
+                fCont.classList.remove('hidden');
+                bCont.classList.add('hidden');
+            }
+        }
+
+        function updatePhone(category, index, newPhone) {
+            inviteeData[category][index].phone = newPhone.trim();
+            saveData();
+        }
+
+        function showModal(message) {
+            document.getElementById('modalMessage').innerText = message;
+            document.getElementById('customModal').classList.remove('hidden');
+            document.getElementById('customModal').classList.add('flex');
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').classList.add('hidden');
+            document.getElementById('customModal').classList.remove('flex');
+        }
+
+        function render() {
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+
+            // Calculate totals
+            let bPpl = inviteeData.building.reduce((acc, item) => acc + (Number(item.qty) || 0), 0);
+            let fPpl = inviteeData.family.reduce((acc, item) => acc + (Number(item.qty) || 0), 0);
+            
+            const bCountEl = document.getElementById('buildingCount');
+            const fCountEl = document.getElementById('familyCount');
+            const grandTotalEl = document.getElementById('grandTotal');
+
+            if (bCountEl) bCountEl.innerText = bPpl;
+            if (fCountEl) fCountEl.innerText = fPpl;
+            if (grandTotalEl) grandTotalEl.innerText = bPpl + fPpl;
+
+            // Render Building
+            const bContainer = document.getElementById('content-building');
+            if (bContainer) {
+                bContainer.innerHTML = '';
+                inviteeData.building.forEach((item, index) => {
+                    if (searchTerm && !item.name.toLowerCase().includes(searchTerm)) return;
+                    bContainer.appendChild(createCard('building', item, index));
+                });
+                if (bContainer.children.length === 0) {
+                    bContainer.innerHTML = '<div class="text-center py-8 text-slate-400 text-sm bg-white rounded-xl border border-slate-200">No matching guests found</div>';
+                }
+            }
+
+            // Render Family
+            const fContainer = document.getElementById('content-family');
+            if (fContainer) {
+                fContainer.innerHTML = '';
+                inviteeData.family.forEach((item, index) => {
+                    if (searchTerm && !item.name.toLowerCase().includes(searchTerm)) return;
+                    fContainer.appendChild(createCard('family', item, index));
+                });
+                if (fContainer.children.length === 0) {
+                    fContainer.innerHTML = '<div class="text-center py-8 text-slate-400 text-sm bg-white rounded-xl border border-slate-200">No matching guests found</div>';
+                }
+            }
+        }
+
+        function createCard(category, item, index) {
+            const div = document.createElement('div');
+            div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:border-slate-300 transition-all";
+            
+            const cleanPhone = (item.phone || '').replace(/\D/g, '');
+            const hasPhone = cleanPhone.length >= 10;
+            const waLink = hasPhone ? `https://wa.me/91${cleanPhone}` : '#';
+
+            div.innerHTML = `
+                <div class="flex items-center gap-3 flex-1">
+                    <span class="bg-slate-100 text-slate-700 font-bold text-xs px-2.5 py-1 rounded-md shrink-0">
+                        ${item.qty} ppl
+                    </span>
+                    <span class="font-medium text-slate-900 text-sm">${item.name}</span>
+                </div>
+                <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+                    <div class="flex items-center gap-1">
+                        <input type="text" placeholder="Enter mobile no." value="${item.phone || ''}" 
+                            onchange="updatePhone('${category}', ${index}, this.value)"
+                            class="text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 w-32 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <a href="${waLink}" ${hasPhone ? 'target="_blank"' : ''} onclick="${hasPhone ? '' : 'showModal(\'Please enter a valid 10-digit mobile number before sending a WhatsApp message.\'); return false;'}"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${hasPhone ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm' : 'bg-slate-100 text-slate-400 cursor-pointer'}">
+                        <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
+                    </a>
+                </div>
+            `;
+            return div;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', render);
+            }
+            render();
+        });
+    </script>
 </body>
 </html>
