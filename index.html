@@ -12,7 +12,7 @@
         <!-- Header -->
         <header class="mb-8 text-center">
             <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Invitee List Manager</h1>
-            <p class="text-slate-500 mt-1">Manage attendees and send direct WhatsApp messages</p>
+            <p class="text-slate-500 mt-1">Alphabetized attendee list with direct WhatsApp messaging</p>
         </header>
 
         <!-- Search and Stats Bar -->
@@ -21,7 +21,7 @@
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </span>
-                <input type="text" id="searchInput" placeholder="Search invitees..." class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm">
+                <input type="text" id="searchInput" placeholder="Search invitees alphabetically..." class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm">
             </div>
             <div class="flex items-center gap-3 text-sm font-medium w-full sm:w-auto justify-end">
                 <div class="bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg border border-emerald-100">
@@ -121,6 +121,11 @@
             ]
         };
 
+        function sortAlphabetically(data) {
+            data.building.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'accent', numeric: true }));
+            data.family.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'accent', numeric: true }));
+        }
+
         let inviteeData = defaultData;
         try {
             const saved = localStorage.getItem('inviteeData');
@@ -134,8 +139,12 @@
             console.error('Could not load from localStorage, using default data', e);
         }
 
+        // Ensure alphabetical ordering upon load
+        sortAlphabetically(inviteeData);
+
         function saveData() {
             try {
+                sortAlphabetically(inviteeData);
                 localStorage.setItem('inviteeData', JSON.stringify(inviteeData));
             } catch (e) {
                 console.error('Could not save to localStorage', e);
