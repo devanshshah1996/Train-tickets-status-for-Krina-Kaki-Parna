@@ -1,860 +1,569 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Invitee List Manager</title>
-    <style>
-        :root {
-            --bg-primary: #f8fafc;
-            --bg-card: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --text-light: #94a3b8;
-            --primary: #059669;
-            --primary-hover: #047857;
-            --primary-light: #ecfdf5;
-            --border: #e2e8f0;
-            --border-focus: #10b981;
-            --wa-green: #25d366;
-            --wa-hover: #128c7e;
-            --danger: #ef4444;
-            --radius-sm: 6px;
-            --radius-md: 10px;
-            --radius-lg: 14px;
-            --radius-full: 9999px;
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-main);
-            min-height: 100vh;
-            padding: 16px 12px 64px 12px;
-        }
-
-        .container {
-            max-width: 680px;
-            margin: 0 auto;
-        }
-
-        .app-header {
-            text-align: center;
-            margin-bottom: 18px;
-        }
-
-        .app-title {
-            font-size: 24px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            color: var(--text-main);
-        }
-
-        .app-subtitle {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        .overview-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 14px;
-            margin-bottom: 16px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .search-wrapper {
-            position: relative;
-            margin-bottom: 12px;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-light);
-            pointer-events: none;
-            display: flex;
-            align-items: center;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 10px 12px 10px 38px;
-            font-size: 14px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            outline: none;
-            background: #f8fafc;
-            color: var(--text-main);
-            transition: all 0.2s ease;
-        }
-
-        .search-input:focus {
-            background: #ffffff;
-            border-color: var(--border-focus);
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
-        }
-
-        .stat-chips {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            font-size: 12px;
-        }
-
-        .grand-badge {
-            background-color: var(--primary-light);
-            color: var(--primary);
-            border: 1px solid #d1fae5;
-            padding: 6px 12px;
-            border-radius: var(--radius-full);
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .action-button-reset {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 12px;
-            cursor: pointer;
-            text-decoration: underline;
-            padding: 4px;
-        }
-
-        .tabs-nav {
-            display: flex;
-            border-bottom: 2px solid var(--border);
-            margin-bottom: 14px;
-            gap: 4px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 12px 6px;
-            font-size: 14px;
-            font-weight: 700;
-            text-align: center;
-            background: none;
-            border: none;
-            border-bottom: 3px solid transparent;
-            color: var(--text-muted);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            margin-bottom: -2px;
-            transition: all 0.15s ease;
-        }
-
-        .tab-btn.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-        }
-
-        .sub-filter-bar {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 16px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .sub-pill {
-            padding: 6px 14px;
-            font-size: 12px;
-            font-weight: 600;
-            border-radius: var(--radius-full);
-            border: 1px solid var(--border);
-            background: var(--bg-card);
-            color: var(--text-muted);
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.15s ease;
-        }
-
-        .sub-pill.active {
-            background: #0f172a;
-            color: #ffffff;
-            border-color: #0f172a;
-        }
-
-        .subsection-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 4px 6px 4px;
-            margin-top: 14px;
-            margin-bottom: 8px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .subsection-title {
-            font-size: 13px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .subsection-count {
-            font-size: 11px;
-            font-weight: 700;
-            background: #e2e8f0;
-            color: #334155;
-            padding: 2px 8px;
-            border-radius: var(--radius-full);
-        }
-
-        .card-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .invitee-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 12px;
-            box-shadow: var(--shadow-sm);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            transition: border-color 0.15s ease;
-        }
-
-        .invitee-card:hover {
-            border-color: #cbd5e1;
-        }
-
-        .card-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-        }
-
-        .invitee-name-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .qty-badge {
-            background: #f1f5f9;
-            color: #1e293b;
-            font-size: 11px;
-            font-weight: 800;
-            padding: 3px 8px;
-            border-radius: var(--radius-sm);
-            border: 1px solid #e2e8f0;
-            flex-shrink: 0;
-        }
-
-        .invitee-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-main);
-            word-break: break-word;
-            line-height: 1.35;
-        }
-
-        .card-bottom {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .phone-input-wrap {
-            flex: 1;
-        }
-
-        .phone-input {
-            width: 100%;
-            padding: 8px 10px;
-            font-size: 13px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            outline: none;
-            background: #ffffff;
-            color: var(--text-main);
-            transition: all 0.15s ease;
-        }
-
-        .phone-input:focus {
-            border-color: var(--border-focus);
-            background: #ffffff;
-        }
-
-        .phone-input::placeholder {
-            color: var(--text-light);
-            font-size: 12px;
-        }
-
-        .wa-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            background-color: var(--wa-green);
-            color: #ffffff;
-            font-size: 12px;
-            font-weight: 700;
-            padding: 8px 14px;
-            border-radius: var(--radius-md);
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            flex-shrink: 0;
-            transition: background-color 0.15s ease, transform 0.05s ease;
-        }
-
-        .wa-btn:active {
-            transform: scale(0.97);
-        }
-
-        .wa-btn:hover {
-            background-color: var(--wa-hover);
-        }
-
-        .wa-btn.disabled {
-            background-color: #e2e8f0;
-            color: #94a3b8;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 36px 16px;
-            color: var(--text-light);
-            font-size: 13px;
-            background: var(--bg-card);
-            border-radius: var(--radius-md);
-            border: 1px dashed var(--border);
-            margin-top: 10px;
-        }
-
-        .modal-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.6);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-            backdrop-filter: blur(2px);
-        }
-
-        .modal-backdrop.show {
-            display: flex;
-        }
-
-        .modal-box {
-            background: #ffffff;
-            border-radius: var(--radius-lg);
-            max-width: 320px;
-            width: 100%;
-            padding: 22px;
-            text-align: center;
-            box-shadow: var(--shadow-md);
-        }
-
-        .modal-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 8px;
-        }
-
-        .modal-text {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-            line-height: 1.45;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .modal-btn {
-            flex: 1;
-            background: var(--primary);
-            color: #ffffff;
-            border: none;
-            border-radius: var(--radius-md);
-            padding: 10px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .modal-btn-cancel {
-            background: #e2e8f0;
-            color: #475569;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: #1e293b;
-            color: #ffffff;
-            padding: 10px 18px;
-            border-radius: var(--radius-full);
-            font-size: 12px;
-            font-weight: 600;
-            box-shadow: var(--shadow-md);
-            transition: transform 0.25s ease;
-            z-index: 999;
-            pointer-events: none;
-        }
-
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jewelry Project Status Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    input, select, textarea {
+      font-size: 0.875rem;
+    }
+  </style>
 </head>
-<body>
+<body class="bg-gray-50 text-gray-800 min-h-screen">
 
-<div class="container">
-    <header class="app-header">
-        <h1 class="app-title">Invitee List Manager</h1>
-        <p class="app-subtitle">Alphabetized guest register & direct WhatsApp messaging</p>
-    </header>
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div>
+        <h1 class="text-xl font-bold text-gray-900 tracking-tight">Jewelry Project Status Tracker</h1>
+        <p class="text-xs text-gray-500 mt-0.5">Tracking handwritten specifications, diamond options, and photos</p>
+      </div>
 
-    <div class="overview-card">
-        <div class="search-wrapper">
-            <span class="search-icon">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-            </span>
-            <input type="text" id="searchInput" class="search-input" placeholder="Search by name or mobile number..." autocomplete="off">
-        </div>
-        <div class="stat-chips">
-            <div class="grand-badge">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-                Total: <span id="grandTotalText">109</span> People
-            </div>
-            <button class="action-button-reset" id="resetBtn" title="Reset numbers to defaults">Reset saved edits</button>
-        </div>
-    </div>
-
-    <nav class="tabs-nav" aria-label="Guest Category Navigation">
-        <button class="tab-btn active" id="tabBtn-bf" onclick="setMainTab('bf')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-                <line x1="9" y1="22" x2="9" y2="22.01"></line>
-                <line x1="15" y1="22" x2="15" y2="22.01"></line>
-                <line x1="9" y1="6" x2="9" y2="6.01"></line>
-                <line x1="15" y1="6" x2="15" y2="6.01"></line>
-                <line x1="9" y1="10" x2="9" y2="10.01"></line>
-                <line x1="15" y1="10" x2="15" y2="10.01"></line>
-                <line x1="9" y1="14" x2="9" y2="14.01"></line>
-                <line x1="15" y1="14" x2="15" y2="14.01"></line>
-                <line x1="9" y1="18" x2="9" y2="18.01"></line>
-                <line x1="15" y1="18" x2="15" y2="18.01"></line>
-            </svg>
-            <span>Building & Friends (<span id="bfTotalCount">57</span>)</span>
+      <!-- Quick Action Controls -->
+      <div class="flex items-center gap-2">
+        <button onclick="exportData()" class="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition">
+          Export Backup
         </button>
-        <button class="tab-btn" id="tabBtn-family" onclick="setMainTab('family')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-            </svg>
-            <span>Family (<span id="familyTotalCount">52</span>)</span>
+        <label class="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md cursor-pointer transition">
+          Import Backup
+          <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(event)">
+        </label>
+        <button onclick="resetToOriginal()" class="px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 rounded-md transition">
+          Reset
         </button>
-    </nav>
-
-    <div id="subFilterContainer" class="sub-filter-bar">
-        <button class="sub-pill active" id="subPill-all" onclick="setSubFilter('all')">All (57)</button>
-        <button class="sub-pill" id="subPill-building" onclick="setSubFilter('building')">🏢 Building (31)</button>
-        <button class="sub-pill" id="subPill-friends" onclick="setSubFilter('friends')">🤝 Friends (26)</button>
+      </div>
     </div>
 
-    <!-- Invitee Card Container -->
-    <div id="listContainer"></div>
-</div>
-
-<!-- Modal for Alerts & Missing Phone Notices -->
-<div class="modal-backdrop" id="customModal">
-    <div class="modal-box">
-        <h3 class="modal-title" id="modalTitle">Phone Number Required</h3>
-        <p class="modal-text" id="modalMessage">Please enter a valid 10-digit mobile number before starting a WhatsApp chat.</p>
-        <button class="modal-btn" onclick="closeModal()">Got it</button>
+    <!-- Filter Bar -->
+    <div class="max-w-6xl mx-auto px-4 pb-3 flex flex-wrap items-center gap-2">
+      <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider mr-1">Filter:</span>
+      <div id="filter-buttons" class="flex flex-wrap gap-1.5">
+        <!-- Rendered by JS -->
+      </div>
     </div>
-</div>
+  </header>
 
-<!-- Modal for Reset Confirmation (Replaces window.confirm) -->
-<div class="modal-backdrop" id="confirmModal">
-    <div class="modal-box">
-        <h3 class="modal-title">Reset Edits?</h3>
-        <p class="modal-text">All manually typed mobile numbers will be restored to their original values.</p>
-        <div class="modal-actions">
-            <button class="modal-btn modal-btn-cancel" onclick="closeConfirmModal()">Cancel</button>
-            <button class="modal-btn" onclick="executeReset()">Yes, Reset</button>
-        </div>
+  <main class="max-w-6xl mx-auto px-4 py-6">
+    <div id="project-list" class="space-y-6">
+      <!-- Project cards injected here -->
     </div>
-</div>
+  </main>
 
-<!-- Toast Popup -->
-<div class="toast" id="toastMessage">Updated successfully</div>
+  <script>
+    const STORAGE_KEY = 'simple_jewelry_tracker_data';
 
-<script>
-const INITIAL_DATA = {
-    building: [
-        { id: "b1", name: "Aakash Bhansali", qty: 2, phone: "9820053865" },
-        { id: "b2", name: "Apurva + Mummy (2+1)", qty: 3, phone: "9967911330" },
-        { id: "b3", name: "Ashish Goel (20th flr The Residence)", qty: 1, phone: "9920230000" },
-        { id: "b4", name: "Ashit Shah", qty: 2, phone: "9833110915" },
-        { id: "b5", name: "Bilav Parmani", qty: 2, phone: "9833071274" },
-        { id: "b6", name: "Deepakbhai Munilal (29th flr)", qty: 4, phone: "7699979997" },
-        { id: "b7", name: "Girishbhai Ladhani", qty: 2, phone: "9820070107" },
-        { id: "b8", name: "Jay Modi (13th flr The Residence)", qty: 2, phone: "9820037891" },
-        { id: "b9", name: "Lata Aunty + Minaben", qty: 2, phone: "" },
-        { id: "b10", name: "Mallika Goyal (20th flr The Residence)", qty: 1, phone: "" },
-        { id: "b11", name: "Nisha -Pinakin", qty: 2, phone: "9820071201" },
-        { id: "b12", name: "Sameerbhai", qty: 2, phone: "9619861613" },
-        { id: "b13", name: "Sanket Jogani", qty: 2, phone: "9820088101" },
-        { id: "b14", name: "Shailesh Jogani", qty: 2, phone: "9820003462" },
-        { id: "b15", name: "Vaibhav and Pooja 11th Flr", qty: 2, phone: "" }
-    ],
-    friends: [
-        { id: "fr1", name: "Ami", qty: 1, phone: "9833485170" },
-        { id: "fr2", name: "Atulbhai Jogani", qty: 1, phone: "9821074842" },
-        { id: "fr3", name: "Atulbhai Rajaram", qty: 2, phone: "" },
-        { id: "fr4", name: "Bela dnr", qty: 1, phone: "" },
-        { id: "fr5", name: "Kiran Babulal", qty: 2, phone: "9820069706" },
-        { id: "fr6", name: "Meeta saurin", qty: 2, phone: "" },
-        { id: "fr7", name: "Nipa Anil Ranka", qty: 2, phone: "9820397770" },
-        { id: "fr8", name: "Prerna 704", qty: 1, phone: "" },
-        { id: "fr9", name: "Raju Sumtilal", qty: 2, phone: "9820059997" },
-        { id: "fr10", name: "Reenaben Tusharbhai Champaklal", qty: 2, phone: "" },
-        { id: "fr11", name: "Rimpi", qty: 1, phone: "9321120621" },
-        { id: "fr12", name: "Rupal - Sanjay Ghadiyali", qty: 2, phone: "9821460106" },
-        { id: "fr13", name: "Sapana patrwala", qty: 1, phone: "" },
-        { id: "fr14", name: "Seemaben Rajeshbhai Maneklal", qty: 1, phone: "9820044724" },
-        { id: "fr15", name: "Shaileshbhai Ajbani", qty: 2, phone: "9820215966" },
-        { id: "fr16", name: "Smitabhābhi", qty: 1, phone: "" },
-        { id: "fr17", name: "Smitesh", qty: 2, phone: "9820036372" }
-    ],
-    family: [
-        { id: "fa1", name: "Aadeshkumar Dilipbhai", qty: 2, phone: "9819232268" },
-        { id: "fa2", name: "Arjav Kumar & Pritiben", qty: 2, phone: "" },
-        { id: "fa3", name: "Deveshkumar Shah", qty: 4, phone: "9821110490" },
-        { id: "fa4", name: "Dilipbhai Maneklal", qty: 2, phone: "9820032268" },
-        { id: "fa5", name: "Dineshbhai Amthalal", qty: 2, phone: "" },
-        { id: "fa6", name: "Girishbhai Jayantilal", qty: 2, phone: "" },
-        { id: "fa7", name: "Jimitkumar Kunjita", qty: 2, phone: "9773669471" },
-        { id: "fa8", name: "Jiteshkumar Shah", qty: 2, phone: "9820036738" },
-        { id: "fa9", name: "Nimeshbhai Mahendrabhai", qty: 2, phone: "" },
-        { id: "fa10", name: "Parinbhai Sevantilal", qty: 3, phone: "9820291416" },
-        { id: "fa11", name: "Pundribhai Ambalal Shah", qty: 2, phone: "9820960207" },
-        { id: "fa12", name: "Rupeshbhai Chhotlal", qty: 4, phone: "9223251111" },
-        { id: "fa13", name: "Rushinkumar Aditi", qty: 2, phone: "9820765552" },
-        { id: "fa14", name: "Sandipbhai Jayantilal", qty: 2, phone: "" },
-        { id: "fa15", name: "Sandipbhai Padechia", qty: 2, phone: "9820046167" },
-        { id: "fa16", name: "Sharmeshbhai Pundrikbhai", qty: 3, phone: "9323201239" },
-        { id: "fa17", name: "Shrenikkumar Shirishbhai", qty: 2, phone: "9819280511" },
-        { id: "fa18", name: "Sudhibhai Chhotalal", qty: 3, phone: "9820036411" },
-        { id: "fa19", name: "Vijaykumar Babulal", qty: 4, phone: "9820031848" },
-        { id: "fa20", name: "Vikeshbhai Rameshbhai", qty: 3, phone: "9820331200" },
-        { id: "fa21", name: "Yomeshbhai Dineshbhai", qty: 2, phone: "" }
-    ]
-};
+    // Exact items strictly from handwritten sheets
+    const DEFAULT_DATA = [
+      // PAYALBHABHI (SELF)
+      {
+        id: 'p_payal_1',
+        person: 'Payalbhabhi',
+        title: 'Asscher Cut',
+        specs: '7 – 8 ct',
+        status: 'In Sourcing',
+        notes: '',
+        diamonds: [],
+        images: []
+      },
+      {
+        id: 'p_payal_2',
+        person: 'Payalbhabhi',
+        title: 'Old Mine Pendant',
+        specs: '4 ct (in the making)',
+        status: 'In the Making',
+        notes: '',
+        diamonds: [],
+        images: []
+      },
+      {
+        id: 'p_payal_3',
+        person: 'Payalbhabhi',
+        title: 'Cushion Square Studs',
+        specs: '4 ct each',
+        status: 'In Sourcing',
+        notes: '',
+        diamonds: [],
+        images: []
+      },
+      {
+        id: 'p_payal_4',
+        person: 'Payalbhabhi',
+        title: 'Triangle Step Pair',
+        specs: '2 ct – 3 ct pair',
+        status: 'In Sourcing',
+        notes: '',
+        diamonds: [],
+        images: []
+      },
 
-function sortAlphabetical(arr) {
-    return arr.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base', numeric: true }));
-}
+      // DIL
+      {
+        id: 'p_dil_1',
+        person: 'DIL',
+        title: 'Heart Pendant',
+        specs: '3.26 E VS1 / 4.4 F VVS1',
+        status: 'In Sourcing',
+        notes: '',
+        diamonds: [],
+        images: []
+      },
+      {
+        id: 'p_dil_2',
+        person: 'DIL',
+        title: 'SE / Pear Drop Earring',
+        specs: 'Top (SE): 1 ct / 1.5 ct / 2 ct | Bottom (PR): 2 ct / 2 ct / 2.5–3 ct (RO 0.3 ct)',
+        status: 'In Sourcing',
+        notes: '',
+        diamonds: [],
+        images: []
+      },
+      {
+        id: 'p_dil_3',
+        person: 'DIL',
+        title: 'Round Earrings',
+        specs: '3.59 ct / 3.72 ct / 3.75 ct',
+        status: 'In Sourcing',
+        notes: '',
+        diamonds: [],
+        images: []
+      },
+      {
+        id: 'p_dil_4',
+        person: 'DIL',
+        title: 'Multi Fancy Bracelet',
+        specs: '1 ct ± width',
+        status: 'In Sourcing',
+        notes: '',
+        diamonds: [],
+        images: []
+      },
 
-sortAlphabetical(INITIAL_DATA.building);
-sortAlphabetical(INITIAL_DATA.friends);
-sortAlphabetical(INITIAL_DATA.family);
+      // ARYASHRI
+      {
+        id: 'p_arya_1',
+        person: 'Aryashri',
+        title: 'PR Stud + Drop',
+        specs: 'Option 1: 2–2.5 ct (top / drop) | Option 2: 1, 1, 1.5, 1.5 ct with 2, 2.5, 2, 2.5 ct',
+        status: 'In Sourcing',
+        notes: '',
+        diamonds: [],
+        images: []
+      },
 
-const STORAGE_KEY = "invitee_list_v5";
-let guestState = JSON.parse(JSON.stringify(INITIAL_DATA));
+      // GIFT / EVENT
+      {
+        id: 'p_gift_1',
+        person: 'Gift / Event',
+        title: 'Gift (10 Lakh Event)',
+        specs: 'RN 1.5 ct / PR 1.5 ct (5–7 Lakh, DEF VS)',
+        status: 'In Sourcing',
+        notes: '',
+        diamonds: [],
+        images: []
+      }
+    ];
 
-function loadState() {
-    try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-            const parsed = JSON.parse(stored);
-            if (parsed && parsed.building && parsed.friends && parsed.family) {
-                ["building", "friends", "family"].forEach(group => {
-                    const savedMap = new Map((parsed[group] || []).map(item => [item.id || item.name, item.phone]));
-                    guestState[group].forEach(item => {
-                        if (savedMap.has(item.id)) {
-                            item.phone = savedMap.get(item.id);
-                        } else if (savedMap.has(item.name)) {
-                            item.phone = savedMap.get(item.name);
-                        }
-                    });
-                });
-            }
+    let projects = [];
+    let selectedFilter = 'All';
+
+    // Status choices
+    const STATUS_OPTIONS = [
+      'In Sourcing',
+      'Option Review',
+      'In the Making',
+      'Setting & Polish',
+      'Completed',
+      'On Hold'
+    ];
+
+    function init() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          projects = JSON.parse(stored);
+        } catch (e) {
+          projects = JSON.parse(JSON.stringify(DEFAULT_DATA));
         }
-    } catch (err) {
-        console.warn("Storage access restricted:", err);
+      } else {
+        projects = JSON.parse(JSON.stringify(DEFAULT_DATA));
+      }
+      renderFilters();
+      renderProjects();
     }
-}
 
-function persistState() {
-    try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(guestState));
-    } catch (err) {
-        console.warn("Could not save to localStorage:", err);
+    function save() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
     }
-}
 
-let activeMainTab = "bf";
-let activeSubFilter = "all";
-
-function setMainTab(tab) {
-    activeMainTab = tab;
-    document.getElementById("tabBtn-bf").classList.toggle("active", tab === "bf");
-    document.getElementById("tabBtn-family").classList.toggle("active", tab === "family");
-    document.getElementById("subFilterContainer").style.display = (tab === "bf") ? "flex" : "none";
-    render();
-}
-
-function setSubFilter(filter) {
-    activeSubFilter = filter;
-    document.getElementById("subPill-all").classList.toggle("active", filter === "all");
-    document.getElementById("subPill-building").classList.toggle("active", filter === "building");
-    document.getElementById("subPill-friends").classList.toggle("active", filter === "friends");
-    render();
-}
-
-function showToast(msg) {
-    const toast = document.getElementById("toastMessage");
-    toast.textContent = msg;
-    toast.classList.add("show");
-    setTimeout(() => toast.classList.remove("show"), 2000);
-}
-
-function showModal(title, msg) {
-    document.getElementById("modalTitle").textContent = title;
-    document.getElementById("modalMessage").textContent = msg;
-    document.getElementById("customModal").classList.add("show");
-}
-
-function closeModal() {
-    document.getElementById("customModal").classList.remove("show");
-}
-
-function promptReset() {
-    document.getElementById("confirmModal").classList.add("show");
-}
-
-function closeConfirmModal() {
-    document.getElementById("confirmModal").classList.remove("show");
-}
-
-function executeReset() {
-    closeConfirmModal();
-    try {
-        localStorage.removeItem(STORAGE_KEY);
-    } catch (e) {}
-    guestState = JSON.parse(JSON.stringify(INITIAL_DATA));
-    render();
-    showToast("Reset all phone numbers to defaults");
-}
-
-function onPhoneChange(group, id, newPhone) {
-    const cleanPhone = newPhone.trim();
-    const item = guestState[group].find(g => g.id === id);
-    if (item) {
-        item.phone = cleanPhone;
-        persistState();
-        updateCardWaButton(id, cleanPhone);
+    function resetToOriginal() {
+      if (window.confirm('Reset all items back to the clean original handwritten list? Any added notes/images will be cleared.')) {
+        projects = JSON.parse(JSON.stringify(DEFAULT_DATA));
+        save();
+        renderProjects();
+      }
     }
-}
 
-function updateCardWaButton(id, phone) {
-    const digits = (phone || "").replace(/\D/g, "");
-    const isValid = digits.length >= 10;
-    const btn = document.getElementById(`wa-btn-${id}`);
-    if (btn) {
-        btn.className = `wa-btn ${isValid ? "" : "disabled"}`;
+    function renderFilters() {
+      const categories = ['All', 'Payalbhabhi', 'DIL', 'Aryashri', 'Gift / Event'];
+      const container = document.getElementById('filter-buttons');
+      container.innerHTML = categories.map(cat => {
+        const active = selectedFilter === cat;
+        return `
+          <button 
+            onclick="setFilter('${cat}')" 
+            class="px-3 py-1 rounded-full text-xs font-medium transition ${
+              active 
+                ? 'bg-gray-900 text-white' 
+                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+            }">
+            ${cat}
+          </button>
+        `;
+      }).join('');
     }
-}
 
-function handleWhatsAppClick(id, guestName) {
-    const allGuests = [...guestState.building, ...guestState.friends, ...guestState.family];
-    const item = allGuests.find(g => g.id === id);
-    const phone = item ? item.phone : "";
-    const cleanPhone = (phone || "").replace(/\D/g, "");
+    function setFilter(cat) {
+      selectedFilter = cat;
+      renderFilters();
+      renderProjects();
+    }
 
-    if (!cleanPhone || cleanPhone.length < 10) {
-        showModal(
-            "Phone Number Required",
-            `Please type a valid 10-digit mobile number for ${guestName} in the text box before opening WhatsApp.`
-        );
+    function renderProjects() {
+      const container = document.getElementById('project-list');
+      const filtered = selectedFilter === 'All' 
+        ? projects 
+        : projects.filter(p => p.person === selectedFilter);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="text-center py-12 text-sm text-gray-500 bg-white rounded-lg border border-gray-200">No projects found.</div>`;
         return;
-    }
+      }
 
-    const formatted = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
-    const url = `https://wa.me/${formatted}`;
-    window.open(url, "_blank");
-}
-
-function createCardHtml(item, group) {
-    const digits = (item.phone || "").replace(/\D/g, "");
-    const isValid = digits.length >= 10;
-    const escapedName = item.name.replace(/'/g, "\\'");
-
-    return `
-        <div class="invitee-card">
-            <div class="card-top">
-                <div class="invitee-name-group">
-                    <span class="qty-badge">${item.qty} ${item.qty === 1 ? 'person' : 'ppl'}</span>
-                    <span class="invitee-name">${item.name}</span>
-                </div>
+      container.innerHTML = filtered.map(item => `
+        <div class="bg-white rounded-lg border border-gray-200 p-5 shadow-sm space-y-4">
+          
+          <!-- Header -->
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-gray-100 pb-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider rounded bg-gray-100 text-gray-700">
+                  ${item.person}
+                </span>
+                <h2 class="text-base font-bold text-gray-900">${item.title}</h2>
+              </div>
+              <p class="text-xs text-gray-600 font-mono mt-1 font-medium bg-yellow-50 inline-block px-2 py-0.5 rounded border border-yellow-200">
+                Specs: ${item.specs}
+              </p>
             </div>
-            <div class="card-bottom">
-                <div class="phone-input-wrap">
-                    <input 
-                        type="tel" 
-                        class="phone-input" 
-                        placeholder="Add mobile no." 
-                        value="${item.phone || ''}" 
-                        oninput="onPhoneChange('${group}', '${item.id}', this.value)"
-                        aria-label="Phone number for ${item.name}"
-                    >
-                </div>
+
+            <!-- Status Dropdown -->
+            <div class="flex items-center gap-2">
+              <label class="text-xs text-gray-500 font-medium">Status:</label>
+              <select 
+                onchange="updateStatus('${item.id}', this.value)"
+                class="px-2.5 py-1 text-xs font-semibold rounded border ${getStatusStyle(item.status)} focus:outline-none cursor-pointer">
+                ${STATUS_OPTIONS.map(opt => `
+                  <option value="${opt}" ${item.status === opt ? 'selected' : ''}>${opt}</option>
+                `).join('')}
+              </select>
+            </div>
+          </div>
+
+          <!-- Quick Notes Field -->
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">General Notes</label>
+            <textarea 
+              oninput="updateNotes('${item.id}', this.value)" 
+              placeholder="Add status update, seller memo, client feedback, or metal preference..." 
+              rows="2"
+              class="w-full px-3 py-1.5 border border-gray-200 rounded text-xs focus:ring-1 focus:ring-gray-400 focus:outline-none">${item.notes || ''}</textarea>
+          </div>
+
+          <!-- Diamond Detail Options Section -->
+          <div class="bg-gray-50/75 rounded-md p-3.5 border border-gray-100">
+            <div class="flex items-center justify-between mb-2.5">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-gray-700">
+                Diamond Detail Options (${(item.diamonds || []).length})
+              </h3>
+              <button 
+                onclick="addDiamondOption('${item.id}')"
+                class="px-2.5 py-1 text-xs font-semibold bg-white border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition shadow-sm">
+                + Add Option
+              </button>
+            </div>
+
+            ${renderDiamondTable(item)}
+          </div>
+
+          <!-- Reference Images Section -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-gray-700">
+                Reference Images (${(item.images || []).length})
+              </h3>
+              <div class="flex items-center gap-2">
+                <label class="px-2 py-0.5 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded cursor-pointer transition">
+                  Upload Photo
+                  <input type="file" accept="image/*" class="hidden" onchange="uploadPhoto('${item.id}', event)">
+                </label>
                 <button 
-                    id="wa-btn-${item.id}"
-                    type="button" 
-                    class="wa-btn ${isValid ? '' : 'disabled'}"
-                    onclick="handleWhatsAppClick('${item.id}', '${escapedName}')"
-                    title="Send WhatsApp message"
-                >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.97.529 1.768.814 2.8.814h.005c3.182 0 5.767-2.586 5.768-5.766 0-1.54-.599-2.989-1.688-4.078-1.09-1.089-2.54-1.688-4.089-1.688zm9.969 5.766c0 5.485-4.467 9.949-9.972 9.949-1.745 0-3.37-.45-4.805-1.238l-5.223 1.351 1.396-5.097c-.896-1.503-1.37-3.23-1.37-5.011 0-5.484 4.468-9.949 9.974-9.949 2.663 0 5.166 1.036 7.049 2.92 1.884 1.883 2.951 4.387 2.951 7.075z"/>
-                    </svg>
-                    WhatsApp
+                  onclick="addImageUrlPrompt('${item.id}')" 
+                  class="px-2 py-0.5 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded transition">
+                  Add URL
                 </button>
+              </div>
             </div>
+
+            ${renderImageThumbnails(item)}
+          </div>
+
         </div>
-    `;
-}
-
-function renderSubsection(title, badgeCount, items, group) {
-    if (items.length === 0) return '';
-    return `
-        <div class="subsection-header">
-            <span class="subsection-title">${title}</span>
-            <span class="subsection-count">${badgeCount} ppl</span>
-        </div>
-        <div class="card-list">
-            ${items.map(item => createCardHtml(item, group)).join('')}
-        </div>
-    `;
-}
-
-function render() {
-    const searchVal = (document.getElementById("searchInput").value || "").trim().toLowerCase();
-    const container = document.getElementById("listContainer");
-
-    const bCount = guestState.building.reduce((acc, i) => acc + i.qty, 0);
-    const frCount = guestState.friends.reduce((acc, i) => acc + i.qty, 0);
-    const faCount = guestState.family.reduce((acc, i) => acc + i.qty, 0);
-
-    document.getElementById("bfTotalCount").textContent = bCount + frCount;
-    document.getElementById("familyTotalCount").textContent = faCount;
-    document.getElementById("grandTotalText").textContent = bCount + frCount + faCount;
-    document.getElementById("subPill-all").textContent = `All (${bCount + frCount})`;
-    document.getElementById("subPill-building").textContent = `🏢 Building (${bCount})`;
-    document.getElementById("subPill-friends").textContent = `🤝 Friends (${frCount})`;
-
-    const matchesSearch = (item) => {
-        if (!searchVal) return true;
-        return item.name.toLowerCase().includes(searchVal) || (item.phone || '').toLowerCase().includes(searchVal);
-    };
-
-    let html = '';
-
-    if (activeMainTab === "bf") {
-        const filteredBuilding = guestState.building.filter(matchesSearch);
-        const filteredFriends = guestState.friends.filter(matchesSearch);
-
-        const filteredBCount = filteredBuilding.reduce((acc, i) => acc + i.qty, 0);
-        const filteredFrCount = filteredFriends.reduce((acc, i) => acc + i.qty, 0);
-
-        if (activeSubFilter === "all" || activeSubFilter === "building") {
-            html += renderSubsection("🏢 Building (The Residence)", filteredBCount, filteredBuilding, "building");
-        }
-
-        if (activeSubFilter === "all" || activeSubFilter === "friends") {
-            html += renderSubsection("🤝 Friends", filteredFrCount, filteredFriends, "friends");
-        }
-
-        if ((activeSubFilter === "building" && filteredBuilding.length === 0) ||
-            (activeSubFilter === "friends" && filteredFriends.length === 0) ||
-            (activeSubFilter === "all" && filteredBuilding.length === 0 && filteredFriends.length === 0)) {
-            html = `<div class="empty-state">No matching guests found.</div>`;
-        }
-    } else {
-        const filteredFamily = guestState.family.filter(matchesSearch);
-        const filteredFaCount = filteredFamily.reduce((acc, i) => acc + i.qty, 0);
-
-        html += renderSubsection("👨‍👩‍👦 Family", filteredFaCount, filteredFamily, "family");
-
-        if (filteredFamily.length === 0) {
-            html = `<div class="empty-state">No matching family members found.</div>`;
-        }
+      `).join('');
     }
 
-    container.innerHTML = html;
-}
+    function renderDiamondTable(item) {
+      const diamonds = item.diamonds || [];
+      if (diamonds.length === 0) {
+        return `<p class="text-xs text-gray-400 italic py-1">No diamond options added yet. Click "+ Add Option" above to enter carat, cut, color/clarity, or price.</p>`;
+      }
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadState();
-    render();
+      return `
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border border-gray-200 bg-white rounded">
+            <thead class="bg-gray-100 text-gray-600 font-semibold border-b border-gray-200">
+              <tr>
+                <th class="p-2">Carat Weight</th>
+                <th class="p-2">Cut / Shape</th>
+                <th class="p-2">Color / Clarity</th>
+                <th class="p-2">Cert # / Memo</th>
+                <th class="p-2">Price / Quote</th>
+                <th class="p-2 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              ${diamonds.map((dia, idx) => `
+                <tr>
+                  <td class="p-1.5">
+                    <input type="text" value="${dia.carat || ''}" placeholder="e.g. 4.02 ct" 
+                      onchange="updateDiamondField('${item.id}', ${idx}, 'carat', this.value)"
+                      class="w-full px-2 py-1 border border-gray-200 rounded text-xs">
+                  </td>
+                  <td class="p-1.5">
+                    <input type="text" value="${dia.cut || ''}" placeholder="e.g. Heart / Pear" 
+                      onchange="updateDiamondField('${item.id}', ${idx}, 'cut', this.value)"
+                      class="w-full px-2 py-1 border border-gray-200 rounded text-xs">
+                  </td>
+                  <td class="p-1.5">
+                    <input type="text" value="${dia.grade || ''}" placeholder="e.g. E VS1" 
+                      onchange="updateDiamondField('${item.id}', ${idx}, 'grade', this.value)"
+                      class="w-full px-2 py-1 border border-gray-200 rounded text-xs uppercase">
+                  </td>
+                  <td class="p-1.5">
+                    <input type="text" value="${dia.cert || ''}" placeholder="e.g. GIA 218..." 
+                      onchange="updateDiamondField('${item.id}', ${idx}, 'cert', this.value)"
+                      class="w-full px-2 py-1 border border-gray-200 rounded text-xs">
+                  </td>
+                  <td class="p-1.5">
+                    <input type="text" value="${dia.price || ''}" placeholder="e.g. ₹ 6.2 L" 
+                      onchange="updateDiamondField('${item.id}', ${idx}, 'price', this.value)"
+                      class="w-full px-2 py-1 border border-gray-200 rounded text-xs">
+                  </td>
+                  <td class="p-1.5 text-right whitespace-nowrap">
+                    <button onclick="removeDiamondOption('${item.id}', ${idx})" class="text-xs text-red-500 hover:text-red-700 px-1 py-0.5 rounded">
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
 
-    document.getElementById("searchInput").addEventListener("input", render);
-    document.getElementById("resetBtn").addEventListener("click", promptReset);
-});
+    function renderImageThumbnails(item) {
+      const images = item.images || [];
+      if (images.length === 0) {
+        return `<p class="text-xs text-gray-400 italic">No reference images attached.</p>`;
+      }
 
-if (document.readyState === "complete" || document.readyState === "interactive") {
-    loadState();
-    render();
-}
-</script>
+      return `
+        <div class="flex flex-wrap gap-2.5">
+          ${images.map((img, idx) => `
+            <div class="relative group w-20 h-20 border border-gray-200 rounded overflow-hidden bg-gray-100 shadow-sm">
+              <a href="${img}" target="_blank" title="Click to view full image">
+                <img src="${img}" alt="Reference" class="w-full h-full object-cover">
+              </a>
+              <button 
+                onclick="removeImage('${item.id}', ${idx})" 
+                title="Delete image"
+                class="absolute top-1 right-1 bg-black/70 hover:bg-red-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+                ✕
+              </button>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function getStatusStyle(status) {
+      switch(status) {
+        case 'In the Making':
+          return 'bg-amber-50 text-amber-800 border-amber-300';
+        case 'In Sourcing':
+          return 'bg-blue-50 text-blue-800 border-blue-300';
+        case 'Option Review':
+          return 'bg-purple-50 text-purple-800 border-purple-300';
+        case 'Setting & Polish':
+          return 'bg-indigo-50 text-indigo-800 border-indigo-300';
+        case 'Completed':
+          return 'bg-emerald-50 text-emerald-800 border-emerald-300';
+        case 'On Hold':
+          return 'bg-rose-50 text-rose-800 border-rose-300';
+        default:
+          return 'bg-gray-50 text-gray-800 border-gray-300';
+      }
+    }
+
+    // Update Project Status
+    function updateStatus(id, newStatus) {
+      const item = projects.find(p => p.id === id);
+      if (item) {
+        item.status = newStatus;
+        save();
+        renderProjects();
+      }
+    }
+
+    // Update Notes
+    function updateNotes(id, text) {
+      const item = projects.find(p => p.id === id);
+      if (item) {
+        item.notes = text;
+        save();
+      }
+    }
+
+    // Add Diamond Option Row
+    function addDiamondOption(id) {
+      const item = projects.find(p => p.id === id);
+      if (item) {
+        if (!item.diamonds) item.diamonds = [];
+        item.diamonds.push({ carat: '', cut: '', grade: '', cert: '', price: '' });
+        save();
+        renderProjects();
+      }
+    }
+
+    // Update Diamond Row Field
+    function updateDiamondField(id, index, field, value) {
+      const item = projects.find(p => p.id === id);
+      if (item && item.diamonds && item.diamonds[index]) {
+        item.diamonds[index][field] = value;
+        save();
+      }
+    }
+
+    // Remove Diamond Option
+    function removeDiamondOption(id, index) {
+      const item = projects.find(p => p.id === id);
+      if (item && item.diamonds) {
+        item.diamonds.splice(index, 1);
+        save();
+        renderProjects();
+      }
+    }
+
+    // Upload Photo File
+    function uploadPhoto(id, event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      // Limit to ~2MB to prevent localStorage blowout
+      if (file.size > 2.5 * 1024 * 1024) {
+        window.alert('Please choose an image under 2.5MB.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const item = projects.find(p => p.id === id);
+        if (item) {
+          if (!item.images) item.images = [];
+          item.images.push(e.target.result);
+          save();
+          renderProjects();
+        }
+      };
+      reader.readAsDataURL(file);
+      event.target.value = '';
+    }
+
+    // Add Image by Direct Web URL
+    function addImageUrlPrompt(id) {
+      const url = window.prompt('Enter image URL:');
+      if (url && url.trim()) {
+        const item = projects.find(p => p.id === id);
+        if (item) {
+          if (!item.images) item.images = [];
+          item.images.push(url.trim());
+          save();
+          renderProjects();
+        }
+      }
+    }
+
+    // Remove Image
+    function removeImage(id, index) {
+      const item = projects.find(p => p.id === id);
+      if (item && item.images) {
+        item.images.splice(index, 1);
+        save();
+        renderProjects();
+      }
+    }
+
+    function exportData() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projects, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `jewelry_tracker_${new Date().toISOString().slice(0, 10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (Array.isArray(imported)) {
+            projects = imported;
+            save();
+            renderProjects();
+          } else {
+            window.alert('Invalid file format.');
+          }
+        } catch (err) {
+          window.alert('Failed to parse file.');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    // Init on page load
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
 </body>
 </html>
