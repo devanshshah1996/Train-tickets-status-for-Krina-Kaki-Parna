@@ -104,7 +104,7 @@
                     </div>
 
                     <!-- LED Button (Hidden until connected) -->
-                    <button id="led-btn" class="hidden w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 px-4 rounded-lg transition duration-200 shadow-md flex justify-center items-center gap-2 mt-2">
+                    <button id="led-btn" data-state="off" class="hidden w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 px-4 rounded-lg transition duration-200 shadow-md flex justify-center items-center gap-2 mt-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         Turn LED On
                     </button>
@@ -282,18 +282,23 @@
             }, 2500);
         });
 
-        // --- LED Logic ---
+        // --- LED Toggle Logic ---
         ledBtn.addEventListener('click', () => {
             showResetButton();
-            ledBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> LED is ON';
-            ledBtn.classList.replace('bg-amber-500', 'bg-green-500');
-            ledBtn.classList.replace('hover:bg-amber-600', 'hover:bg-green-600');
             
-            setTimeout(() => {
+            if (ledBtn.dataset.state === 'off') {
+                // Turn LED On
+                ledBtn.dataset.state = 'on';
+                ledBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Turn LED Off';
+                ledBtn.classList.replace('bg-amber-500', 'bg-green-500');
+                ledBtn.classList.replace('hover:bg-amber-600', 'hover:bg-green-600');
+            } else {
+                // Turn LED Off
+                ledBtn.dataset.state = 'off';
                 ledBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Turn LED On';
                 ledBtn.classList.replace('bg-green-500', 'bg-amber-500');
                 ledBtn.classList.replace('hover:bg-green-600', 'hover:bg-amber-600');
-            }, 3000);
+            }
         });
 
         // --- Reset Logic ---
@@ -325,7 +330,8 @@
             connectionStatus.textContent = 'Awaiting Hardware';
             connectionStatus.className = 'text-sm font-semibold text-gray-400';
             
-            // Reset LED button visuals
+            // Reset LED button visuals and state
+            ledBtn.dataset.state = 'off';
             ledBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Turn LED On';
             ledBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
             ledBtn.classList.add('bg-amber-500', 'hover:bg-amber-600');
