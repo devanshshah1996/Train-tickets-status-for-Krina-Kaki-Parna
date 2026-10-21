@@ -6,7 +6,6 @@
     <title>Memo Control System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Ensure no scrolling on the body itself to enforce the 80/20 split */
         body, html { 
             margin: 0; 
             padding: 0; 
@@ -14,8 +13,6 @@
             overflow: hidden; 
             font-family: sans-serif; 
         }
-        
-        /* 80vh container for the main application, allows scrolling inside if needed */
         .top-section { 
             height: 80vh; 
             overflow-y: auto; 
@@ -23,80 +20,103 @@
             flex-direction: column; 
             justify-content: center; 
             align-items: center; 
-            background-color: #f3f4f6; 
+            background-color: #f8fafc; 
             padding: 1rem; 
         }
-        
-        /* 20vh container at the bottom */
         .bottom-section { 
             height: 20vh; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            background-color: #e5e7eb; 
-            border-top: 2px solid #d1d5db; 
+            background-color: #e2e8f0; 
+            border-top: 2px solid #cbd5e1; 
         }
     </style>
 </head>
 <body>
     <div class="top-section">
-        <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-            <h1 class="text-2xl font-bold mb-6 text-gray-800 text-center">Memo Control System</h1>
-
-            <!-- Search / Fetch Section -->
-            <div class="flex flex-col gap-4 mb-6">
-                <div>
-                    <label for="recent-memos" class="block text-sm font-medium text-gray-700 mb-1">Recent Memos</label>
-                    <select id="recent-memos" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2 border outline-none">
-                        <option value="" disabled selected>Recent Memo</option>
-                        <!-- Options populated via JS -->
-                    </select>
-                </div>
-
-                <div>
-                    <label for="memo-input" class="block text-sm font-medium text-gray-700 mb-1">Memo Number</label>
-                    <div class="flex gap-2">
-                        <input type="text" id="memo-input" placeholder="Enter memo number" class="flex-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2 border outline-none">
-                        <button id="fetch-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-150">Fetch</button>
-                    </div>
-                </div>
+        <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-lg border border-gray-100">
+            <div class="mb-6 text-center">
+                <h1 class="text-2xl font-bold text-gray-800">Memo Retrieval System</h1>
+                <p class="text-sm text-gray-500 mt-1">Enter a memo number or select from recent history to fetch the data block.</p>
             </div>
 
-            <!-- Success / Device Section (Hidden by default) -->
-            <div id="success-section" class="hidden border-t border-gray-200 pt-5 mt-2">
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-5" role="alert">
-                    <span class="block sm:inline font-semibold">✓ Memo fetched successfully.</span>
-                </div>
+            <!-- Search / Fetch Section -->
+            <div class="flex flex-col gap-4 mb-2">
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <div class="w-full sm:w-1/2">
+                        <select id="recent-memos" class="w-full border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 border outline-none text-sm text-gray-700">
+                            <option value="" disabled selected>Select Recent Memo</option>
+                            <!-- Options populated via JS -->
+                        </select>
+                    </div>
 
+                    <div class="w-full sm:w-1/2 relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </div>
+                        <input type="text" id="memo-input" placeholder="Memo Number" class="w-full pl-9 border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 border outline-none text-sm text-gray-700">
+                    </div>
+                </div>
+                
+                <button id="fetch-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-200 shadow-sm flex justify-center items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    Fetch Data Block
+                </button>
+            </div>
+
+            <!-- Dynamic Global Alert Box (Errors / Success Messages) -->
+            <div id="global-alert" class="hidden px-4 py-3 rounded-lg relative mb-4 flex items-center justify-center gap-2 border mt-4 transition-all" role="alert">
+                <svg id="global-alert-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
+                <span id="global-alert-text" class="block sm:inline font-semibold"></span>
+            </div>
+
+            <!-- Hardware Section (Hidden by default, shown ONLY on fetch success) -->
+            <div id="success-section" class="hidden border-t border-gray-100 pt-6 mt-2">
                 <div class="flex flex-col gap-4">
-                    <div>
-                        <label for="rfid-reader" class="block text-sm font-medium text-gray-700 mb-1">RFID Reader</label>
-                        <div class="flex gap-2">
-                            <select id="rfid-reader" class="flex-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2 border outline-none">
-                                <option value="" disabled selected>Select a reader</option>
-                                <option value="reader1">Reader A (Desk 1)</option>
-                                <option value="reader2">Reader B (Desk 2)</option>
-                                <option value="reader3">Reader C (Vault)</option>
-                            </select>
-                            <button id="connect-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md transition duration-150">Connect</button>
+                    <label class="block text-sm font-bold text-gray-800">Hardware Interface</label>
+                    
+                    <div class="flex flex-wrap items-center gap-3">
+                        <select id="rfid-reader" class="flex-1 min-w-[140px] border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 border outline-none text-sm text-gray-700">
+                            <option value="" disabled selected>Select a reader</option>
+                            <option value="reader1">Reader 1 (Main)</option>
+                            <option value="reader2">Reader 2 (Desk)</option>
+                            <option value="reader3">Reader 3 (Sec...)</option>
+                        </select>
+                        
+                        <button id="connect-btn" class="bg-gray-400 hover:bg-gray-500 text-white text-sm font-semibold py-2.5 px-5 rounded-lg transition duration-150 shadow-sm">
+                            Connect
+                        </button>
+                        
+                        <!-- Connecting Badge (Hidden initially) -->
+                        <div id="connecting-badge" class="hidden items-center gap-2 bg-amber-50 text-amber-700 px-4 py-2.5 rounded-lg text-sm border border-amber-200 font-medium">
+                            <span class="relative flex h-3 w-3">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                            </span>
+                            Connecting...
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="text-sm font-medium text-gray-700">Status:</span>
-                        <span id="connection-status" class="text-sm font-semibold text-red-600">Not Connected</span>
+                    <div class="flex items-center gap-2 mb-2 mt-1">
+                        <span class="text-sm font-medium text-gray-500">Status:</span>
+                        <span id="connection-status" class="text-sm font-semibold text-gray-400">Awaiting Hardware</span>
                     </div>
 
                     <!-- LED Button (Hidden until connected) -->
-                    <button id="led-btn" class="hidden w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-4 rounded-md transition duration-150 shadow">
+                    <button id="led-btn" class="hidden w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 px-4 rounded-lg transition duration-200 shadow-md flex justify-center items-center gap-2 mt-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         Turn LED On
                     </button>
                 </div>
             </div>
 
             <!-- Reset Button -->
-            <div class="mt-8 pt-4 text-center border-t border-gray-100">
-                <button id="reset-btn" class="text-sm text-gray-500 hover:text-gray-800 underline transition-colors">Reset System</button>
+            <div class="mt-8 pt-4 flex justify-center border-t border-gray-100 min-h-[60px]">
+                <button id="reset-btn" class="hidden flex items-center gap-1.5 text-sm text-red-500 hover:text-red-700 font-semibold transition-colors bg-red-50 hover:bg-red-100 px-5 py-2.5 rounded-full border border-red-100">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reset System
+                </button>
             </div>
         </div>
     </div>
@@ -109,150 +129,8 @@
     </div>
 
     <script>
-        // Sample Memo Data - generate timestamps dynamically so they are always recent
+        // Data Initialization
         const now = new Date();
         const memos = [
-            { id: 'M-9021', timestamp: new Date(now.getTime() - 1000 * 60 * 5) },      // 5 mins ago
-            { id: 'M-9020', timestamp: new Date(now.getTime() - 1000 * 60 * 35) },     // 35 mins ago
-            { id: 'M-9019', timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 2) }, // 2 hours ago
-            { id: 'M-9018', timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 24) } // 1 day ago
-        ];
-
-        // Ensure descending order (newest first)
-        memos.sort((a, b) => b.timestamp - a.timestamp);
-
-        // DOM Elements
-        const memoSelect = document.getElementById('recent-memos');
-        const memoInput = document.getElementById('memo-input');
-        const fetchBtn = document.getElementById('fetch-btn');
-        const successSection = document.getElementById('success-section');
-        const rfidReader = document.getElementById('rfid-reader');
-        const connectBtn = document.getElementById('connect-btn');
-        const connectionStatus = document.getElementById('connection-status');
-        const ledBtn = document.getElementById('led-btn');
-        const resetBtn = document.getElementById('reset-btn');
-
-        // Populate Recent Memos Dropdown
-        memos.forEach(memo => {
-            const option = document.createElement('option');
-            option.value = memo.id;
-            
-            // Format time nicely
-            const timeString = memo.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const dateString = memo.timestamp.toLocaleDateString([], { month: 'short', day: 'numeric' });
-            
-            option.textContent = `${memo.id} - ${dateString} ${timeString}`;
-            memoSelect.appendChild(option);
-        });
-
-        // Event: Select Memo from Dropdown
-        memoSelect.addEventListener('change', (e) => {
-            memoInput.value = e.target.value;
-        });
-
-        // Event: Fetch Button Click
-        fetchBtn.addEventListener('click', () => {
-            if (!memoInput.value.trim()) {
-                alert('Please enter or select a memo number.');
-                return;
-            }
-            
-            // Simulate Fetching state
-            fetchBtn.textContent = 'Fetching...';
-            fetchBtn.disabled = true;
-            fetchBtn.classList.add('opacity-75', 'cursor-not-allowed');
-
-            setTimeout(() => {
-                // Remove loading states
-                fetchBtn.textContent = 'Fetch';
-                fetchBtn.disabled = false;
-                fetchBtn.classList.remove('opacity-75', 'cursor-not-allowed');
-                
-                // Hide fetch button and show success area
-                fetchBtn.classList.add('hidden'); 
-                successSection.classList.remove('hidden');
-            }, 1500);
-        });
-
-        // Event: Connect RFID Reader Button Click
-        connectBtn.addEventListener('click', () => {
-            if (!rfidReader.value) {
-                alert('Please select an RFID reader from the dropdown first.');
-                return;
-            }
-
-            // Simulate Connecting state
-            connectBtn.textContent = '...';
-            connectBtn.disabled = true;
-            connectBtn.classList.add('opacity-75', 'cursor-not-allowed');
-            
-            connectionStatus.textContent = 'Connecting...';
-            connectionStatus.className = 'text-sm font-semibold text-yellow-600 animate-pulse';
-            
-            // Disable dropdown while connecting
-            rfidReader.disabled = true;
-
-            setTimeout(() => {
-                // Connection successful state
-                connectionStatus.textContent = 'Connected';
-                connectionStatus.className = 'text-sm font-semibold text-green-600';
-                
-                // Hide connect button, show LED button
-                connectBtn.classList.add('hidden'); 
-                ledBtn.classList.remove('hidden'); 
-                
-                // Keep dropdown disabled while connected to prevent changing reader mid-session
-            }, 2000);
-        });
-
-        // Event: Turn LED On Button Click
-        ledBtn.addEventListener('click', () => {
-            // Visual feedback that the LED command was sent
-            ledBtn.textContent = 'LED is ON';
-            ledBtn.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
-            ledBtn.classList.add('bg-green-500', 'hover:bg-green-600');
-            
-            // Reset button visual after a few seconds
-            setTimeout(() => {
-                ledBtn.textContent = 'Turn LED On';
-                ledBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
-                ledBtn.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
-            }, 3000);
-        });
-
-        // Event: Reset System
-        resetBtn.addEventListener('click', () => {
-            // Reset Inputs
-            memoSelect.value = '';
-            memoInput.value = '';
-            
-            // Reset Fetch Button
-            fetchBtn.classList.remove('hidden');
-            fetchBtn.textContent = 'Fetch';
-            fetchBtn.disabled = false;
-            fetchBtn.classList.remove('opacity-75', 'cursor-not-allowed');
-            
-            // Hide Success Section
-            successSection.classList.add('hidden');
-            
-            // Reset RFID & Connect Button
-            rfidReader.value = '';
-            rfidReader.disabled = false;
-            connectBtn.classList.remove('hidden');
-            connectBtn.textContent = 'Connect';
-            connectBtn.disabled = false;
-            connectBtn.classList.remove('opacity-75', 'cursor-not-allowed');
-            
-            // Reset Status
-            connectionStatus.textContent = 'Not Connected';
-            connectionStatus.className = 'text-sm font-semibold text-red-600';
-            
-            // Reset and Hide LED Button
-            ledBtn.classList.add('hidden');
-            ledBtn.textContent = 'Turn LED On';
-            ledBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
-            ledBtn.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
-        });
-    </script>
-</body>
-</html>
+            { id: 'M-8899', timestamp: new Date(now.getTime() - 1000 * 60 * 15) },
+            { id: 'M-8898', timestamp: new Date(now.getTime() - 1000 *
