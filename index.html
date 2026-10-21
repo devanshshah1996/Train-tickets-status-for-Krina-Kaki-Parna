@@ -1,569 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jewelry Project Status Tracker</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-    input, select, textarea {
-      font-size: 0.875rem;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memo Control System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Ensure no scrolling on the body itself to enforce the 80/20 split */
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            height: 100%; 
+            overflow: hidden; 
+            font-family: sans-serif; 
+        }
+        
+        /* 80vh container for the main application, allows scrolling inside if needed */
+        .top-section { 
+            height: 80vh; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            background-color: #f3f4f6; 
+            padding: 1rem; 
+        }
+        
+        /* 20vh container at the bottom */
+        .bottom-section { 
+            height: 20vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            background-color: #e5e7eb; 
+            border-top: 2px solid #d1d5db; 
+        }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen">
+<body>
+    <div class="top-section">
+        <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+            <h1 class="text-2xl font-bold mb-6 text-gray-800 text-center">Memo Control System</h1>
 
-  <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
-    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-      <div>
-        <h1 class="text-xl font-bold text-gray-900 tracking-tight">Jewelry Project Status Tracker</h1>
-        <p class="text-xs text-gray-500 mt-0.5">Tracking handwritten specifications, diamond options, and photos</p>
-      </div>
+            <!-- Search / Fetch Section -->
+            <div class="flex flex-col gap-4 mb-6">
+                <div>
+                    <label for="recent-memos" class="block text-sm font-medium text-gray-700 mb-1">Recent Memos</label>
+                    <select id="recent-memos" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2 border outline-none">
+                        <option value="" disabled selected>Recent Memo</option>
+                        <!-- Options populated via JS -->
+                    </select>
+                </div>
 
-      <!-- Quick Action Controls -->
-      <div class="flex items-center gap-2">
-        <button onclick="exportData()" class="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition">
-          Export Backup
-        </button>
-        <label class="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md cursor-pointer transition">
-          Import Backup
-          <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(event)">
-        </label>
-        <button onclick="resetToOriginal()" class="px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 rounded-md transition">
-          Reset
-        </button>
-      </div>
-    </div>
-
-    <!-- Filter Bar -->
-    <div class="max-w-6xl mx-auto px-4 pb-3 flex flex-wrap items-center gap-2">
-      <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider mr-1">Filter:</span>
-      <div id="filter-buttons" class="flex flex-wrap gap-1.5">
-        <!-- Rendered by JS -->
-      </div>
-    </div>
-  </header>
-
-  <main class="max-w-6xl mx-auto px-4 py-6">
-    <div id="project-list" class="space-y-6">
-      <!-- Project cards injected here -->
-    </div>
-  </main>
-
-  <script>
-    const STORAGE_KEY = 'simple_jewelry_tracker_data';
-
-    // Exact items strictly from handwritten sheets
-    const DEFAULT_DATA = [
-      // PAYALBHABHI (SELF)
-      {
-        id: 'p_payal_1',
-        person: 'Payalbhabhi',
-        title: 'Asscher Cut',
-        specs: '7 – 8 ct',
-        status: 'In Sourcing',
-        notes: '',
-        diamonds: [],
-        images: []
-      },
-      {
-        id: 'p_payal_2',
-        person: 'Payalbhabhi',
-        title: 'Old Mine Pendant',
-        specs: '4 ct (in the making)',
-        status: 'In the Making',
-        notes: '',
-        diamonds: [],
-        images: []
-      },
-      {
-        id: 'p_payal_3',
-        person: 'Payalbhabhi',
-        title: 'Cushion Square Studs',
-        specs: '4 ct each',
-        status: 'In Sourcing',
-        notes: '',
-        diamonds: [],
-        images: []
-      },
-      {
-        id: 'p_payal_4',
-        person: 'Payalbhabhi',
-        title: 'Triangle Step Pair',
-        specs: '2 ct – 3 ct pair',
-        status: 'In Sourcing',
-        notes: '',
-        diamonds: [],
-        images: []
-      },
-
-      // DIL
-      {
-        id: 'p_dil_1',
-        person: 'DIL',
-        title: 'Heart Pendant',
-        specs: '3.26 E VS1 / 4.4 F VVS1',
-        status: 'In Sourcing',
-        notes: '',
-        diamonds: [],
-        images: []
-      },
-      {
-        id: 'p_dil_2',
-        person: 'DIL',
-        title: 'SE / Pear Drop Earring',
-        specs: 'Top (SE): 1 ct / 1.5 ct / 2 ct | Bottom (PR): 2 ct / 2 ct / 2.5–3 ct (RO 0.3 ct)',
-        status: 'In Sourcing',
-        notes: '',
-        diamonds: [],
-        images: []
-      },
-      {
-        id: 'p_dil_3',
-        person: 'DIL',
-        title: 'Round Earrings',
-        specs: '3.59 ct / 3.72 ct / 3.75 ct',
-        status: 'In Sourcing',
-        notes: '',
-        diamonds: [],
-        images: []
-      },
-      {
-        id: 'p_dil_4',
-        person: 'DIL',
-        title: 'Multi Fancy Bracelet',
-        specs: '1 ct ± width',
-        status: 'In Sourcing',
-        notes: '',
-        diamonds: [],
-        images: []
-      },
-
-      // ARYASHRI
-      {
-        id: 'p_arya_1',
-        person: 'Aryashri',
-        title: 'PR Stud + Drop',
-        specs: 'Option 1: 2–2.5 ct (top / drop) | Option 2: 1, 1, 1.5, 1.5 ct with 2, 2.5, 2, 2.5 ct',
-        status: 'In Sourcing',
-        notes: '',
-        diamonds: [],
-        images: []
-      },
-
-      // GIFT / EVENT
-      {
-        id: 'p_gift_1',
-        person: 'Gift / Event',
-        title: 'Gift (10 Lakh Event)',
-        specs: 'RN 1.5 ct / PR 1.5 ct (5–7 Lakh, DEF VS)',
-        status: 'In Sourcing',
-        notes: '',
-        diamonds: [],
-        images: []
-      }
-    ];
-
-    let projects = [];
-    let selectedFilter = 'All';
-
-    // Status choices
-    const STATUS_OPTIONS = [
-      'In Sourcing',
-      'Option Review',
-      'In the Making',
-      'Setting & Polish',
-      'Completed',
-      'On Hold'
-    ];
-
-    function init() {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        try {
-          projects = JSON.parse(stored);
-        } catch (e) {
-          projects = JSON.parse(JSON.stringify(DEFAULT_DATA));
-        }
-      } else {
-        projects = JSON.parse(JSON.stringify(DEFAULT_DATA));
-      }
-      renderFilters();
-      renderProjects();
-    }
-
-    function save() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-    }
-
-    function resetToOriginal() {
-      if (window.confirm('Reset all items back to the clean original handwritten list? Any added notes/images will be cleared.')) {
-        projects = JSON.parse(JSON.stringify(DEFAULT_DATA));
-        save();
-        renderProjects();
-      }
-    }
-
-    function renderFilters() {
-      const categories = ['All', 'Payalbhabhi', 'DIL', 'Aryashri', 'Gift / Event'];
-      const container = document.getElementById('filter-buttons');
-      container.innerHTML = categories.map(cat => {
-        const active = selectedFilter === cat;
-        return `
-          <button 
-            onclick="setFilter('${cat}')" 
-            class="px-3 py-1 rounded-full text-xs font-medium transition ${
-              active 
-                ? 'bg-gray-900 text-white' 
-                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
-            }">
-            ${cat}
-          </button>
-        `;
-      }).join('');
-    }
-
-    function setFilter(cat) {
-      selectedFilter = cat;
-      renderFilters();
-      renderProjects();
-    }
-
-    function renderProjects() {
-      const container = document.getElementById('project-list');
-      const filtered = selectedFilter === 'All' 
-        ? projects 
-        : projects.filter(p => p.person === selectedFilter);
-
-      if (filtered.length === 0) {
-        container.innerHTML = `<div class="text-center py-12 text-sm text-gray-500 bg-white rounded-lg border border-gray-200">No projects found.</div>`;
-        return;
-      }
-
-      container.innerHTML = filtered.map(item => `
-        <div class="bg-white rounded-lg border border-gray-200 p-5 shadow-sm space-y-4">
-          
-          <!-- Header -->
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-gray-100 pb-3">
-            <div>
-              <div class="flex items-center gap-2">
-                <span class="px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider rounded bg-gray-100 text-gray-700">
-                  ${item.person}
-                </span>
-                <h2 class="text-base font-bold text-gray-900">${item.title}</h2>
-              </div>
-              <p class="text-xs text-gray-600 font-mono mt-1 font-medium bg-yellow-50 inline-block px-2 py-0.5 rounded border border-yellow-200">
-                Specs: ${item.specs}
-              </p>
+                <div>
+                    <label for="memo-input" class="block text-sm font-medium text-gray-700 mb-1">Memo Number</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="memo-input" placeholder="Enter memo number" class="flex-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2 border outline-none">
+                        <button id="fetch-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-150">Fetch</button>
+                    </div>
+                </div>
             </div>
 
-            <!-- Status Dropdown -->
-            <div class="flex items-center gap-2">
-              <label class="text-xs text-gray-500 font-medium">Status:</label>
-              <select 
-                onchange="updateStatus('${item.id}', this.value)"
-                class="px-2.5 py-1 text-xs font-semibold rounded border ${getStatusStyle(item.status)} focus:outline-none cursor-pointer">
-                ${STATUS_OPTIONS.map(opt => `
-                  <option value="${opt}" ${item.status === opt ? 'selected' : ''}>${opt}</option>
-                `).join('')}
-              </select>
-            </div>
-          </div>
+            <!-- Success / Device Section (Hidden by default) -->
+            <div id="success-section" class="hidden border-t border-gray-200 pt-5 mt-2">
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-5" role="alert">
+                    <span class="block sm:inline font-semibold">✓ Memo fetched successfully.</span>
+                </div>
 
-          <!-- Quick Notes Field -->
-          <div>
-            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">General Notes</label>
-            <textarea 
-              oninput="updateNotes('${item.id}', this.value)" 
-              placeholder="Add status update, seller memo, client feedback, or metal preference..." 
-              rows="2"
-              class="w-full px-3 py-1.5 border border-gray-200 rounded text-xs focus:ring-1 focus:ring-gray-400 focus:outline-none">${item.notes || ''}</textarea>
-          </div>
+                <div class="flex flex-col gap-4">
+                    <div>
+                        <label for="rfid-reader" class="block text-sm font-medium text-gray-700 mb-1">RFID Reader</label>
+                        <div class="flex gap-2">
+                            <select id="rfid-reader" class="flex-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2 border outline-none">
+                                <option value="" disabled selected>Select a reader</option>
+                                <option value="reader1">Reader A (Desk 1)</option>
+                                <option value="reader2">Reader B (Desk 2)</option>
+                                <option value="reader3">Reader C (Vault)</option>
+                            </select>
+                            <button id="connect-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md transition duration-150">Connect</button>
+                        </div>
+                    </div>
 
-          <!-- Diamond Detail Options Section -->
-          <div class="bg-gray-50/75 rounded-md p-3.5 border border-gray-100">
-            <div class="flex items-center justify-between mb-2.5">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-gray-700">
-                Diamond Detail Options (${(item.diamonds || []).length})
-              </h3>
-              <button 
-                onclick="addDiamondOption('${item.id}')"
-                class="px-2.5 py-1 text-xs font-semibold bg-white border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition shadow-sm">
-                + Add Option
-              </button>
-            </div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-sm font-medium text-gray-700">Status:</span>
+                        <span id="connection-status" class="text-sm font-semibold text-red-600">Not Connected</span>
+                    </div>
 
-            ${renderDiamondTable(item)}
-          </div>
-
-          <!-- Reference Images Section -->
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-gray-700">
-                Reference Images (${(item.images || []).length})
-              </h3>
-              <div class="flex items-center gap-2">
-                <label class="px-2 py-0.5 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded cursor-pointer transition">
-                  Upload Photo
-                  <input type="file" accept="image/*" class="hidden" onchange="uploadPhoto('${item.id}', event)">
-                </label>
-                <button 
-                  onclick="addImageUrlPrompt('${item.id}')" 
-                  class="px-2 py-0.5 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded transition">
-                  Add URL
-                </button>
-              </div>
-            </div>
-
-            ${renderImageThumbnails(item)}
-          </div>
-
-        </div>
-      `).join('');
-    }
-
-    function renderDiamondTable(item) {
-      const diamonds = item.diamonds || [];
-      if (diamonds.length === 0) {
-        return `<p class="text-xs text-gray-400 italic py-1">No diamond options added yet. Click "+ Add Option" above to enter carat, cut, color/clarity, or price.</p>`;
-      }
-
-      return `
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs border border-gray-200 bg-white rounded">
-            <thead class="bg-gray-100 text-gray-600 font-semibold border-b border-gray-200">
-              <tr>
-                <th class="p-2">Carat Weight</th>
-                <th class="p-2">Cut / Shape</th>
-                <th class="p-2">Color / Clarity</th>
-                <th class="p-2">Cert # / Memo</th>
-                <th class="p-2">Price / Quote</th>
-                <th class="p-2 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-              ${diamonds.map((dia, idx) => `
-                <tr>
-                  <td class="p-1.5">
-                    <input type="text" value="${dia.carat || ''}" placeholder="e.g. 4.02 ct" 
-                      onchange="updateDiamondField('${item.id}', ${idx}, 'carat', this.value)"
-                      class="w-full px-2 py-1 border border-gray-200 rounded text-xs">
-                  </td>
-                  <td class="p-1.5">
-                    <input type="text" value="${dia.cut || ''}" placeholder="e.g. Heart / Pear" 
-                      onchange="updateDiamondField('${item.id}', ${idx}, 'cut', this.value)"
-                      class="w-full px-2 py-1 border border-gray-200 rounded text-xs">
-                  </td>
-                  <td class="p-1.5">
-                    <input type="text" value="${dia.grade || ''}" placeholder="e.g. E VS1" 
-                      onchange="updateDiamondField('${item.id}', ${idx}, 'grade', this.value)"
-                      class="w-full px-2 py-1 border border-gray-200 rounded text-xs uppercase">
-                  </td>
-                  <td class="p-1.5">
-                    <input type="text" value="${dia.cert || ''}" placeholder="e.g. GIA 218..." 
-                      onchange="updateDiamondField('${item.id}', ${idx}, 'cert', this.value)"
-                      class="w-full px-2 py-1 border border-gray-200 rounded text-xs">
-                  </td>
-                  <td class="p-1.5">
-                    <input type="text" value="${dia.price || ''}" placeholder="e.g. ₹ 6.2 L" 
-                      onchange="updateDiamondField('${item.id}', ${idx}, 'price', this.value)"
-                      class="w-full px-2 py-1 border border-gray-200 rounded text-xs">
-                  </td>
-                  <td class="p-1.5 text-right whitespace-nowrap">
-                    <button onclick="removeDiamondOption('${item.id}', ${idx})" class="text-xs text-red-500 hover:text-red-700 px-1 py-0.5 rounded">
-                      Remove
+                    <!-- LED Button (Hidden until connected) -->
+                    <button id="led-btn" class="hidden w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-4 rounded-md transition duration-150 shadow">
+                        Turn LED On
                     </button>
-                  </td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      `;
-    }
-
-    function renderImageThumbnails(item) {
-      const images = item.images || [];
-      if (images.length === 0) {
-        return `<p class="text-xs text-gray-400 italic">No reference images attached.</p>`;
-      }
-
-      return `
-        <div class="flex flex-wrap gap-2.5">
-          ${images.map((img, idx) => `
-            <div class="relative group w-20 h-20 border border-gray-200 rounded overflow-hidden bg-gray-100 shadow-sm">
-              <a href="${img}" target="_blank" title="Click to view full image">
-                <img src="${img}" alt="Reference" class="w-full h-full object-cover">
-              </a>
-              <button 
-                onclick="removeImage('${item.id}', ${idx})" 
-                title="Delete image"
-                class="absolute top-1 right-1 bg-black/70 hover:bg-red-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
-                ✕
-              </button>
+                </div>
             </div>
-          `).join('')}
+
+            <!-- Reset Button -->
+            <div class="mt-8 pt-4 text-center border-t border-gray-100">
+                <button id="reset-btn" class="text-sm text-gray-500 hover:text-gray-800 underline transition-colors">Reset System</button>
+            </div>
         </div>
-      `;
-    }
+    </div>
 
-    function getStatusStyle(status) {
-      switch(status) {
-        case 'In the Making':
-          return 'bg-amber-50 text-amber-800 border-amber-300';
-        case 'In Sourcing':
-          return 'bg-blue-50 text-blue-800 border-blue-300';
-        case 'Option Review':
-          return 'bg-purple-50 text-purple-800 border-purple-300';
-        case 'Setting & Polish':
-          return 'bg-indigo-50 text-indigo-800 border-indigo-300';
-        case 'Completed':
-          return 'bg-emerald-50 text-emerald-800 border-emerald-300';
-        case 'On Hold':
-          return 'bg-rose-50 text-rose-800 border-rose-300';
-        default:
-          return 'bg-gray-50 text-gray-800 border-gray-300';
-      }
-    }
+    <!-- 20% Bottom Inactive Area -->
+    <div class="bottom-section">
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-400 uppercase tracking-widest text-center px-4">
+            Venus Jewel Diamond Finding Form
+        </h2>
+    </div>
 
-    // Update Project Status
-    function updateStatus(id, newStatus) {
-      const item = projects.find(p => p.id === id);
-      if (item) {
-        item.status = newStatus;
-        save();
-        renderProjects();
-      }
-    }
+    <script>
+        // Sample Memo Data - generate timestamps dynamically so they are always recent
+        const now = new Date();
+        const memos = [
+            { id: 'M-9021', timestamp: new Date(now.getTime() - 1000 * 60 * 5) },      // 5 mins ago
+            { id: 'M-9020', timestamp: new Date(now.getTime() - 1000 * 60 * 35) },     // 35 mins ago
+            { id: 'M-9019', timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 2) }, // 2 hours ago
+            { id: 'M-9018', timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 24) } // 1 day ago
+        ];
 
-    // Update Notes
-    function updateNotes(id, text) {
-      const item = projects.find(p => p.id === id);
-      if (item) {
-        item.notes = text;
-        save();
-      }
-    }
+        // Ensure descending order (newest first)
+        memos.sort((a, b) => b.timestamp - a.timestamp);
 
-    // Add Diamond Option Row
-    function addDiamondOption(id) {
-      const item = projects.find(p => p.id === id);
-      if (item) {
-        if (!item.diamonds) item.diamonds = [];
-        item.diamonds.push({ carat: '', cut: '', grade: '', cert: '', price: '' });
-        save();
-        renderProjects();
-      }
-    }
+        // DOM Elements
+        const memoSelect = document.getElementById('recent-memos');
+        const memoInput = document.getElementById('memo-input');
+        const fetchBtn = document.getElementById('fetch-btn');
+        const successSection = document.getElementById('success-section');
+        const rfidReader = document.getElementById('rfid-reader');
+        const connectBtn = document.getElementById('connect-btn');
+        const connectionStatus = document.getElementById('connection-status');
+        const ledBtn = document.getElementById('led-btn');
+        const resetBtn = document.getElementById('reset-btn');
 
-    // Update Diamond Row Field
-    function updateDiamondField(id, index, field, value) {
-      const item = projects.find(p => p.id === id);
-      if (item && item.diamonds && item.diamonds[index]) {
-        item.diamonds[index][field] = value;
-        save();
-      }
-    }
+        // Populate Recent Memos Dropdown
+        memos.forEach(memo => {
+            const option = document.createElement('option');
+            option.value = memo.id;
+            
+            // Format time nicely
+            const timeString = memo.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const dateString = memo.timestamp.toLocaleDateString([], { month: 'short', day: 'numeric' });
+            
+            option.textContent = `${memo.id} - ${dateString} ${timeString}`;
+            memoSelect.appendChild(option);
+        });
 
-    // Remove Diamond Option
-    function removeDiamondOption(id, index) {
-      const item = projects.find(p => p.id === id);
-      if (item && item.diamonds) {
-        item.diamonds.splice(index, 1);
-        save();
-        renderProjects();
-      }
-    }
+        // Event: Select Memo from Dropdown
+        memoSelect.addEventListener('change', (e) => {
+            memoInput.value = e.target.value;
+        });
 
-    // Upload Photo File
-    function uploadPhoto(id, event) {
-      const file = event.target.files[0];
-      if (!file) return;
+        // Event: Fetch Button Click
+        fetchBtn.addEventListener('click', () => {
+            if (!memoInput.value.trim()) {
+                alert('Please enter or select a memo number.');
+                return;
+            }
+            
+            // Simulate Fetching state
+            fetchBtn.textContent = 'Fetching...';
+            fetchBtn.disabled = true;
+            fetchBtn.classList.add('opacity-75', 'cursor-not-allowed');
 
-      // Limit to ~2MB to prevent localStorage blowout
-      if (file.size > 2.5 * 1024 * 1024) {
-        window.alert('Please choose an image under 2.5MB.');
-        return;
-      }
+            setTimeout(() => {
+                // Remove loading states
+                fetchBtn.textContent = 'Fetch';
+                fetchBtn.disabled = false;
+                fetchBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                
+                // Hide fetch button and show success area
+                fetchBtn.classList.add('hidden'); 
+                successSection.classList.remove('hidden');
+            }, 1500);
+        });
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const item = projects.find(p => p.id === id);
-        if (item) {
-          if (!item.images) item.images = [];
-          item.images.push(e.target.result);
-          save();
-          renderProjects();
-        }
-      };
-      reader.readAsDataURL(file);
-      event.target.value = '';
-    }
+        // Event: Connect RFID Reader Button Click
+        connectBtn.addEventListener('click', () => {
+            if (!rfidReader.value) {
+                alert('Please select an RFID reader from the dropdown first.');
+                return;
+            }
 
-    // Add Image by Direct Web URL
-    function addImageUrlPrompt(id) {
-      const url = window.prompt('Enter image URL:');
-      if (url && url.trim()) {
-        const item = projects.find(p => p.id === id);
-        if (item) {
-          if (!item.images) item.images = [];
-          item.images.push(url.trim());
-          save();
-          renderProjects();
-        }
-      }
-    }
+            // Simulate Connecting state
+            connectBtn.textContent = '...';
+            connectBtn.disabled = true;
+            connectBtn.classList.add('opacity-75', 'cursor-not-allowed');
+            
+            connectionStatus.textContent = 'Connecting...';
+            connectionStatus.className = 'text-sm font-semibold text-yellow-600 animate-pulse';
+            
+            // Disable dropdown while connecting
+            rfidReader.disabled = true;
 
-    // Remove Image
-    function removeImage(id, index) {
-      const item = projects.find(p => p.id === id);
-      if (item && item.images) {
-        item.images.splice(index, 1);
-        save();
-        renderProjects();
-      }
-    }
+            setTimeout(() => {
+                // Connection successful state
+                connectionStatus.textContent = 'Connected';
+                connectionStatus.className = 'text-sm font-semibold text-green-600';
+                
+                // Hide connect button, show LED button
+                connectBtn.classList.add('hidden'); 
+                ledBtn.classList.remove('hidden'); 
+                
+                // Keep dropdown disabled while connected to prevent changing reader mid-session
+            }, 2000);
+        });
 
-    function exportData() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projects, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `jewelry_tracker_${new Date().toISOString().slice(0, 10)}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-    }
+        // Event: Turn LED On Button Click
+        ledBtn.addEventListener('click', () => {
+            // Visual feedback that the LED command was sent
+            ledBtn.textContent = 'LED is ON';
+            ledBtn.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+            ledBtn.classList.add('bg-green-500', 'hover:bg-green-600');
+            
+            // Reset button visual after a few seconds
+            setTimeout(() => {
+                ledBtn.textContent = 'Turn LED On';
+                ledBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+                ledBtn.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+            }, 3000);
+        });
 
-    function importData(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const imported = JSON.parse(e.target.result);
-          if (Array.isArray(imported)) {
-            projects = imported;
-            save();
-            renderProjects();
-          } else {
-            window.alert('Invalid file format.');
-          }
-        } catch (err) {
-          window.alert('Failed to parse file.');
-        }
-      };
-      reader.readAsText(file);
-      event.target.value = '';
-    }
-
-    // Init on page load
-    window.addEventListener('DOMContentLoaded', init);
-  </script>
+        // Event: Reset System
+        resetBtn.addEventListener('click', () => {
+            // Reset Inputs
+            memoSelect.value = '';
+            memoInput.value = '';
+            
+            // Reset Fetch Button
+            fetchBtn.classList.remove('hidden');
+            fetchBtn.textContent = 'Fetch';
+            fetchBtn.disabled = false;
+            fetchBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+            
+            // Hide Success Section
+            successSection.classList.add('hidden');
+            
+            // Reset RFID & Connect Button
+            rfidReader.value = '';
+            rfidReader.disabled = false;
+            connectBtn.classList.remove('hidden');
+            connectBtn.textContent = 'Connect';
+            connectBtn.disabled = false;
+            connectBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+            
+            // Reset Status
+            connectionStatus.textContent = 'Not Connected';
+            connectionStatus.className = 'text-sm font-semibold text-red-600';
+            
+            // Reset and Hide LED Button
+            ledBtn.classList.add('hidden');
+            ledBtn.textContent = 'Turn LED On';
+            ledBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+            ledBtn.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+        });
+    </script>
 </body>
 </html>
