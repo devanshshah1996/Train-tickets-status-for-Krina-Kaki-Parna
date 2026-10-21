@@ -31,80 +31,86 @@
             background-color: #e2e8f0; 
             border-top: 2px solid #cbd5e1; 
         }
+        /* Custom scrollbar for memo list */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body>
     <div class="top-section">
-        <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-lg border border-gray-100">
-            <div class="mb-6 text-center">
+        <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg w-full max-w-lg border border-gray-100">
+            <div class="mb-5 text-center">
                 <h1 class="text-2xl font-bold text-gray-800">Memo Retrieval System</h1>
-                <p class="text-sm text-gray-500 mt-1">Enter a memo number or select from recent history to fetch the data block.</p>
+                <p class="text-sm text-gray-500 mt-1">Select a recent memo to issue inventory, or enter manually.</p>
             </div>
 
-            <!-- Search / Fetch Section -->
-            <div class="flex flex-col gap-4 mb-2">
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <div class="w-full sm:w-1/2">
-                        <select id="recent-memos" class="w-full border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 border outline-none text-sm text-gray-700">
-                            <option value="" disabled selected>Select Recent Memo</option>
-                            <!-- Options populated via JS -->
-                        </select>
-                    </div>
+            <!-- Recent Memos Action Buttons -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <label class="block text-sm font-bold text-gray-800">Recent Issued Memos</label>
+                    <span id="refresh-indicator" class="text-xs text-gray-400 flex items-center gap-1 opacity-0 transition-opacity">
+                        <svg class="animate-spin w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="4" stroke-dasharray="32" stroke-linecap="round"></circle></svg>
+                        Checking...
+                    </span>
+                </div>
+                <div id="memo-buttons-container" class="flex flex-col gap-2 max-h-48 overflow-y-auto custom-scrollbar pr-1">
+                    <!-- Buttons populated via JS -->
+                </div>
+            </div>
 
-                    <div class="w-full sm:w-1/2 relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        </div>
-                        <input type="text" id="memo-input" placeholder="Memo Number" class="w-full pl-9 border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 border outline-none text-sm text-gray-700">
+            <div class="relative flex py-2 items-center mb-4">
+                <div class="flex-grow border-t border-gray-200"></div>
+                <span class="flex-shrink-0 mx-4 text-gray-400 text-xs uppercase font-medium">Or Manual Entry</span>
+                <div class="flex-grow border-t border-gray-200"></div>
+            </div>
+
+            <!-- Manual Fetch Section -->
+            <div class="flex flex-col sm:flex-row gap-3 mb-2">
+                <div class="w-full relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     </div>
+                    <input type="text" id="memo-input" placeholder="Enter 7-digit memo (e.g., 3124567)" class="w-full pl-9 border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 border outline-none text-sm text-gray-700">
                 </div>
                 
-                <button id="fetch-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-200 shadow-sm flex justify-center items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    Fetch Data Block
+                <button id="fetch-btn" class="sm:w-32 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-200 shadow-sm flex justify-center items-center gap-2">
+                    Fetch
                 </button>
             </div>
 
-            <!-- Dynamic Global Alert Box (Errors / Success Messages) -->
-            <div id="global-alert" class="hidden px-4 py-3 rounded-lg relative mb-4 flex items-center justify-center gap-2 border mt-4 transition-all" role="alert">
-                <svg id="global-alert-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
-                <span id="global-alert-text" class="block sm:inline font-semibold"></span>
+            <!-- Dynamic Global Alert Box -->
+            <div id="global-alert" class="hidden px-4 py-3 rounded-lg relative mb-4 items-center justify-center gap-2 border mt-4 transition-all" role="alert">
+                <svg id="global-alert-icon" class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
+                <span id="global-alert-text" class="block sm:inline font-semibold text-sm"></span>
             </div>
 
-            <!-- Hardware Section (Hidden by default, shown ONLY on fetch success) -->
-            <div id="success-section" class="hidden border-t border-gray-100 pt-6 mt-2">
+            <!-- Hardware Section -->
+            <div id="success-section" class="hidden border-t border-gray-100 pt-5 mt-4">
                 <div class="flex flex-col gap-4">
-                    <label class="block text-sm font-bold text-gray-800">Hardware Interface</label>
+                    <label class="block text-sm font-bold text-gray-800">Select Hardware Interface</label>
                     
-                    <div class="flex flex-wrap items-center gap-3">
-                        <select id="rfid-reader" class="flex-1 min-w-[140px] border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 border outline-none text-sm text-gray-700">
-                            <option value="" disabled selected>Select a reader</option>
-                            <option value="reader1">Reader 1 (Main)</option>
-                            <option value="reader2">Reader 2 (Desk)</option>
-                            <option value="reader3">Reader 3 (Sec...)</option>
-                        </select>
-                        
-                        <button id="connect-btn" class="bg-gray-400 hover:bg-gray-500 text-white text-sm font-semibold py-2.5 px-5 rounded-lg transition duration-150 shadow-sm">
-                            Connect
+                    <!-- Device Action Buttons -->
+                    <div class="flex gap-2">
+                        <button class="device-btn flex-1 bg-gray-50 hover:bg-gray-100 border border-gray-300 text-gray-700 font-semibold py-2.5 px-1 rounded-lg text-xs sm:text-sm transition-all shadow-sm" data-id="reader1">
+                            Reader 1 (Main)
                         </button>
-                        
-                        <!-- Connecting Badge (Hidden initially) -->
-                        <div id="connecting-badge" class="hidden items-center gap-2 bg-amber-50 text-amber-700 px-4 py-2.5 rounded-lg text-sm border border-amber-200 font-medium">
-                            <span class="relative flex h-3 w-3">
-                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                              <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
-                            </span>
-                            Connecting...
-                        </div>
+                        <button class="device-btn flex-1 bg-gray-50 hover:bg-gray-100 border border-gray-300 text-gray-700 font-semibold py-2.5 px-1 rounded-lg text-xs sm:text-sm transition-all shadow-sm" data-id="reader2">
+                            Reader 2 (Desk)
+                        </button>
+                        <button class="device-btn flex-1 bg-gray-50 hover:bg-gray-100 border border-gray-300 text-gray-700 font-semibold py-2.5 px-1 rounded-lg text-xs sm:text-sm transition-all shadow-sm" data-id="reader3">
+                            Reader 3 (Sec)
+                        </button>
                     </div>
 
-                    <div class="flex items-center gap-2 mb-2 mt-1">
+                    <div class="flex items-center gap-2 mb-1 mt-1">
                         <span class="text-sm font-medium text-gray-500">Status:</span>
-                        <span id="connection-status" class="text-sm font-semibold text-gray-400">Awaiting Hardware</span>
+                        <span id="connection-status" class="text-sm font-semibold text-gray-400">Awaiting Hardware Selection</span>
                     </div>
 
-                    <!-- LED Button (Hidden until connected) -->
-                    <button id="led-btn" data-state="off" class="hidden w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 px-4 rounded-lg transition duration-200 shadow-md flex justify-center items-center gap-2 mt-2">
+                    <!-- LED Button -->
+                    <button id="led-btn" data-state="off" class="hidden w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 px-4 rounded-lg transition duration-200 shadow-md flex justify-center items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         Turn LED On
                     </button>
@@ -112,8 +118,8 @@
             </div>
 
             <!-- Reset Button -->
-            <div class="mt-8 pt-4 flex justify-center border-t border-gray-100 min-h-[60px]">
-                <button id="reset-btn" class="hidden flex items-center gap-1.5 text-sm text-red-500 hover:text-red-700 font-semibold transition-colors bg-red-50 hover:bg-red-100 px-5 py-2.5 rounded-full border border-red-100">
+            <div class="mt-6 pt-4 flex justify-center border-t border-gray-100 min-h-[50px]">
+                <button id="reset-btn" class="hidden flex items-center gap-1.5 text-sm text-red-500 hover:text-red-700 font-semibold transition-colors bg-red-50 hover:bg-red-100 px-5 py-2 rounded-full border border-red-100">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     Reset System
                 </button>
@@ -130,24 +136,23 @@
 
     <script>
         // Data Initialization
-        const now = new Date();
-        const memos = [
-            { id: 'M-8899', timestamp: new Date(now.getTime() - 1000 * 60 * 15) },
-            { id: 'M-8898', timestamp: new Date(now.getTime() - 1000 * 60 * 45) },
-            { id: 'M-8897', timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 3) }
+        let memos = [
+            { id: '3128492', customer: 'Venus Impex', timestamp: new Date(Date.now() - 1000 * 60 * 2) }, // 2 mins ago (New)
+            { id: '3128491', customer: 'Finestar Jewellery', timestamp: new Date(Date.now() - 1000 * 60 * 15) },
+            { id: '3128490', customer: 'Kiran Gems', timestamp: new Date(Date.now() - 1000 * 60 * 45) },
+            { id: '3000003', customer: 'Error Test Co.', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2) } // Error trigger
         ];
 
         // DOM Elements
-        const memoSelect = document.getElementById('recent-memos');
+        const memoButtonsContainer = document.getElementById('memo-buttons-container');
         const memoInput = document.getElementById('memo-input');
         const fetchBtn = document.getElementById('fetch-btn');
         const successSection = document.getElementById('success-section');
-        const rfidReader = document.getElementById('rfid-reader');
-        const connectBtn = document.getElementById('connect-btn');
-        const connectingBadge = document.getElementById('connecting-badge');
+        const deviceBtns = document.querySelectorAll('.device-btn');
         const connectionStatus = document.getElementById('connection-status');
         const ledBtn = document.getElementById('led-btn');
         const resetBtn = document.getElementById('reset-btn');
+        const refreshIndicator = document.getElementById('refresh-indicator');
         
         // Alert Elements
         const globalAlert = document.getElementById('global-alert');
@@ -156,20 +161,68 @@
         
         let connectionTimeout = null; 
         let fetchTimeout = null;
+        let isProcessing = false;
 
-        // Populate Recent Memos
-        memos.forEach(memo => {
-            const option = document.createElement('option');
-            option.value = memo.id;
-            const timeString = memo.timestamp.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-            const dateString = memo.timestamp.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            option.textContent = `${memo.id} - ${dateString}, ${timeString}`;
-            memoSelect.appendChild(option);
-        });
+        // Activity Tracking for Auto-Refresh
+        let lastActivityTime = Date.now();
+        const updateActivity = () => { lastActivityTime = Date.now(); };
+        ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => 
+            window.addEventListener(evt, updateActivity)
+        );
+
+        // Render Memo Action Buttons
+        const renderMemos = () => {
+            memoButtonsContainer.innerHTML = '';
+            const now = Date.now();
+
+            memos.forEach(memo => {
+                const isNew = (now - memo.timestamp.getTime()) <= (5 * 60 * 1000); // <= 5 mins
+                const timeString = memo.timestamp.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                
+                const btn = document.createElement('button');
+                btn.className = 'w-full text-left bg-white border border-gray-200 hover:border-blue-400 hover:bg-blue-50 text-gray-700 py-2.5 px-3 rounded-lg shadow-sm transition-all flex items-center justify-between group disabled:opacity-50 disabled:cursor-not-allowed';
+                btn.onclick = () => initiateFetch(memo.id);
+                
+                btn.innerHTML = `
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        <span class="font-mono font-bold text-blue-700">${memo.id}</span>
+                        <span class="text-sm font-medium truncate">${memo.customer}</span>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        ${isNew ? `<span class="bg-red-100 text-red-700 border border-red-200 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide">New</span>` : ''}
+                        <span class="text-xs text-gray-400 group-hover:text-blue-500">${timeString}</span>
+                    </div>
+                `;
+                memoButtonsContainer.appendChild(btn);
+            });
+        };
+
+        // Initialize Render
+        renderMemos();
+
+        // Auto Refresh Logic (Every 5 seconds if idle)
+        setInterval(() => {
+            if (!isProcessing && (Date.now() - lastActivityTime >= 5000)) {
+                // Show tiny indicator
+                refreshIndicator.classList.remove('opacity-0');
+                
+                setTimeout(() => {
+                    // Simulate a new memo arriving occasionally for demonstration
+                    if (Math.random() < 0.2) {
+                        const newId = '3' + Math.floor(100000 + Math.random() * 900000);
+                        memos.unshift({ id: newId, customer: 'Auto-Sync Client', timestamp: new Date() });
+                        if (memos.length > 6) memos.pop();
+                    }
+                    renderMemos();
+                    refreshIndicator.classList.add('opacity-0');
+                }, 800);
+            }
+        }, 5000);
 
         // --- Alert Handlers ---
         const showGlobalAlert = (type, message) => {
             globalAlert.classList.remove('hidden');
+            globalAlert.classList.add('flex');
             if (type === 'success') {
                 globalAlert.className = 'px-4 py-3 rounded-lg relative mb-4 flex items-center justify-center gap-2 border mt-4 bg-green-50 border-green-200 text-green-700 transition-all';
                 globalAlertIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
@@ -182,120 +235,149 @@
 
         const hideGlobalAlert = () => {
             globalAlert.classList.add('hidden');
+            globalAlert.classList.remove('flex');
         };
 
-        // --- Global Activity Tracker for Reset Button ---
-        const showResetButton = () => {
-            resetBtn.classList.remove('hidden');
-        };
+        // --- Reset Button Tracker ---
+        const showResetButton = () => { resetBtn.classList.remove('hidden'); };
+        memoInput.addEventListener('input', () => { showResetButton(); hideGlobalAlert(); });
 
-        // Attach to all inputs to show reset button immediately
-        memoSelect.addEventListener('change', (e) => {
-            memoInput.value = e.target.value;
-            showResetButton();
-            hideGlobalAlert();
-        });
-        memoInput.addEventListener('input', () => {
-            showResetButton();
-            hideGlobalAlert();
-        });
-        rfidReader.addEventListener('change', showResetButton);
-
-        // --- Fetch Logic with Specific Error Trigger for M-8897 ---
-        fetchBtn.addEventListener('click', () => {
+        // --- Core Fetch Logic ---
+        const initiateFetch = (memoVal) => {
+            if (isProcessing) return;
+            
             showResetButton(); 
             hideGlobalAlert();
+            memoInput.value = memoVal; // Reflect in manual input for clarity
             
-            const memoVal = memoInput.value.trim();
-            if (!memoVal) {
-                showGlobalAlert('error', 'Please enter or select a memo number.');
+            if (!memoVal.trim() || memoVal.length !== 7 || !memoVal.startsWith('3')) {
+                showGlobalAlert('error', 'Invalid Format: Memo must be 7 digits starting with 3.');
                 return;
             }
             
-            // Set Loading UI
-            fetchBtn.innerHTML = '<svg class="animate-spin w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="4" stroke-dasharray="32" stroke-linecap="round"></circle></svg> Fetching...';
+            isProcessing = true;
+            
+            // Set Loading UI for Manual Fetch Button
+            const originalFetchText = fetchBtn.innerHTML;
+            fetchBtn.innerHTML = '<svg class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="4" stroke-dasharray="32" stroke-linecap="round"></circle></svg>';
             fetchBtn.disabled = true;
-            fetchBtn.classList.add('opacity-75', 'cursor-not-allowed');
+            
+            // Disable memo action buttons
+            Array.from(memoButtonsContainer.children).forEach(b => b.disabled = true);
+            successSection.classList.add('hidden');
             
             if (fetchTimeout) clearTimeout(fetchTimeout);
 
             fetchTimeout = setTimeout(() => {
-                // SPECIFIC ERROR CONDITION: Memo 8897 fails to fetch
-                const isError = (memoVal === 'M-8897'); 
-
-                // Reset button background state
-                fetchBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Fetch Data Block';
+                isProcessing = false;
+                fetchBtn.innerHTML = 'Fetch';
                 fetchBtn.disabled = false;
-                fetchBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                Array.from(memoButtonsContainer.children).forEach(b => b.disabled = false);
 
-                if (isError) {
-                    showGlobalAlert('error', 'Network Timeout: Failed to fetch memo M-8897.');
-                    successSection.classList.add('hidden');
+                // SPECIFIC ERROR: 3000003 fails
+                if (memoVal === '3000003') {
+                    showGlobalAlert('error', 'Network Timeout: Failed to fetch memo 3000003.');
                 } else {
-                    fetchBtn.classList.add('hidden'); 
-                    showGlobalAlert('success', 'Fetch Successful');
+                    showGlobalAlert('success', `Data block fetched successfully for ${memoVal}.`);
                     successSection.classList.remove('hidden');
+                    resetHardwareUI();
                 }
-            }, 1500);
-        });
+            }, 1200);
+        };
 
-        // --- Connection Logic with Specific Error Trigger for Reader 2 ---
-        connectBtn.addEventListener('click', () => {
-            showResetButton();
-            
-            const selectedReader = rfidReader.value;
-            if (!selectedReader) {
-                showGlobalAlert('error', 'Please select an RFID reader from the dropdown.');
-                return;
-            }
+        // Manual Fetch Button Click
+        fetchBtn.addEventListener('click', () => initiateFetch(memoInput.value));
+        memoInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') initiateFetch(memoInput.value); });
 
-            // Step 1: Connecting State UI
-            connectBtn.classList.add('hidden'); 
-            connectingBadge.classList.remove('hidden'); 
-            connectingBadge.classList.add('flex');
-            rfidReader.disabled = true; 
-            
-            connectionStatus.textContent = 'Establishing connection...';
-            connectionStatus.className = 'text-sm font-semibold text-amber-600 animate-pulse';
-            ledBtn.classList.add('hidden'); 
+        // --- Hardware Connection Logic ---
+        const resetHardwareUI = () => {
+            deviceBtns.forEach(btn => {
+                btn.disabled = false;
+                btn.className = 'device-btn flex-1 bg-gray-50 hover:bg-gray-100 border border-gray-300 text-gray-700 font-semibold py-2.5 px-1 rounded-lg text-xs sm:text-sm transition-all shadow-sm';
+                btn.innerHTML = btn.getAttribute('data-id') === 'reader1' ? 'Reader 1 (Main)' : 
+                                btn.getAttribute('data-id') === 'reader2' ? 'Reader 2 (Desk)' : 'Reader 3 (Sec)';
+            });
+            connectionStatus.textContent = 'Awaiting Hardware Selection';
+            connectionStatus.className = 'text-sm font-semibold text-gray-400';
+            ledBtn.classList.add('hidden');
+        };
 
-            if (connectionTimeout) clearTimeout(connectionTimeout);
+        deviceBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (isProcessing) return;
+                showResetButton();
+                hideGlobalAlert();
 
-            // Step 2: Resolve Connection
-            connectionTimeout = setTimeout(() => {
-                connectingBadge.classList.add('hidden');
-                connectingBadge.classList.remove('flex');
+                const readerId = btn.getAttribute('data-id');
+                isProcessing = true;
+
+                // Disable all device buttons, style the clicked one
+                deviceBtns.forEach(b => {
+                    b.disabled = true;
+                    b.classList.replace('border-gray-300', 'border-gray-200');
+                    b.classList.replace('text-gray-700', 'text-gray-400');
+                });
                 
-                // SPECIFIC ERROR CONDITION: Reader 2 (Desk) fails to connect
-                const isError = (selectedReader === 'reader2'); 
+                btn.classList.replace('bg-gray-50', 'bg-amber-50');
+                btn.classList.replace('border-gray-200', 'border-amber-300');
+                btn.classList.replace('text-gray-400', 'text-amber-700');
                 
-                if (isError) {
-                    connectionStatus.textContent = 'Connection Timeout - Reader 2 (Desk) not responding';
-                    connectionStatus.className = 'text-sm font-semibold text-red-600';
+                btn.innerHTML = `
+                    <div class="flex items-center justify-center gap-1.5">
+                        <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span></span>
+                        Connecting...
+                    </div>
+                `;
+
+                connectionStatus.textContent = 'Establishing connection...';
+                connectionStatus.className = 'text-sm font-semibold text-amber-600 animate-pulse';
+                ledBtn.classList.add('hidden');
+
+                if (connectionTimeout) clearTimeout(connectionTimeout);
+
+                connectionTimeout = setTimeout(() => {
+                    isProcessing = false;
                     
-                    // Allow retry
-                    connectBtn.classList.remove('hidden'); 
-                    rfidReader.disabled = false;
-                } else {
-                    connectionStatus.textContent = 'Connected Successfully';
-                    connectionStatus.className = 'text-sm font-semibold text-green-600';
-                    ledBtn.classList.remove('hidden'); 
-                }
-            }, 2500);
+                    // SPECIFIC ERROR: Reader 2 fails
+                    if (readerId === 'reader2') {
+                        connectionStatus.textContent = 'Connection Timeout - Reader 2 not responding';
+                        connectionStatus.className = 'text-sm font-semibold text-red-600';
+                        
+                        // Re-enable to allow trying another reader
+                        deviceBtns.forEach(b => {
+                            b.disabled = false;
+                            b.classList.replace('border-gray-200', 'border-gray-300');
+                            b.classList.replace('text-gray-400', 'text-gray-700');
+                        });
+                        btn.innerHTML = 'Reader 2 (Desk)';
+                        btn.classList.replace('bg-amber-50', 'bg-red-50');
+                        btn.classList.replace('border-amber-300', 'border-red-300');
+                        btn.classList.replace('text-amber-700', 'text-red-700');
+                    } else {
+                        // Success
+                        connectionStatus.textContent = 'Connected Successfully';
+                        connectionStatus.className = 'text-sm font-semibold text-green-600';
+                        
+                        btn.classList.replace('bg-amber-50', 'bg-green-50');
+                        btn.classList.replace('border-amber-300', 'border-green-400');
+                        btn.classList.replace('text-amber-700', 'text-green-700');
+                        btn.innerHTML = `Connected ✓`;
+                        
+                        ledBtn.classList.remove('hidden');
+                    }
+                }, 2000);
+            });
         });
 
         // --- LED Toggle Logic ---
         ledBtn.addEventListener('click', () => {
             showResetButton();
-            
             if (ledBtn.dataset.state === 'off') {
-                // Turn LED On
                 ledBtn.dataset.state = 'on';
                 ledBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Turn LED Off';
                 ledBtn.classList.replace('bg-amber-500', 'bg-green-500');
                 ledBtn.classList.replace('hover:bg-amber-600', 'hover:bg-green-600');
             } else {
-                // Turn LED Off
                 ledBtn.dataset.state = 'off';
                 ledBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Turn LED On';
                 ledBtn.classList.replace('bg-green-500', 'bg-amber-500');
@@ -307,36 +389,30 @@
         resetBtn.addEventListener('click', () => {
             if (fetchTimeout) clearTimeout(fetchTimeout);
             if (connectionTimeout) clearTimeout(connectionTimeout);
+            isProcessing = false;
 
-            // Reset Inputs
-            memoSelect.value = '';
+            // Reset Inputs & Visibilities
             memoInput.value = '';
-            rfidReader.value = '';
-            rfidReader.disabled = false;
-            
-            // Reset Visibilities
             hideGlobalAlert();
-            fetchBtn.classList.remove('hidden');
-            fetchBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Fetch Data Block';
-            fetchBtn.disabled = false;
-            fetchBtn.classList.remove('opacity-75', 'cursor-not-allowed');
-
             successSection.classList.add('hidden');
-            connectBtn.classList.remove('hidden');
-            connectingBadge.classList.add('hidden');
-            connectingBadge.classList.remove('flex');
-            ledBtn.classList.add('hidden');
             resetBtn.classList.add('hidden'); 
             
-            // Reset Status Text
-            connectionStatus.textContent = 'Awaiting Hardware';
-            connectionStatus.className = 'text-sm font-semibold text-gray-400';
-            
-            // Reset LED button visuals and state
+            // Restore manual fetch
+            fetchBtn.innerHTML = 'Fetch';
+            fetchBtn.disabled = false;
+            Array.from(memoButtonsContainer.children).forEach(b => b.disabled = false);
+
+            // Restore LED
             ledBtn.dataset.state = 'off';
             ledBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Turn LED On';
             ledBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
             ledBtn.classList.add('bg-amber-500', 'hover:bg-amber-600');
+            
+            resetHardwareUI();
+            
+            // Ensure memos render with correct times
+            renderMemos();
+            lastActivityTime = Date.now();
         });
     </script>
 </body>
