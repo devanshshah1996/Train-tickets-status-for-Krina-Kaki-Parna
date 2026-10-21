@@ -201,12 +201,13 @@
         });
         rfidReader.addEventListener('change', showResetButton);
 
-        // --- Fetch Logic with Timeout/Error Simulation ---
+        // --- Fetch Logic with Specific Error Trigger for M-8897 ---
         fetchBtn.addEventListener('click', () => {
             showResetButton(); 
             hideGlobalAlert();
             
-            if (!memoInput.value.trim()) {
+            const memoVal = memoInput.value.trim();
+            if (!memoVal) {
                 showGlobalAlert('error', 'Please enter or select a memo number.');
                 return;
             }
@@ -219,8 +220,8 @@
             if (fetchTimeout) clearTimeout(fetchTimeout);
 
             fetchTimeout = setTimeout(() => {
-                // SIMULATION: 20% chance the fetch fails to demonstrate error handling
-                const isError = Math.random() < 0.2; 
+                // SPECIFIC ERROR CONDITION: Memo 8897 fails to fetch
+                const isError = (memoVal === 'M-8897'); 
 
                 // Reset button background state
                 fetchBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Fetch Data Block';
@@ -228,7 +229,7 @@
                 fetchBtn.classList.remove('opacity-75', 'cursor-not-allowed');
 
                 if (isError) {
-                    showGlobalAlert('error', 'Network Timeout: Failed to fetch memo data.');
+                    showGlobalAlert('error', 'Network Timeout: Failed to fetch memo M-8897.');
                     successSection.classList.add('hidden');
                 } else {
                     fetchBtn.classList.add('hidden'); 
@@ -238,11 +239,12 @@
             }, 1500);
         });
 
-        // --- Connection Logic with Error Simulation ---
+        // --- Connection Logic with Specific Error Trigger for Reader 2 ---
         connectBtn.addEventListener('click', () => {
             showResetButton();
             
-            if (!rfidReader.value) {
+            const selectedReader = rfidReader.value;
+            if (!selectedReader) {
                 showGlobalAlert('error', 'Please select an RFID reader from the dropdown.');
                 return;
             }
@@ -255,7 +257,7 @@
             
             connectionStatus.textContent = 'Establishing connection...';
             connectionStatus.className = 'text-sm font-semibold text-amber-600 animate-pulse';
-            ledBtn.classList.add('hidden'); // Ensure LED is hidden during retry
+            ledBtn.classList.add('hidden'); 
 
             if (connectionTimeout) clearTimeout(connectionTimeout);
 
@@ -264,11 +266,11 @@
                 connectingBadge.classList.add('hidden');
                 connectingBadge.classList.remove('flex');
                 
-                // SIMULATION: 20% chance hardware connection fails
-                const isError = Math.random() < 0.2; 
+                // SPECIFIC ERROR CONDITION: Reader 2 (Desk) fails to connect
+                const isError = (selectedReader === 'reader2'); 
                 
                 if (isError) {
-                    connectionStatus.textContent = 'Connection Timeout - Hardware not responding';
+                    connectionStatus.textContent = 'Connection Timeout - Reader 2 (Desk) not responding';
                     connectionStatus.className = 'text-sm font-semibold text-red-600';
                     
                     // Allow retry
