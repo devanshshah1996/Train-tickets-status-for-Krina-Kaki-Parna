@@ -133,4 +133,203 @@
         const now = new Date();
         const memos = [
             { id: 'M-8899', timestamp: new Date(now.getTime() - 1000 * 60 * 15) },
-            { id: 'M-8898', timestamp: new Date(now.getTime() - 1000 *
+            { id: 'M-8898', timestamp: new Date(now.getTime() - 1000 * 60 * 45) },
+            { id: 'M-8897', timestamp: new Date(now.getTime() - 1000 * 60 * 60 * 3) }
+        ];
+
+        // DOM Elements
+        const memoSelect = document.getElementById('recent-memos');
+        const memoInput = document.getElementById('memo-input');
+        const fetchBtn = document.getElementById('fetch-btn');
+        const successSection = document.getElementById('success-section');
+        const rfidReader = document.getElementById('rfid-reader');
+        const connectBtn = document.getElementById('connect-btn');
+        const connectingBadge = document.getElementById('connecting-badge');
+        const connectionStatus = document.getElementById('connection-status');
+        const ledBtn = document.getElementById('led-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        
+        // Alert Elements
+        const globalAlert = document.getElementById('global-alert');
+        const globalAlertIcon = document.getElementById('global-alert-icon');
+        const globalAlertText = document.getElementById('global-alert-text');
+        
+        let connectionTimeout = null; 
+        let fetchTimeout = null;
+
+        // Populate Recent Memos
+        memos.forEach(memo => {
+            const option = document.createElement('option');
+            option.value = memo.id;
+            const timeString = memo.timestamp.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            const dateString = memo.timestamp.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            option.textContent = `${memo.id} - ${dateString}, ${timeString}`;
+            memoSelect.appendChild(option);
+        });
+
+        // --- Alert Handlers ---
+        const showGlobalAlert = (type, message) => {
+            globalAlert.classList.remove('hidden');
+            if (type === 'success') {
+                globalAlert.className = 'px-4 py-3 rounded-lg relative mb-4 flex items-center justify-center gap-2 border mt-4 bg-green-50 border-green-200 text-green-700 transition-all';
+                globalAlertIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
+            } else if (type === 'error') {
+                globalAlert.className = 'px-4 py-3 rounded-lg relative mb-4 flex items-center justify-center gap-2 border mt-4 bg-red-50 border-red-200 text-red-700 transition-all';
+                globalAlertIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
+            }
+            globalAlertText.textContent = message;
+        };
+
+        const hideGlobalAlert = () => {
+            globalAlert.classList.add('hidden');
+        };
+
+        // --- Global Activity Tracker for Reset Button ---
+        const showResetButton = () => {
+            resetBtn.classList.remove('hidden');
+        };
+
+        // Attach to all inputs to show reset button immediately
+        memoSelect.addEventListener('change', (e) => {
+            memoInput.value = e.target.value;
+            showResetButton();
+            hideGlobalAlert();
+        });
+        memoInput.addEventListener('input', () => {
+            showResetButton();
+            hideGlobalAlert();
+        });
+        rfidReader.addEventListener('change', showResetButton);
+
+        // --- Fetch Logic with Timeout/Error Simulation ---
+        fetchBtn.addEventListener('click', () => {
+            showResetButton(); 
+            hideGlobalAlert();
+            
+            if (!memoInput.value.trim()) {
+                showGlobalAlert('error', 'Please enter or select a memo number.');
+                return;
+            }
+            
+            // Set Loading UI
+            fetchBtn.innerHTML = '<svg class="animate-spin w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="4" stroke-dasharray="32" stroke-linecap="round"></circle></svg> Fetching...';
+            fetchBtn.disabled = true;
+            fetchBtn.classList.add('opacity-75', 'cursor-not-allowed');
+            
+            if (fetchTimeout) clearTimeout(fetchTimeout);
+
+            fetchTimeout = setTimeout(() => {
+                // SIMULATION: 20% chance the fetch fails to demonstrate error handling
+                const isError = Math.random() < 0.2; 
+
+                // Reset button background state
+                fetchBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Fetch Data Block';
+                fetchBtn.disabled = false;
+                fetchBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+
+                if (isError) {
+                    showGlobalAlert('error', 'Network Timeout: Failed to fetch memo data.');
+                    successSection.classList.add('hidden');
+                } else {
+                    fetchBtn.classList.add('hidden'); 
+                    showGlobalAlert('success', 'Fetch Successful');
+                    successSection.classList.remove('hidden');
+                }
+            }, 1500);
+        });
+
+        // --- Connection Logic with Error Simulation ---
+        connectBtn.addEventListener('click', () => {
+            showResetButton();
+            
+            if (!rfidReader.value) {
+                showGlobalAlert('error', 'Please select an RFID reader from the dropdown.');
+                return;
+            }
+
+            // Step 1: Connecting State UI
+            connectBtn.classList.add('hidden'); 
+            connectingBadge.classList.remove('hidden'); 
+            connectingBadge.classList.add('flex');
+            rfidReader.disabled = true; 
+            
+            connectionStatus.textContent = 'Establishing connection...';
+            connectionStatus.className = 'text-sm font-semibold text-amber-600 animate-pulse';
+            ledBtn.classList.add('hidden'); // Ensure LED is hidden during retry
+
+            if (connectionTimeout) clearTimeout(connectionTimeout);
+
+            // Step 2: Resolve Connection
+            connectionTimeout = setTimeout(() => {
+                connectingBadge.classList.add('hidden');
+                connectingBadge.classList.remove('flex');
+                
+                // SIMULATION: 20% chance hardware connection fails
+                const isError = Math.random() < 0.2; 
+                
+                if (isError) {
+                    connectionStatus.textContent = 'Connection Timeout - Hardware not responding';
+                    connectionStatus.className = 'text-sm font-semibold text-red-600';
+                    
+                    // Allow retry
+                    connectBtn.classList.remove('hidden'); 
+                    rfidReader.disabled = false;
+                } else {
+                    connectionStatus.textContent = 'Connected Successfully';
+                    connectionStatus.className = 'text-sm font-semibold text-green-600';
+                    ledBtn.classList.remove('hidden'); 
+                }
+            }, 2500);
+        });
+
+        // --- LED Logic ---
+        ledBtn.addEventListener('click', () => {
+            showResetButton();
+            ledBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> LED is ON';
+            ledBtn.classList.replace('bg-amber-500', 'bg-green-500');
+            ledBtn.classList.replace('hover:bg-amber-600', 'hover:bg-green-600');
+            
+            setTimeout(() => {
+                ledBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Turn LED On';
+                ledBtn.classList.replace('bg-green-500', 'bg-amber-500');
+                ledBtn.classList.replace('hover:bg-green-600', 'hover:bg-amber-600');
+            }, 3000);
+        });
+
+        // --- Reset Logic ---
+        resetBtn.addEventListener('click', () => {
+            if (fetchTimeout) clearTimeout(fetchTimeout);
+            if (connectionTimeout) clearTimeout(connectionTimeout);
+
+            // Reset Inputs
+            memoSelect.value = '';
+            memoInput.value = '';
+            rfidReader.value = '';
+            rfidReader.disabled = false;
+            
+            // Reset Visibilities
+            hideGlobalAlert();
+            fetchBtn.classList.remove('hidden');
+            fetchBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Fetch Data Block';
+            fetchBtn.disabled = false;
+            fetchBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+
+            successSection.classList.add('hidden');
+            connectBtn.classList.remove('hidden');
+            connectingBadge.classList.add('hidden');
+            connectingBadge.classList.remove('flex');
+            ledBtn.classList.add('hidden');
+            resetBtn.classList.add('hidden'); 
+            
+            // Reset Status Text
+            connectionStatus.textContent = 'Awaiting Hardware';
+            connectionStatus.className = 'text-sm font-semibold text-gray-400';
+            
+            // Reset LED button visuals
+            ledBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Turn LED On';
+            ledBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+            ledBtn.classList.add('bg-amber-500', 'hover:bg-amber-600');
+        });
+    </script>
+</body>
+</html>
