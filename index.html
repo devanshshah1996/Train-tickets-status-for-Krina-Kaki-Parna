@@ -18,7 +18,7 @@
             overflow-y: auto; 
             display: flex; 
             flex-direction: column; 
-            justify-content: flex-start; /* Changed from center to accommodate larger list */
+            justify-content: flex-start; 
             align-items: center; 
             background-color: #f8fafc; 
             padding: 2rem 1rem; 
@@ -31,26 +31,15 @@
             background-color: #e2e8f0; 
             border-top: 2px solid #cbd5e1; 
         }
-        /* Custom scrollbars */
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        
-        /* Checkbox styling */
-        .piece-checkbox:checked + div .status-badge {
-            background-color: #dcfce7;
-            color: #166534;
-        }
-        .piece-checkbox:checked + div .status-text {
-            text-decoration: line-through;
-            color: #94a3b8;
-        }
     </style>
 </head>
 <body>
     <div class="top-section">
-        <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg w-full max-w-lg border border-gray-100 my-auto">
+        <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg w-full max-w-lg border border-gray-100 my-auto flex-shrink-0">
             <div class="mb-5 text-center">
                 <h1 class="text-2xl font-bold text-gray-800">Memo Retrieval System</h1>
                 <p class="text-sm text-gray-500 mt-1">Select a recent memo to issue inventory, or enter manually.</p>
@@ -58,7 +47,6 @@
 
             <!-- MEMO SELECTION WRAPPER -->
             <div id="memo-selection-wrapper">
-                <!-- Recent Memos Action Buttons -->
                 <div class="mb-6">
                     <div class="flex justify-between items-center mb-2">
                         <label class="block text-sm font-bold text-gray-800">Recent Issued Memos</label>
@@ -78,7 +66,6 @@
                     <div class="flex-grow border-t border-gray-200"></div>
                 </div>
 
-                <!-- Manual Fetch Section -->
                 <div class="flex flex-col sm:flex-row gap-3 mb-2">
                     <div class="w-full relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -86,14 +73,13 @@
                         </div>
                         <input type="text" id="memo-input" placeholder="Enter 7-digit memo (e.g., 3124567)" class="w-full pl-9 border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 border outline-none text-sm text-gray-700 disabled:bg-gray-100 disabled:text-gray-400">
                     </div>
-                    
                     <button id="fetch-btn" class="sm:w-32 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-200 shadow-sm flex justify-center items-center gap-2">
                         Fetch
                     </button>
                 </div>
             </div>
 
-            <!-- ACTIVE MEMO DETAILS (Hidden initially) -->
+            <!-- ACTIVE MEMO DETAILS -->
             <div id="active-memo-details" class="hidden bg-blue-50 border border-blue-200 rounded-xl p-5 mb-2 shadow-sm relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-16 h-16 bg-blue-100 rounded-bl-full -mr-8 -mt-8 z-0"></div>
                 <div class="relative z-10">
@@ -104,14 +90,13 @@
                     <h2 id="active-memo-id" class="text-2xl font-black text-blue-900 font-mono tracking-tight"></h2>
                     <p id="active-memo-customer" class="text-sm font-semibold text-blue-700 mt-1"></p>
                     
-                    <!-- PIECES INVENTORY LIST -->
                     <div class="mt-4 border-t border-blue-200 pt-4">
                         <div class="flex justify-between items-center mb-3">
                             <span class="text-xs font-bold text-blue-800 uppercase tracking-wider flex items-center gap-1">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                                 Piece Details
                             </span>
-                            <span id="pieces-progress" class="text-xs font-bold text-blue-700 bg-white px-2.5 py-1 rounded-full border border-blue-200 shadow-sm">0 / 0 Found</span>
+                            <span id="pieces-progress" class="text-xs font-bold text-blue-700 bg-white px-2.5 py-1 rounded-full border border-blue-200 shadow-sm transition-colors">0 / 0 Found</span>
                         </div>
                         
                         <!-- Scrollable List Container -->
@@ -131,8 +116,6 @@
             <!-- Hardware Section -->
             <div id="success-section" class="hidden border-t border-gray-100 pt-5 mt-4">
                 <div class="flex flex-col gap-4">
-                    
-                    <!-- DEVICE SELECTION WRAPPER -->
                     <div id="device-selection-wrapper">
                         <label class="block text-sm font-bold text-gray-800 mb-3">Select Hardware Interface</label>
                         <div class="flex gap-2">
@@ -146,14 +129,12 @@
                                 Reader 3 (Sec)
                             </button>
                         </div>
-                        
                         <div class="flex items-center gap-2 mt-3">
                             <span class="text-sm font-medium text-gray-500">Status:</span>
                             <span id="connection-status-temp" class="text-sm font-semibold text-gray-400">Awaiting Hardware Selection</span>
                         </div>
                     </div>
 
-                    <!-- ACTIVE DEVICE DISPLAY -->
                     <div id="active-device-display" class="hidden flex items-center justify-between bg-green-50 border border-green-200 p-3.5 rounded-lg">
                         <div class="flex items-center gap-2.5">
                             <span class="flex h-3 w-3 relative">
@@ -165,7 +146,6 @@
                         <span class="text-xs font-bold text-green-700 uppercase tracking-wide bg-green-100 px-2 py-1 rounded">Connected</span>
                     </div>
 
-                    <!-- LED Button -->
                     <button id="led-btn" data-state="off" class="hidden w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 px-4 rounded-lg transition duration-200 shadow-md flex justify-center items-center gap-2 mt-1">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         Turn LED On
@@ -183,7 +163,6 @@
         </div>
     </div>
 
-    <!-- 20% Bottom Inactive Area -->
     <div class="bottom-section">
         <h2 class="text-xl sm:text-2xl font-bold text-gray-400 uppercase tracking-widest text-center px-4">
             Venus Jewel Diamond Finding Form
@@ -191,7 +170,7 @@
     </div>
 
     <script>
-        // Data Initialization function for diamond pieces
+        // Data generation logic for pieces
         const generatePieces = (count) => {
             const shapes = ['Round', 'Princess', 'Oval', 'Cushion', 'Emerald'];
             const colors = ['D', 'E', 'F', 'G', 'H'];
@@ -202,10 +181,10 @@
                 p.push({
                     id: 'VD' + Math.floor(100000 + Math.random() * 900000),
                     shape: shapes[Math.floor(Math.random() * shapes.length)],
-                    carat: (Math.random() * 2 + 0.5).toFixed(2), // 0.50 to 2.50
+                    carat: (Math.random() * 2 + 0.5).toFixed(2),
                     color: colors[Math.floor(Math.random() * colors.length)],
                     clarity: clarities[Math.floor(Math.random() * clarities.length)],
-                    found: false
+                    status: 'pending' // Options: 'pending', 'found', 'not-found'
                 });
             }
             return p;
@@ -218,10 +197,9 @@
             { id: '3000003', customer: 'Error Test Co.', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), pieces: [] } 
         ];
 
-        // Global State for Active Pieces
         let activePieces = [];
+        let isSorted = false;
 
-        // DOM Elements
         const memoSelectionWrapper = document.getElementById('memo-selection-wrapper');
         const activeMemoDetails = document.getElementById('active-memo-details');
         const memoButtonsContainer = document.getElementById('memo-buttons-container');
@@ -251,11 +229,9 @@
             window.addEventListener(evt, updateActivity)
         );
 
-        // --- Render Memos ---
         const renderMemos = () => {
             memoButtonsContainer.innerHTML = '';
             const now = Date.now();
-
             memos.forEach(memo => {
                 const isNew = (now - memo.timestamp.getTime()) <= (5 * 60 * 1000); 
                 const timeString = memo.timestamp.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -280,7 +256,6 @@
 
         renderMemos();
 
-        // Auto Refresh
         setInterval(() => {
             if (!isProcessing && !memoSelectionWrapper.classList.contains('hidden') && (Date.now() - lastActivityTime >= 5000)) {
                 refreshIndicator.classList.remove('opacity-0');
@@ -296,7 +271,6 @@
             }
         }, 5000);
 
-        // --- Alert Handlers ---
         const showGlobalAlert = (type, message) => {
             globalAlert.classList.remove('hidden');
             globalAlert.classList.add('flex');
@@ -317,72 +291,105 @@
         const showResetButton = () => { resetBtn.classList.remove('hidden'); };
         memoInput.addEventListener('input', () => { showResetButton(); hideGlobalAlert(); });
 
-        // --- Render Pieces for Active Memo ---
         const updatePiecesProgress = () => {
-            const foundCount = activePieces.filter(p => p.found).length;
+            const foundCount = activePieces.filter(p => p.status === 'found').length;
+            const notFoundCount = activePieces.filter(p => p.status === 'not-found').length;
             const totalCount = activePieces.length;
+            
             piecesProgress.textContent = `${foundCount} / ${totalCount} Found`;
             
             if (foundCount === totalCount && totalCount > 0) {
                 piecesProgress.className = "text-xs font-bold text-green-800 bg-green-100 px-2.5 py-1 rounded-full border border-green-300 shadow-sm transition-colors";
+            } else if (notFoundCount > 0) {
+                piecesProgress.className = "text-xs font-bold text-red-700 bg-red-50 px-2.5 py-1 rounded-full border border-red-200 shadow-sm transition-colors";
             } else {
                 piecesProgress.className = "text-xs font-bold text-blue-700 bg-white px-2.5 py-1 rounded-full border border-blue-200 shadow-sm transition-colors";
             }
         };
 
-        const renderActiveMemoPieces = (pieces) => {
-            // Sort: Shape (Desc), Carat (Desc), Color (Desc), Clarity (Desc)
-            activePieces = [...pieces].sort((a, b) => {
-                // Descending string compare for shape (e.g. Round > Princess > Oval)
-                if (a.shape !== b.shape) return b.shape.localeCompare(a.shape);
-                // Descending numerical compare for carat
-                if (parseFloat(a.carat) !== parseFloat(b.carat)) return parseFloat(b.carat) - parseFloat(a.carat);
-                // Descending string compare for color (Z -> A)
-                if (a.color !== b.color) return b.color.localeCompare(a.color);
-                // Descending string compare for clarity
-                return b.clarity.localeCompare(a.clarity);
-            });
+        const renderActiveMemoPieces = () => {
+            if(!isSorted) {
+                activePieces.sort((a, b) => {
+                    if (a.shape !== b.shape) return b.shape.localeCompare(a.shape);
+                    if (parseFloat(a.carat) !== parseFloat(b.carat)) return parseFloat(b.carat) - parseFloat(a.carat);
+                    if (a.color !== b.color) return b.color.localeCompare(a.color);
+                    return b.clarity.localeCompare(a.clarity);
+                });
+                isSorted = true;
+            }
 
             memoPiecesList.innerHTML = '';
             
             activePieces.forEach((piece, index) => {
-                const label = document.createElement('label');
-                label.className = "flex items-center p-3 bg-white border border-blue-100 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors shadow-sm relative";
+                const row = document.createElement('div');
                 
-                label.innerHTML = `
-                    <input type="checkbox" class="piece-checkbox w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 transition-all" ${piece.found ? 'checked' : ''}>
-                    <div class="ml-3 flex-1 flex justify-between items-center">
-                        <div class="flex flex-col">
-                            <span class="status-text font-mono font-bold text-gray-800 text-sm transition-all">${piece.id}</span>
-                            <span class="status-text text-xs text-gray-500 font-medium transition-all mt-0.5">
-                                ${piece.shape} • <span class="text-blue-600 font-bold">${piece.carat}ct</span> • ${piece.color} • ${piece.clarity}
-                            </span>
+                let rowClass = "flex items-center p-3 border rounded-lg transition-colors shadow-sm relative ";
+                let foundIconClass = "w-6 h-6 rounded border-2 flex items-center justify-center transition-colors cursor-pointer ";
+                let notFoundIconClass = "w-6 h-6 rounded border-2 flex items-center justify-center transition-colors cursor-pointer ";
+                let textClass = "font-mono font-bold text-sm transition-all ";
+                let badgeHTML = "";
+                
+                if (piece.status === 'found') {
+                    rowClass += "bg-green-50 border-green-200";
+                    foundIconClass += "bg-green-500 border-green-500 text-white";
+                    notFoundIconClass += "border-gray-300 text-transparent hover:border-red-400 bg-white";
+                    textClass += "text-green-800 line-through opacity-70";
+                    badgeHTML = `<span class="hidden sm:inline-block ml-2 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide bg-green-200 text-green-800">Found</span>`;
+                } else if (piece.status === 'not-found') {
+                    rowClass += "bg-red-50 border-red-200";
+                    notFoundIconClass += "bg-red-500 border-red-500 text-white";
+                    foundIconClass += "border-gray-300 text-transparent hover:border-green-400 bg-white";
+                    textClass += "text-red-800 line-through opacity-70";
+                    badgeHTML = `<span class="hidden sm:inline-block ml-2 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide bg-red-200 text-red-800">Missing</span>`;
+                } else {
+                    rowClass += "bg-white border-blue-100 hover:bg-blue-50";
+                    foundIconClass += "border-gray-300 text-transparent hover:border-green-400 bg-white";
+                    notFoundIconClass += "border-gray-300 text-transparent hover:border-red-400 bg-white";
+                    textClass += "text-gray-800";
+                }
+
+                row.className = rowClass;
+                
+                row.innerHTML = `
+                    <button class="flex-shrink-0 mr-3 found-btn focus:outline-none focus:ring-2 focus:ring-green-400 rounded transition-shadow" title="Mark as Found">
+                        <div class="${foundIconClass}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                         </div>
-                        <span class="status-badge text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wide bg-gray-100 text-gray-500 transition-colors border border-transparent border-gray-200">
-                            ${piece.found ? 'Found' : 'Pending'}
+                    </button>
+
+                    <div class="flex-1 flex flex-col items-center sm:items-start text-center sm:text-left">
+                        <div class="flex items-center justify-center sm:justify-start">
+                            <span class="${textClass}">${piece.id}</span>
+                            ${badgeHTML}
+                        </div>
+                        <span class="text-xs ${piece.status === 'pending' ? 'text-gray-500' : 'text-gray-500 opacity-70'} font-medium transition-all mt-0.5">
+                            ${piece.shape} • <span class="${piece.status === 'pending' ? 'text-blue-600' : ''} font-bold">${piece.carat}ct</span> • ${piece.color} • ${piece.clarity}
                         </span>
                     </div>
+
+                    <button class="flex-shrink-0 ml-3 not-found-btn focus:outline-none focus:ring-2 focus:ring-red-400 rounded transition-shadow" title="Mark as Not Found">
+                        <div class="${notFoundIconClass}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </div>
+                    </button>
                 `;
 
-                // Handle Checkbox Change
-                const checkbox = label.querySelector('input');
-                checkbox.addEventListener('change', (e) => {
-                    activePieces[index].found = e.target.checked;
-                    
-                    // Update badge text dynamically based on CSS sibling selectors handling colors
-                    const badge = label.querySelector('.status-badge');
-                    badge.textContent = e.target.checked ? 'Found' : 'Pending';
-                    
-                    updatePiecesProgress();
+                row.querySelector('.found-btn').addEventListener('click', () => {
+                    activePieces[index].status = activePieces[index].status === 'found' ? 'pending' : 'found';
+                    renderActiveMemoPieces(); 
                 });
 
-                memoPiecesList.appendChild(label);
+                row.querySelector('.not-found-btn').addEventListener('click', () => {
+                    activePieces[index].status = activePieces[index].status === 'not-found' ? 'pending' : 'not-found';
+                    renderActiveMemoPieces();
+                });
+
+                memoPiecesList.appendChild(row);
             });
 
             updatePiecesProgress();
         };
 
-        // --- Core Fetch Logic ---
         const initiateFetch = (memoVal, clickedBtn = null) => {
             if (isProcessing) return;
             
@@ -425,17 +432,17 @@
                     const foundMemo = memos.find(m => m.id === memoVal);
                     const customer = foundMemo ? foundMemo.customer : 'Manual Entry Client';
                     const time = foundMemo ? foundMemo.timestamp : new Date();
-                    // If manually entered and not in array, generate random pieces
-                    const piecesToRender = foundMemo ? foundMemo.pieces : generatePieces(5); 
                     
-                    // Populate Active Memo UI
+                    isSorted = false;
+                    
+                    activePieces = JSON.parse(JSON.stringify(foundMemo ? foundMemo.pieces : generatePieces(5))); 
+                    
                     document.getElementById('active-memo-id').textContent = memoVal;
                     document.getElementById('active-memo-customer').textContent = customer;
                     document.getElementById('active-memo-time').textContent = time.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
                     
-                    renderActiveMemoPieces(piecesToRender);
+                    renderActiveMemoPieces();
                     
-                    // HIDE Selection, SHOW Active Info
                     memoSelectionWrapper.classList.add('hidden');
                     activeMemoDetails.classList.remove('hidden');
                     
@@ -448,7 +455,6 @@
         fetchBtn.addEventListener('click', () => initiateFetch(memoInput.value));
         memoInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') initiateFetch(memoInput.value); });
 
-        // --- Hardware Connection Logic ---
         const resetHardwareUI = () => {
             deviceSelectionWrapper.classList.remove('hidden');
             activeDeviceDisplay.classList.add('hidden');
@@ -521,7 +527,6 @@
             });
         });
 
-        // --- LED Toggle Logic ---
         ledBtn.addEventListener('click', () => {
             if (ledBtn.dataset.state === 'off') {
                 ledBtn.dataset.state = 'on';
@@ -536,23 +541,20 @@
             }
         });
 
-        // --- Reset Logic ---
         resetBtn.addEventListener('click', () => {
             if (fetchTimeout) clearTimeout(fetchTimeout);
             if (connectionTimeout) clearTimeout(connectionTimeout);
             isProcessing = false;
 
-            // Clear Active pieces array
             activePieces = [];
             memoPiecesList.innerHTML = '';
+            isSorted = false;
 
-            // Reset States
             memoInput.value = '';
             memoInput.disabled = false;
             fetchBtn.innerHTML = 'Fetch';
             fetchBtn.disabled = false;
             
-            // Restore visibilities
             memoSelectionWrapper.classList.remove('hidden');
             activeMemoDetails.classList.add('hidden');
             
@@ -560,7 +562,6 @@
             successSection.classList.add('hidden');
             resetBtn.classList.add('hidden'); 
             
-            // Restore LED
             ledBtn.dataset.state = 'off';
             ledBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Turn LED On';
             ledBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
