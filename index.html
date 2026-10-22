@@ -96,7 +96,10 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                                 Piece Details
                             </span>
-                            <span id="pieces-progress" class="text-xs font-bold text-blue-700 bg-white px-2.5 py-1 rounded-full border border-blue-200 shadow-sm transition-colors">0 / 0 Found</span>
+                            <div class="flex gap-2 items-center">
+                                <span id="pieces-progress" class="text-xs font-bold text-blue-700 bg-white px-2.5 py-1 rounded-full border border-blue-200 shadow-sm transition-colors">0 / 0 Found</span>
+                                <span id="pieces-not-found" class="hidden text-xs font-bold text-red-700 bg-red-50 px-2.5 py-1 rounded-full border border-red-200 shadow-sm transition-colors">0 Not Found</span>
+                            </div>
                         </div>
                         
                         <!-- Scrollable List Container -->
@@ -205,6 +208,7 @@
         const memoButtonsContainer = document.getElementById('memo-buttons-container');
         const memoPiecesList = document.getElementById('memo-pieces-list');
         const piecesProgress = document.getElementById('pieces-progress');
+        const piecesNotFound = document.getElementById('pieces-not-found');
         const memoInput = document.getElementById('memo-input');
         const fetchBtn = document.getElementById('fetch-btn');
         
@@ -300,10 +304,15 @@
             
             if (foundCount === totalCount && totalCount > 0) {
                 piecesProgress.className = "text-xs font-bold text-green-800 bg-green-100 px-2.5 py-1 rounded-full border border-green-300 shadow-sm transition-colors";
-            } else if (notFoundCount > 0) {
-                piecesProgress.className = "text-xs font-bold text-red-700 bg-red-50 px-2.5 py-1 rounded-full border border-red-200 shadow-sm transition-colors";
             } else {
                 piecesProgress.className = "text-xs font-bold text-blue-700 bg-white px-2.5 py-1 rounded-full border border-blue-200 shadow-sm transition-colors";
+            }
+
+            if (notFoundCount > 0) {
+                piecesNotFound.textContent = `${notFoundCount} Not Found`;
+                piecesNotFound.classList.remove('hidden');
+            } else {
+                piecesNotFound.classList.add('hidden');
             }
         };
 
@@ -332,19 +341,19 @@
                 if (piece.status === 'found') {
                     rowClass += "bg-green-50 border-green-200";
                     foundIconClass += "bg-green-500 border-green-500 text-white";
-                    notFoundIconClass += "border-gray-300 text-transparent hover:border-red-400 bg-white";
+                    notFoundIconClass += "border-gray-300 text-gray-300 hover:border-red-400 hover:text-red-400 bg-white";
                     textClass += "text-green-800 line-through opacity-70";
                     badgeHTML = `<span class="hidden sm:inline-block ml-2 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide bg-green-200 text-green-800">Found</span>`;
                 } else if (piece.status === 'not-found') {
                     rowClass += "bg-red-50 border-red-200";
                     notFoundIconClass += "bg-red-500 border-red-500 text-white";
-                    foundIconClass += "border-gray-300 text-transparent hover:border-green-400 bg-white";
+                    foundIconClass += "border-gray-300 text-gray-300 hover:border-green-400 hover:text-green-400 bg-white";
                     textClass += "text-red-800 line-through opacity-70";
                     badgeHTML = `<span class="hidden sm:inline-block ml-2 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide bg-red-200 text-red-800">Missing</span>`;
                 } else {
                     rowClass += "bg-white border-blue-100 hover:bg-blue-50";
-                    foundIconClass += "border-gray-300 text-transparent hover:border-green-400 bg-white";
-                    notFoundIconClass += "border-gray-300 text-transparent hover:border-red-400 bg-white";
+                    foundIconClass += "border-gray-300 text-gray-300 hover:border-green-400 hover:text-green-400 bg-white";
+                    notFoundIconClass += "border-gray-300 text-gray-300 hover:border-red-400 hover:text-red-400 bg-white";
                     textClass += "text-gray-800";
                 }
 
