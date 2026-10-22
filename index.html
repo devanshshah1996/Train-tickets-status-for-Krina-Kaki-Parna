@@ -32,6 +32,12 @@
 <body>
     <div class="main-section">
         <div class="bg-white p-5 sm:p-6 rounded-xl shadow-lg w-full max-w-lg border border-gray-100 my-auto flex-shrink-0">
+            <!-- MINIMIZED TITLE SECTION -->
+            <div class="mb-3 text-center">
+                <h1 class="text-xl font-bold text-gray-800 leading-tight">Memo Retrieval System</h1>
+                <p class="text-xs text-gray-500 mt-0.5">Select a recent memo to issue inventory, or enter manually.</p>
+            </div>
+
             <!-- MEMO SELECTION WRAPPER -->
             <div id="memo-selection-wrapper">
                 <div class="mb-5">
@@ -83,14 +89,15 @@
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                                 Piece Details
                             </span>
-                            <div class="flex gap-1.5 items-center">
-                                <span id="pieces-progress" class="text-[10px] font-bold text-blue-700 bg-white px-2 py-0.5 rounded-full border border-blue-200 shadow-sm transition-colors">0 / 0 Found</span>
-                                <span id="pieces-not-found" class="hidden text-[10px] font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded-full border border-red-200 shadow-sm transition-colors">0 Not Found</span>
-                            </div>
+                        </div>
+                        
+                        <!-- TABS BAR -->
+                        <div id="memo-tabs" class="flex gap-1.5 mb-2.5 overflow-x-auto pb-1">
+                            <!-- Tabs populated dynamically based on data availability -->
                         </div>
                         
                         <!-- Scrollable List Container -->
-                        <div id="memo-pieces-list" class="flex flex-col gap-1.5 max-h-60 overflow-y-auto custom-scrollbar pr-1.5 pb-1">
+                        <div id="memo-pieces-list" class="flex flex-col gap-1.5 max-h-56 overflow-y-auto custom-scrollbar pr-1.5 pb-1">
                             <!-- Piece items populated via JS -->
                         </div>
                     </div>
@@ -181,14 +188,15 @@
         ];
 
         let activePieces = [];
+        let activeMemoId = '';
+        let currentTab = 'all'; // 'all', 'pending', 'found', 'not-found'
         let isSorted = false;
 
         const memoSelectionWrapper = document.getElementById('memo-selection-wrapper');
         const activeMemoDetails = document.getElementById('active-memo-details');
         const memoButtonsContainer = document.getElementById('memo-buttons-container');
         const memoPiecesList = document.getElementById('memo-pieces-list');
-        const piecesProgress = document.getElementById('pieces-progress');
-        const piecesNotFound = document.getElementById('pieces-not-found');
+        const memoTabs = document.getElementById('memo-tabs');
         const memoInput = document.getElementById('memo-input');
         const fetchBtn = document.getElementById('fetch-btn');
         
@@ -275,25 +283,75 @@
         const showResetButton = () => { resetBtn.classList.remove('hidden'); };
         memoInput.addEventListener('input', () => { showResetButton(); hideGlobalAlert(); });
 
-        const updatePiecesProgress = () => {
+        // Database persistence simulation using localStorage
+        const saveMemoStatusToDB = () => {
+            if (!activeMemoId) return;
+            const statusMap = activePieces.map(p => ({ id: p.id, status: p.status }));
+            localStorage.setItem('venus_memo_status_' + activeMemoId, JSON.stringify(statusMap));
+        };
+
+        const loadMemoStatusFromDB = (memoId, pieces) => {
+            const saved = localStorage.getItem('venus_memo_status_' + memoId);
+            if (!saved) return pieces;
+            try {
+                const statusMap = JSON.parse(saved);
+                return pieces.map(p => {
+                    const found = statusMap.find(s => s.id === p.id);
+                    if (found) p.status = found.status;
+                    return p;
+                });
+            } catch(e) {
+                return pieces;
+            }
+        };
+
+        const renderTabs = () => {
+            memoTabs.innerHTML = '';
+            
+            const allCount = activePieces.length;
+            const pendingCount = activePieces.filter(p => p.status === 'pending').length;
             const foundCount = activePieces.filter(p => p.status === 'found').length;
             const notFoundCount = activePieces.filter(p => p.status === 'not-found').length;
-            const totalCount = activePieces.length;
-            
-            piecesProgress.textContent = `${foundCount} / ${totalCount} Found`;
-            
-            if (foundCount === totalCount && totalCount > 0) {
-                piecesProgress.className = "text-[10px] font-bold text-green-800 bg-green-100 px-2 py-0.5 rounded-full border border-green-300 shadow-sm transition-colors";
-            } else {
-                piecesProgress.className = "text-[10px] font-bold text-blue-700 bg-white px-2 py-0.5 rounded-full border border-blue-200 shadow-sm transition-colors";
+
+            const tabsConfig = [
+                { id: 'all', label: 'All', count: allCount, show: allCount > 0 },
+                { id: 'pending', label: 'Pending', count: pendingCount, show: pendingCount > 0 },
+                { id: 'found', label: 'Found', count: foundCount, show: foundCount > 0 },
+                { id: 'not-found', label: 'Not Found', count: notFoundCount, show: notFoundCount > 0 }
+            ];
+
+            // Ensure currentTab is valid, fallback to first available tab if currentTab has 0 items
+            const activeTabConfig = tabsConfig.find(t => t.id === currentTab);
+            if (!activeTabConfig || !activeTabConfig.show) {
+                const firstAvailable = tabsConfig.find(t => t.show);
+                currentTab = firstAvailable ? firstAvailable.id : 'all';
             }
 
-            if (notFoundCount > 0) {
-                piecesNotFound.textContent = `${notFoundCount} Not Found`;
-                piecesNotFound.classList.remove('hidden');
-            } else {
-                piecesNotFound.classList.add('hidden');
-            }
+            tabsConfig.forEach(tab => {
+                if (!tab.show) return; // Tabs created only when there is data in it
+
+                const btn = document.createElement('button');
+                const isActive = currentTab === tab.id;
+                
+                btn.className = `px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border shadow-sm ${
+                    isActive 
+                        ? 'bg-blue-600 text-white border-blue-600 shadow' 
+                        : 'bg-white text-gray-700 border-gray-200 hover:bg-blue-50 hover:border-blue-300'
+                }`;
+
+                btn.innerHTML = `
+                    <span>${tab.label}</span>
+                    <span class="text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? 'bg-blue-700 text-white' : 'bg-gray-100 text-gray-600'}">${tab.count}</span>
+                `;
+
+                btn.onclick = () => {
+                    currentTab = tab.id;
+                    renderTabs();
+                    renderActiveMemoPieces();
+                };
+
+                memoTabs.appendChild(btn);
+            });
         };
 
         const renderActiveMemoPieces = () => {
@@ -307,9 +365,27 @@
                 isSorted = true;
             }
 
+            renderTabs(); // Refresh tab counts and visibility
+
             memoPiecesList.innerHTML = '';
             
-            activePieces.forEach((piece, index) => {
+            // Filter pieces based on currentTab
+            const filteredPieces = activePieces.filter(piece => {
+                if (currentTab === 'all') return true;
+                return piece.status === currentTab;
+            });
+
+            if (filteredPieces.length === 0) {
+                const emptyMsg = document.createElement('div');
+                emptyMsg.className = 'text-center py-6 text-xs text-gray-400 italic bg-white border border-gray-100 rounded-lg shadow-sm';
+                emptyMsg.textContent = `No items found in this tab.`;
+                memoPiecesList.appendChild(emptyMsg);
+                return;
+            }
+
+            filteredPieces.forEach((piece) => {
+                const index = activePieces.findIndex(p => p.id === piece.id);
+                
                 const row = document.createElement('div');
                 
                 let rowClass = "flex items-center p-2.5 border rounded-lg transition-colors shadow-sm relative ";
@@ -365,18 +441,18 @@
 
                 row.querySelector('.found-btn').addEventListener('click', () => {
                     activePieces[index].status = activePieces[index].status === 'found' ? 'pending' : 'found';
+                    saveMemoStatusToDB(); // Automatically saved into database (localStorage)
                     renderActiveMemoPieces(); 
                 });
 
                 row.querySelector('.not-found-btn').addEventListener('click', () => {
                     activePieces[index].status = activePieces[index].status === 'not-found' ? 'pending' : 'not-found';
+                    saveMemoStatusToDB(); // Automatically saved into database (localStorage)
                     renderActiveMemoPieces();
                 });
 
                 memoPiecesList.appendChild(row);
             });
-
-            updatePiecesProgress();
         };
 
         const initiateFetch = (memoVal, clickedBtn = null) => {
@@ -418,13 +494,16 @@
                 } else {
                     showGlobalAlert('success', `Data block fetched successfully.`);
                     
+                    activeMemoId = memoVal;
                     const foundMemo = memos.find(m => m.id === memoVal);
                     const customer = foundMemo ? foundMemo.customer : 'Manual Entry Client';
                     const time = foundMemo ? foundMemo.timestamp : new Date();
                     
                     isSorted = false;
+                    currentTab = 'all'; // Default to All tab upon opening
                     
-                    activePieces = JSON.parse(JSON.stringify(foundMemo ? foundMemo.pieces : generatePieces(5))); 
+                    let rawPieces = foundMemo ? foundMemo.pieces : generatePieces(5);
+                    activePieces = loadMemoStatusFromDB(memoVal, JSON.parse(JSON.stringify(rawPieces))); 
                     
                     document.getElementById('active-memo-id').textContent = memoVal;
                     document.getElementById('active-memo-customer').textContent = customer;
@@ -475,7 +554,7 @@
                 });
                 
                 btn.classList.replace('bg-gray-50', 'bg-amber-50');
-                btn.classList.replace('border-gray-200', 'border-amber-300');
+                btn.classList.replace('border-amber-300', 'border-amber-300');
                 btn.classList.replace('text-gray-400', 'text-amber-700');
                 
                 btn.innerHTML = `
@@ -536,7 +615,9 @@
             isProcessing = false;
 
             activePieces = [];
+            activeMemoId = '';
             memoPiecesList.innerHTML = '';
+            memoTabs.innerHTML = '';
             isSorted = false;
 
             memoInput.value = '';
