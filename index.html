@@ -18,10 +18,10 @@
             overflow-y: auto; 
             display: flex; 
             flex-direction: column; 
-            justify-content: center; 
+            justify-content: flex-start; /* Changed from center to accommodate larger list */
             align-items: center; 
             background-color: #f8fafc; 
-            padding: 1rem; 
+            padding: 2rem 1rem; 
         }
         .bottom-section { 
             height: 20vh; 
@@ -31,22 +31,32 @@
             background-color: #e2e8f0; 
             border-top: 2px solid #cbd5e1; 
         }
-        /* Custom scrollbar for memo list */
+        /* Custom scrollbars */
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Checkbox styling */
+        .piece-checkbox:checked + div .status-badge {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        .piece-checkbox:checked + div .status-text {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
     </style>
 </head>
 <body>
     <div class="top-section">
-        <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg w-full max-w-lg border border-gray-100">
+        <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg w-full max-w-lg border border-gray-100 my-auto">
             <div class="mb-5 text-center">
                 <h1 class="text-2xl font-bold text-gray-800">Memo Retrieval System</h1>
                 <p class="text-sm text-gray-500 mt-1">Select a recent memo to issue inventory, or enter manually.</p>
             </div>
 
-            <!-- MEMO SELECTION WRAPPER (Hides on fetch success) -->
+            <!-- MEMO SELECTION WRAPPER -->
             <div id="memo-selection-wrapper">
                 <!-- Recent Memos Action Buttons -->
                 <div class="mb-6">
@@ -88,11 +98,27 @@
                 <div class="absolute top-0 right-0 w-16 h-16 bg-blue-100 rounded-bl-full -mr-8 -mt-8 z-0"></div>
                 <div class="relative z-10">
                     <div class="flex justify-between items-start mb-2">
-                        <span class="text-xs font-bold text-blue-500 uppercase tracking-wider">Active Memo Data</span>
+                        <span class="text-xs font-bold text-blue-500 uppercase tracking-wider">Active Memo</span>
                         <span id="active-memo-time" class="text-xs text-blue-600 font-medium bg-blue-100 border border-blue-200 px-2 py-1 rounded"></span>
                     </div>
                     <h2 id="active-memo-id" class="text-2xl font-black text-blue-900 font-mono tracking-tight"></h2>
                     <p id="active-memo-customer" class="text-sm font-semibold text-blue-700 mt-1"></p>
+                    
+                    <!-- PIECES INVENTORY LIST -->
+                    <div class="mt-4 border-t border-blue-200 pt-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-bold text-blue-800 uppercase tracking-wider flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                Piece Details
+                            </span>
+                            <span id="pieces-progress" class="text-xs font-bold text-blue-700 bg-white px-2.5 py-1 rounded-full border border-blue-200 shadow-sm">0 / 0 Found</span>
+                        </div>
+                        
+                        <!-- Scrollable List Container -->
+                        <div id="memo-pieces-list" class="flex flex-col gap-2 max-h-56 overflow-y-auto custom-scrollbar pr-2 pb-1">
+                            <!-- Piece items populated via JS -->
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -106,7 +132,7 @@
             <div id="success-section" class="hidden border-t border-gray-100 pt-5 mt-4">
                 <div class="flex flex-col gap-4">
                     
-                    <!-- DEVICE SELECTION WRAPPER (Hides on connect success) -->
+                    <!-- DEVICE SELECTION WRAPPER -->
                     <div id="device-selection-wrapper">
                         <label class="block text-sm font-bold text-gray-800 mb-3">Select Hardware Interface</label>
                         <div class="flex gap-2">
@@ -127,7 +153,7 @@
                         </div>
                     </div>
 
-                    <!-- ACTIVE DEVICE DISPLAY (Hidden initially) -->
+                    <!-- ACTIVE DEVICE DISPLAY -->
                     <div id="active-device-display" class="hidden flex items-center justify-between bg-green-50 border border-green-200 p-3.5 rounded-lg">
                         <div class="flex items-center gap-2.5">
                             <span class="flex h-3 w-3 relative">
@@ -165,18 +191,42 @@
     </div>
 
     <script>
-        // Data Initialization
+        // Data Initialization function for diamond pieces
+        const generatePieces = (count) => {
+            const shapes = ['Round', 'Princess', 'Oval', 'Cushion', 'Emerald'];
+            const colors = ['D', 'E', 'F', 'G', 'H'];
+            const clarities = ['IF', 'VVS1', 'VVS2', 'VS1', 'VS2', 'SI1'];
+            
+            let p = [];
+            for(let i=0; i<count; i++) {
+                p.push({
+                    id: 'VD' + Math.floor(100000 + Math.random() * 900000),
+                    shape: shapes[Math.floor(Math.random() * shapes.length)],
+                    carat: (Math.random() * 2 + 0.5).toFixed(2), // 0.50 to 2.50
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    clarity: clarities[Math.floor(Math.random() * clarities.length)],
+                    found: false
+                });
+            }
+            return p;
+        };
+
         let memos = [
-            { id: '3128492', customer: 'Venus Impex', timestamp: new Date(Date.now() - 1000 * 60 * 2) }, // 2 mins ago (New)
-            { id: '3128491', customer: 'Finestar Jewellery', timestamp: new Date(Date.now() - 1000 * 60 * 15) },
-            { id: '3128490', customer: 'Kiran Gems', timestamp: new Date(Date.now() - 1000 * 60 * 45) },
-            { id: '3000003', customer: 'Error Test Co.', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2) } // Error trigger
+            { id: '3128492', customer: 'Venus Impex', timestamp: new Date(Date.now() - 1000 * 60 * 2), pieces: generatePieces(6) }, 
+            { id: '3128491', customer: 'Finestar Jewellery', timestamp: new Date(Date.now() - 1000 * 60 * 15), pieces: generatePieces(4) },
+            { id: '3128490', customer: 'Kiran Gems', timestamp: new Date(Date.now() - 1000 * 60 * 45), pieces: generatePieces(8) },
+            { id: '3000003', customer: 'Error Test Co.', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), pieces: [] } 
         ];
+
+        // Global State for Active Pieces
+        let activePieces = [];
 
         // DOM Elements
         const memoSelectionWrapper = document.getElementById('memo-selection-wrapper');
         const activeMemoDetails = document.getElementById('active-memo-details');
         const memoButtonsContainer = document.getElementById('memo-buttons-container');
+        const memoPiecesList = document.getElementById('memo-pieces-list');
+        const piecesProgress = document.getElementById('pieces-progress');
         const memoInput = document.getElementById('memo-input');
         const fetchBtn = document.getElementById('fetch-btn');
         
@@ -195,14 +245,13 @@
         let fetchTimeout = null;
         let isProcessing = false;
 
-        // Activity Tracking for Auto-Refresh
         let lastActivityTime = Date.now();
         const updateActivity = () => { lastActivityTime = Date.now(); };
         ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => 
             window.addEventListener(evt, updateActivity)
         );
 
-        // Render Memo Action Buttons
+        // --- Render Memos ---
         const renderMemos = () => {
             memoButtonsContainer.innerHTML = '';
             const now = Date.now();
@@ -229,17 +278,16 @@
             });
         };
 
-        // Initialize Render
         renderMemos();
 
-        // Auto Refresh Logic (Every 5 seconds if idle & selection wrapper is visible)
+        // Auto Refresh
         setInterval(() => {
             if (!isProcessing && !memoSelectionWrapper.classList.contains('hidden') && (Date.now() - lastActivityTime >= 5000)) {
                 refreshIndicator.classList.remove('opacity-0');
                 setTimeout(() => {
                     if (Math.random() < 0.2) {
                         const newId = '3' + Math.floor(100000 + Math.random() * 900000);
-                        memos.unshift({ id: newId, customer: 'Auto-Sync Client', timestamp: new Date() });
+                        memos.unshift({ id: newId, customer: 'Auto-Sync Client', timestamp: new Date(), pieces: generatePieces(5) });
                         if (memos.length > 6) memos.pop();
                     }
                     renderMemos();
@@ -253,15 +301,14 @@
             globalAlert.classList.remove('hidden');
             globalAlert.classList.add('flex');
             if (type === 'success') {
-                globalAlert.className = 'px-4 py-3 rounded-lg relative mb-4 flex items-center justify-center gap-2 border mt-4 bg-green-50 border-green-200 text-green-700 transition-all';
+                globalAlert.className = 'px-4 py-3 rounded-lg relative mb-4 flex items-center justify-center gap-2 border mt-4 bg-green-50 border-green-200 text-green-700 transition-all z-20';
                 document.getElementById('global-alert-icon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
             } else if (type === 'error') {
-                globalAlert.className = 'px-4 py-3 rounded-lg relative mb-4 flex items-center justify-center gap-2 border mt-4 bg-red-50 border-red-200 text-red-700 transition-all';
+                globalAlert.className = 'px-4 py-3 rounded-lg relative mb-4 flex items-center justify-center gap-2 border mt-4 bg-red-50 border-red-200 text-red-700 transition-all z-20';
                 document.getElementById('global-alert-icon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
             }
             document.getElementById('global-alert-text').textContent = message;
         };
-
         const hideGlobalAlert = () => {
             globalAlert.classList.add('hidden');
             globalAlert.classList.remove('flex');
@@ -269,6 +316,71 @@
 
         const showResetButton = () => { resetBtn.classList.remove('hidden'); };
         memoInput.addEventListener('input', () => { showResetButton(); hideGlobalAlert(); });
+
+        // --- Render Pieces for Active Memo ---
+        const updatePiecesProgress = () => {
+            const foundCount = activePieces.filter(p => p.found).length;
+            const totalCount = activePieces.length;
+            piecesProgress.textContent = `${foundCount} / ${totalCount} Found`;
+            
+            if (foundCount === totalCount && totalCount > 0) {
+                piecesProgress.className = "text-xs font-bold text-green-800 bg-green-100 px-2.5 py-1 rounded-full border border-green-300 shadow-sm transition-colors";
+            } else {
+                piecesProgress.className = "text-xs font-bold text-blue-700 bg-white px-2.5 py-1 rounded-full border border-blue-200 shadow-sm transition-colors";
+            }
+        };
+
+        const renderActiveMemoPieces = (pieces) => {
+            // Sort: Shape (Desc), Carat (Desc), Color (Desc), Clarity (Desc)
+            activePieces = [...pieces].sort((a, b) => {
+                // Descending string compare for shape (e.g. Round > Princess > Oval)
+                if (a.shape !== b.shape) return b.shape.localeCompare(a.shape);
+                // Descending numerical compare for carat
+                if (parseFloat(a.carat) !== parseFloat(b.carat)) return parseFloat(b.carat) - parseFloat(a.carat);
+                // Descending string compare for color (Z -> A)
+                if (a.color !== b.color) return b.color.localeCompare(a.color);
+                // Descending string compare for clarity
+                return b.clarity.localeCompare(a.clarity);
+            });
+
+            memoPiecesList.innerHTML = '';
+            
+            activePieces.forEach((piece, index) => {
+                const label = document.createElement('label');
+                label.className = "flex items-center p-3 bg-white border border-blue-100 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors shadow-sm relative";
+                
+                label.innerHTML = `
+                    <input type="checkbox" class="piece-checkbox w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 transition-all" ${piece.found ? 'checked' : ''}>
+                    <div class="ml-3 flex-1 flex justify-between items-center">
+                        <div class="flex flex-col">
+                            <span class="status-text font-mono font-bold text-gray-800 text-sm transition-all">${piece.id}</span>
+                            <span class="status-text text-xs text-gray-500 font-medium transition-all mt-0.5">
+                                ${piece.shape} • <span class="text-blue-600 font-bold">${piece.carat}ct</span> • ${piece.color} • ${piece.clarity}
+                            </span>
+                        </div>
+                        <span class="status-badge text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wide bg-gray-100 text-gray-500 transition-colors border border-transparent border-gray-200">
+                            ${piece.found ? 'Found' : 'Pending'}
+                        </span>
+                    </div>
+                `;
+
+                // Handle Checkbox Change
+                const checkbox = label.querySelector('input');
+                checkbox.addEventListener('change', (e) => {
+                    activePieces[index].found = e.target.checked;
+                    
+                    // Update badge text dynamically based on CSS sibling selectors handling colors
+                    const badge = label.querySelector('.status-badge');
+                    badge.textContent = e.target.checked ? 'Found' : 'Pending';
+                    
+                    updatePiecesProgress();
+                });
+
+                memoPiecesList.appendChild(label);
+            });
+
+            updatePiecesProgress();
+        };
 
         // --- Core Fetch Logic ---
         const initiateFetch = (memoVal, clickedBtn = null) => {
@@ -287,7 +399,6 @@
             memoInput.disabled = true;
             Array.from(memoButtonsContainer.children).forEach(b => b.disabled = true);
             
-            // UI Loading state
             if (clickedBtn) {
                 clickedBtn.classList.add('bg-blue-50', 'border-blue-400');
                 clickedBtn.innerHTML += `<svg class="animate-spin w-4 h-4 text-blue-600 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="4" stroke-dasharray="32" stroke-linecap="round"></circle></svg>`;
@@ -303,25 +414,26 @@
                 isProcessing = false;
                 
                 if (memoVal === '3000003') {
-                    // ERROR Trigger
                     showGlobalAlert('error', 'Network Timeout: Failed to fetch memo 3000003.');
                     memoInput.disabled = false;
                     fetchBtn.innerHTML = 'Fetch';
                     fetchBtn.disabled = false;
-                    renderMemos(); // Re-render to clear loading spinners
+                    renderMemos(); 
                 } else {
-                    // SUCCESS Trigger
                     showGlobalAlert('success', `Data block fetched successfully.`);
                     
-                    // Retrieve memo data (or fallback for manual entry)
                     const foundMemo = memos.find(m => m.id === memoVal);
                     const customer = foundMemo ? foundMemo.customer : 'Manual Entry Client';
                     const time = foundMemo ? foundMemo.timestamp : new Date();
+                    // If manually entered and not in array, generate random pieces
+                    const piecesToRender = foundMemo ? foundMemo.pieces : generatePieces(5); 
                     
                     // Populate Active Memo UI
                     document.getElementById('active-memo-id').textContent = memoVal;
                     document.getElementById('active-memo-customer').textContent = customer;
                     document.getElementById('active-memo-time').textContent = time.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                    
+                    renderActiveMemoPieces(piecesToRender);
                     
                     // HIDE Selection, SHOW Active Info
                     memoSelectionWrapper.classList.add('hidden');
@@ -387,7 +499,6 @@
                     isProcessing = false;
                     
                     if (readerId === 'reader2') {
-                        // ERROR trigger
                         connectionStatusTemp.textContent = 'Connection Timeout - Reader not responding';
                         connectionStatusTemp.className = 'text-sm font-semibold text-red-600';
                         
@@ -401,10 +512,7 @@
                         btn.classList.replace('border-amber-300', 'border-red-300');
                         btn.classList.replace('text-amber-700', 'text-red-700');
                     } else {
-                        // SUCCESS trigger
                         document.getElementById('active-device-name').textContent = readerName;
-                        
-                        // Hide selection wrapper, show active device box
                         deviceSelectionWrapper.classList.add('hidden');
                         activeDeviceDisplay.classList.remove('hidden');
                         ledBtn.classList.remove('hidden');
@@ -433,6 +541,10 @@
             if (fetchTimeout) clearTimeout(fetchTimeout);
             if (connectionTimeout) clearTimeout(connectionTimeout);
             isProcessing = false;
+
+            // Clear Active pieces array
+            activePieces = [];
+            memoPiecesList.innerHTML = '';
 
             // Reset States
             memoInput.value = '';
