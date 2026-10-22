@@ -72,7 +72,7 @@
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     </div>
-                    <input type="text" id="memo-input" placeholder="Enter 7-digit memo (e.g., 3124567)" class="w-full pl-9 border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 border outline-none text-sm text-gray-700">
+                    <input type="text" id="memo-input" placeholder="Enter 7-digit memo (e.g., 3124567)" class="w-full pl-9 border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 border outline-none text-sm text-gray-700 disabled:bg-gray-100 disabled:text-gray-400">
                 </div>
                 
                 <button id="fetch-btn" class="sm:w-32 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-200 shadow-sm flex justify-center items-center gap-2">
@@ -89,10 +89,10 @@
             <!-- Hardware Section -->
             <div id="success-section" class="hidden border-t border-gray-100 pt-5 mt-4">
                 <div class="flex flex-col gap-4">
-                    <label class="block text-sm font-bold text-gray-800">Select Hardware Interface</label>
+                    <label class="block text-sm font-bold text-gray-800">Hardware Interface</label>
                     
-                    <!-- Device Action Buttons -->
-                    <div class="flex gap-2">
+                    <!-- Device Action Buttons Container -->
+                    <div id="device-buttons-container" class="flex gap-2">
                         <button class="device-btn flex-1 bg-gray-50 hover:bg-gray-100 border border-gray-300 text-gray-700 font-semibold py-2.5 px-1 rounded-lg text-xs sm:text-sm transition-all shadow-sm" data-id="reader1">
                             Reader 1 (Main)
                         </button>
@@ -148,6 +148,7 @@
         const memoInput = document.getElementById('memo-input');
         const fetchBtn = document.getElementById('fetch-btn');
         const successSection = document.getElementById('success-section');
+        const deviceButtonsContainer = document.getElementById('device-buttons-container');
         const deviceBtns = document.querySelectorAll('.device-btn');
         const connectionStatus = document.getElementById('connection-status');
         const ledBtn = document.getElementById('led-btn');
@@ -256,6 +257,7 @@
             }
             
             isProcessing = true;
+            memoInput.disabled = true; // Lock input
             
             // Set Loading UI for Manual Fetch Button
             const originalFetchText = fetchBtn.innerHTML;
@@ -272,13 +274,18 @@
                 isProcessing = false;
                 fetchBtn.innerHTML = 'Fetch';
                 fetchBtn.disabled = false;
-                Array.from(memoButtonsContainer.children).forEach(b => b.disabled = false);
-
+                
                 // SPECIFIC ERROR: 3000003 fails
                 if (memoVal === '3000003') {
                     showGlobalAlert('error', 'Network Timeout: Failed to fetch memo 3000003.');
+                    memoInput.disabled = false;
+                    Array.from(memoButtonsContainer.children).forEach(b => b.disabled = false);
                 } else {
                     showGlobalAlert('success', `Data block fetched successfully for ${memoVal}.`);
+                    
+                    // Hide fetch button on success
+                    fetchBtn.classList.add('hidden');
+                    
                     successSection.classList.remove('hidden');
                     resetHardwareUI();
                 }
@@ -291,6 +298,7 @@
 
         // --- Hardware Connection Logic ---
         const resetHardwareUI = () => {
+            deviceButtonsContainer.classList.remove('hidden'); // Ensure container is visible
             deviceBtns.forEach(btn => {
                 btn.disabled = false;
                 btn.className = 'device-btn flex-1 bg-gray-50 hover:bg-gray-100 border border-gray-300 text-gray-700 font-semibold py-2.5 px-1 rounded-lg text-xs sm:text-sm transition-all shadow-sm';
@@ -354,14 +362,11 @@
                         btn.classList.replace('border-amber-300', 'border-red-300');
                         btn.classList.replace('text-amber-700', 'text-red-700');
                     } else {
-                        // Success
+                        // Success: Hide all hardware connection buttons
+                        deviceButtonsContainer.classList.add('hidden');
+                        
                         connectionStatus.textContent = 'Connected Successfully';
                         connectionStatus.className = 'text-sm font-semibold text-green-600';
-                        
-                        btn.classList.replace('bg-amber-50', 'bg-green-50');
-                        btn.classList.replace('border-amber-300', 'border-green-400');
-                        btn.classList.replace('text-amber-700', 'text-green-700');
-                        btn.innerHTML = `Connected ✓`;
                         
                         ledBtn.classList.remove('hidden');
                     }
@@ -393,11 +398,13 @@
 
             // Reset Inputs & Visibilities
             memoInput.value = '';
+            memoInput.disabled = false;
             hideGlobalAlert();
             successSection.classList.add('hidden');
             resetBtn.classList.add('hidden'); 
             
             // Restore manual fetch
+            fetchBtn.classList.remove('hidden');
             fetchBtn.innerHTML = 'Fetch';
             fetchBtn.disabled = false;
             Array.from(memoButtonsContainer.children).forEach(b => b.disabled = false);
