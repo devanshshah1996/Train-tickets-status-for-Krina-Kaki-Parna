@@ -3,26 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memo Control System</title>
+    <title>Memo Control System - Optimized</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body, html { 
-            margin: 0; 
-            padding: 0; 
-            height: 100%; 
-            overflow: hidden; 
-            font-family: sans-serif; 
-        }
-        .main-section { 
-            height: 100vh; 
-            overflow-y: auto; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: flex-start; 
-            align-items: center; 
-            background-color: #f8fafc; 
-            padding: 1.5rem 1rem; 
-        }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: sans-serif; background-color: #f8fafc; }
+        .main-section { height: 100vh; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 1.5rem 1rem; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -30,27 +15,25 @@
     </style>
 </head>
 <body>
-    <div class="main-section">
+    <div class="main-section w-full">
         <div class="bg-white p-5 sm:p-6 rounded-xl shadow-lg w-full max-w-lg border border-gray-100 my-auto flex-shrink-0">
-            <!-- MINIMIZED TITLE SECTION -->
+            
+            <!-- HEADER -->
             <div class="mb-3 text-center">
                 <h1 class="text-xl font-bold text-gray-800 leading-tight">Memo Retrieval System</h1>
                 <p class="text-xs text-gray-500 mt-0.5">Select a recent memo to issue inventory, or enter manually.</p>
             </div>
 
-            <!-- MEMO SELECTION WRAPPER -->
-            <div id="memo-selection-wrapper">
+            <!-- MEMO SELECTION UI -->
+            <div id="ui-selection">
                 <div class="mb-5">
                     <div class="flex justify-between items-center mb-1.5">
                         <label class="block text-sm font-bold text-gray-800">Recent Issued Memos</label>
                         <span id="refresh-indicator" class="text-xs text-gray-400 flex items-center gap-1 opacity-0 transition-opacity">
-                            <svg class="animate-spin w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="4" stroke-dasharray="32" stroke-linecap="round"></circle></svg>
-                            Checking...
+                            <svg class="animate-spin w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="4" stroke-dasharray="32" stroke-linecap="round"></circle></svg> Syncing...
                         </span>
                     </div>
-                    <div id="memo-buttons-container" class="flex flex-col gap-2 max-h-48 overflow-y-auto custom-scrollbar pr-1">
-                        <!-- Buttons populated via JS -->
-                    </div>
+                    <div id="memo-list-container" class="flex flex-col gap-2 max-h-48 overflow-y-auto custom-scrollbar pr-1"></div>
                 </div>
 
                 <div class="relative flex py-1 items-center mb-3">
@@ -66,14 +49,12 @@
                         </div>
                         <input type="text" id="memo-input" placeholder="Enter 7-digit memo (e.g., 3124567)" class="w-full pl-9 border-gray-300 bg-gray-50 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2 border outline-none text-sm text-gray-700 disabled:bg-gray-100 disabled:text-gray-400">
                     </div>
-                    <button id="fetch-btn" class="sm:w-28 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-3 rounded-lg transition duration-200 shadow-sm flex justify-center items-center gap-2 text-sm">
-                        Fetch
-                    </button>
+                    <button id="btn-fetch" class="sm:w-28 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-3 rounded-lg transition duration-200 shadow-sm flex justify-center items-center gap-2 text-sm disabled:opacity-75 disabled:cursor-not-allowed">Fetch</button>
                 </div>
             </div>
 
             <!-- ACTIVE MEMO DETAILS -->
-            <div id="active-memo-details" class="hidden bg-blue-50 border border-blue-200 rounded-xl p-4 mb-2 shadow-sm relative overflow-hidden">
+            <div id="ui-active-memo" class="hidden bg-blue-50 border border-blue-200 rounded-xl p-4 mb-2 shadow-sm relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-16 h-16 bg-blue-100 rounded-bl-full -mr-8 -mt-8 z-0"></div>
                 <div class="relative z-10">
                     <div class="flex justify-between items-start mb-1">
@@ -91,556 +72,32 @@
                             </span>
                         </div>
                         
-                        <!-- TABS BAR -->
-                        <div id="memo-tabs" class="flex gap-1.5 mb-2.5 overflow-x-auto pb-1">
-                            <!-- Tabs populated dynamically based on data availability -->
-                        </div>
-                        
-                        <!-- Scrollable List Container -->
-                        <div id="memo-pieces-list" class="flex flex-col gap-1.5 max-h-56 overflow-y-auto custom-scrollbar pr-1.5 pb-1">
-                            <!-- Piece items populated via JS -->
-                        </div>
+                        <div id="tabs-container" class="flex gap-1.5 mb-2.5 overflow-x-auto pb-1 custom-scrollbar"></div>
+                        <div id="pieces-container" class="flex flex-col gap-1.5 max-h-56 overflow-y-auto custom-scrollbar pr-1.5 pb-1"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Dynamic Global Alert Box -->
-            <div id="global-alert" class="hidden px-3 py-2 rounded-lg relative mb-3 items-center justify-center gap-2 border mt-3 transition-all" role="alert">
-                <svg id="global-alert-icon" class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
-                <span id="global-alert-text" class="block sm:inline font-semibold text-xs"></span>
+            <!-- DYNAMIC GLOBAL ALERT -->
+            <div id="ui-alert" class="hidden px-3 py-2 rounded-lg relative mb-3 flex items-center justify-center gap-2 border mt-3 transition-all text-xs font-semibold">
+                <svg id="alert-icon" class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
+                <span id="alert-text"></span>
             </div>
 
-            <!-- Hardware Section -->
-            <div id="success-section" class="hidden border-t border-gray-100 pt-4 mt-3">
+            <!-- HARDWARE UI -->
+            <div id="ui-hardware" class="hidden border-t border-gray-100 pt-4 mt-3">
                 <div class="flex flex-col gap-3">
-                    <div id="device-selection-wrapper">
+                    <div id="hw-selector-wrapper">
                         <label class="block text-xs font-bold text-gray-800 mb-2">Select Hardware Interface</label>
-                        <div class="flex gap-2">
-                            <button class="device-btn flex-1 bg-gray-50 hover:bg-gray-100 border border-gray-300 text-gray-700 font-semibold py-2 px-1 rounded-lg text-xs transition-all shadow-sm" data-id="reader1">
-                                Reader 1 (Main)
-                            </button>
-                            <button class="device-btn flex-1 bg-gray-50 hover:bg-gray-100 border border-gray-300 text-gray-700 font-semibold py-2 px-1 rounded-lg text-xs transition-all shadow-sm" data-id="reader2">
-                                Reader 2 (Desk)
-                            </button>
-                            <button class="device-btn flex-1 bg-gray-50 hover:bg-gray-100 border border-gray-300 text-gray-700 font-semibold py-2 px-1 rounded-lg text-xs transition-all shadow-sm" data-id="reader3">
-                                Reader 3 (Sec)
-                            </button>
+                        <div class="flex gap-2" id="hw-buttons">
+                            <button class="hw-btn flex-1 bg-gray-50 hover:bg-gray-100 border border-gray-300 text-gray-700 font-semibold py-2 px-1 rounded-lg text-xs transition-all shadow-sm" data-id="reader1">Reader 1 (Main)</button>
+                            <button class="hw-btn flex-1 bg-gray-50 hover:bg-gray-100 border border-gray-300 text-gray-700 font-semibold py-2 px-1 rounded-lg text-xs transition-all shadow-sm" data-id="reader2">Reader 2 (Desk)</button>
+                            <button class="hw-btn flex-1 bg-gray-50 hover:bg-gray-100 border border-gray-300 text-gray-700 font-semibold py-2 px-1 rounded-lg text-xs transition-all shadow-sm" data-id="reader3">Reader 3 (Sec)</button>
                         </div>
                         <div class="flex items-center gap-2 mt-2">
                             <span class="text-xs font-medium text-gray-500">Status:</span>
-                            <span id="connection-status-temp" class="text-xs font-semibold text-gray-400">Awaiting Hardware Selection</span>
+                            <span id="hw-status-text" class="text-xs font-semibold text-gray-400">Awaiting Hardware Selection</span>
                         </div>
                     </div>
 
-                    <div id="active-device-display" class="hidden flex items-center justify-between bg-green-50 border border-green-200 p-2.5 rounded-lg">
-                        <div class="flex items-center gap-2">
-                            <span class="flex h-2.5 w-2.5 relative">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-                            </span>
-                            <span id="active-device-name" class="font-bold text-green-800 text-xs"></span>
-                        </div>
-                        <span class="text-[10px] font-bold text-green-700 uppercase tracking-wide bg-green-100 px-1.5 py-0.5 rounded">Connected</span>
-                    </div>
-
-                    <button id="led-btn" data-state="off" class="hidden w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 px-4 rounded-lg transition duration-200 shadow-md flex justify-center items-center gap-2 text-sm">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                        Turn LED On
-                    </button>
-                </div>
-            </div>
-
-            <!-- Reset Button -->
-            <div class="mt-4 pt-3 flex justify-center border-t border-gray-100 min-h-[40px]">
-                <button id="reset-btn" class="hidden flex items-center gap-1.5 text-xs text-red-500 hover:text-red-700 font-bold transition-colors bg-red-50 hover:bg-red-100 px-4 py-1.5 rounded-full border border-red-100">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    Reset System
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const generatePieces = (count) => {
-            const shapes = ['Round', 'Princess', 'Oval', 'Cushion', 'Emerald'];
-            const colors = ['D', 'E', 'F', 'G', 'H'];
-            const clarities = ['IF', 'VVS1', 'VVS2', 'VS1', 'VS2', 'SI1'];
-            
-            let p = [];
-            for(let i=0; i<count; i++) {
-                p.push({
-                    id: 'VD' + Math.floor(100000 + Math.random() * 900000),
-                    shape: shapes[Math.floor(Math.random() * shapes.length)],
-                    carat: (Math.random() * 2 + 0.5).toFixed(2),
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    clarity: clarities[Math.floor(Math.random() * clarities.length)],
-                    status: 'pending' // Options: 'pending', 'found', 'not-found'
-                });
-            }
-            return p;
-        };
-
-        let memos = [
-            { id: '3128492', customer: 'Venus Impex', timestamp: new Date(Date.now() - 1000 * 60 * 2), pieces: generatePieces(6) }, 
-            { id: '3128491', customer: 'Finestar Jewellery', timestamp: new Date(Date.now() - 1000 * 60 * 15), pieces: generatePieces(4) },
-            { id: '3128490', customer: 'Kiran Gems', timestamp: new Date(Date.now() - 1000 * 60 * 45), pieces: generatePieces(8) },
-            { id: '3000003', customer: 'Error Test Co.', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), pieces: [] } 
-        ];
-
-        let activePieces = [];
-        let activeMemoId = '';
-        let currentTab = 'all'; // 'all', 'pending', 'found', 'not-found'
-        let isSorted = false;
-
-        const memoSelectionWrapper = document.getElementById('memo-selection-wrapper');
-        const activeMemoDetails = document.getElementById('active-memo-details');
-        const memoButtonsContainer = document.getElementById('memo-buttons-container');
-        const memoPiecesList = document.getElementById('memo-pieces-list');
-        const memoTabs = document.getElementById('memo-tabs');
-        const memoInput = document.getElementById('memo-input');
-        const fetchBtn = document.getElementById('fetch-btn');
-        
-        const successSection = document.getElementById('success-section');
-        const deviceSelectionWrapper = document.getElementById('device-selection-wrapper');
-        const activeDeviceDisplay = document.getElementById('active-device-display');
-        const deviceBtns = document.querySelectorAll('.device-btn');
-        const connectionStatusTemp = document.getElementById('connection-status-temp');
-        
-        const ledBtn = document.getElementById('led-btn');
-        const resetBtn = document.getElementById('reset-btn');
-        const refreshIndicator = document.getElementById('refresh-indicator');
-        const globalAlert = document.getElementById('global-alert');
-        
-        let connectionTimeout = null; 
-        let fetchTimeout = null;
-        let isProcessing = false;
-
-        let lastActivityTime = Date.now();
-        const updateActivity = () => { lastActivityTime = Date.now(); };
-        ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => 
-            window.addEventListener(evt, updateActivity)
-        );
-
-        const renderMemos = () => {
-            memoButtonsContainer.innerHTML = '';
-            const now = Date.now();
-            memos.forEach(memo => {
-                const isNew = (now - memo.timestamp.getTime()) <= (5 * 60 * 1000); 
-                const timeString = memo.timestamp.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                
-                const btn = document.createElement('button');
-                btn.className = 'w-full text-left bg-white border border-gray-200 hover:border-blue-400 hover:bg-blue-50 text-gray-700 py-2 px-2.5 rounded-lg shadow-sm transition-all flex items-center justify-between group disabled:opacity-50 disabled:cursor-not-allowed';
-                btn.onclick = () => initiateFetch(memo.id, btn);
-                
-                btn.innerHTML = `
-                    <div class="flex items-center gap-2.5 overflow-hidden">
-                        <span class="font-mono font-bold text-blue-700 text-sm">${memo.id}</span>
-                        <span class="text-xs font-medium truncate">${memo.customer}</span>
-                    </div>
-                    <div class="flex items-center gap-1.5 flex-shrink-0">
-                        ${isNew ? `<span class="bg-red-100 text-red-700 border border-red-200 text-[9px] font-bold px-1 py-0.5 rounded uppercase tracking-wide">New</span>` : ''}
-                        <span class="text-[10px] text-gray-400 group-hover:text-blue-500">${timeString}</span>
-                    </div>
-                `;
-                memoButtonsContainer.appendChild(btn);
-            });
-        };
-
-        renderMemos();
-
-        setInterval(() => {
-            if (!isProcessing && !memoSelectionWrapper.classList.contains('hidden') && (Date.now() - lastActivityTime >= 5000)) {
-                refreshIndicator.classList.remove('opacity-0');
-                setTimeout(() => {
-                    if (Math.random() < 0.2) {
-                        const newId = '3' + Math.floor(100000 + Math.random() * 900000);
-                        memos.unshift({ id: newId, customer: 'Auto-Sync Client', timestamp: new Date(), pieces: generatePieces(5) });
-                        if (memos.length > 6) memos.pop();
-                    }
-                    renderMemos();
-                    refreshIndicator.classList.add('opacity-0');
-                }, 800);
-            }
-        }, 5000);
-
-        const showGlobalAlert = (type, message) => {
-            globalAlert.classList.remove('hidden');
-            globalAlert.classList.add('flex');
-            if (type === 'success') {
-                globalAlert.className = 'px-3 py-2 rounded-lg relative mb-3 flex items-center justify-center gap-2 border mt-3 bg-green-50 border-green-200 text-green-700 transition-all z-20';
-                document.getElementById('global-alert-icon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
-            } else if (type === 'error') {
-                globalAlert.className = 'px-3 py-2 rounded-lg relative mb-3 flex items-center justify-center gap-2 border mt-3 bg-red-50 border-red-200 text-red-700 transition-all z-20';
-                document.getElementById('global-alert-icon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
-            }
-            document.getElementById('global-alert-text').textContent = message;
-        };
-        const hideGlobalAlert = () => {
-            globalAlert.classList.add('hidden');
-            globalAlert.classList.remove('flex');
-        };
-
-        const showResetButton = () => { resetBtn.classList.remove('hidden'); };
-        memoInput.addEventListener('input', () => { showResetButton(); hideGlobalAlert(); });
-
-        // Database persistence simulation using localStorage
-        const saveMemoStatusToDB = () => {
-            if (!activeMemoId) return;
-            const statusMap = activePieces.map(p => ({ id: p.id, status: p.status }));
-            localStorage.setItem('venus_memo_status_' + activeMemoId, JSON.stringify(statusMap));
-        };
-
-        const loadMemoStatusFromDB = (memoId, pieces) => {
-            const saved = localStorage.getItem('venus_memo_status_' + memoId);
-            if (!saved) return pieces;
-            try {
-                const statusMap = JSON.parse(saved);
-                return pieces.map(p => {
-                    const found = statusMap.find(s => s.id === p.id);
-                    if (found) p.status = found.status;
-                    return p;
-                });
-            } catch(e) {
-                return pieces;
-            }
-        };
-
-        const renderTabs = () => {
-            memoTabs.innerHTML = '';
-            
-            const allCount = activePieces.length;
-            const pendingCount = activePieces.filter(p => p.status === 'pending').length;
-            const foundCount = activePieces.filter(p => p.status === 'found').length;
-            const notFoundCount = activePieces.filter(p => p.status === 'not-found').length;
-
-            const tabsConfig = [
-                { id: 'all', label: 'All', count: allCount, show: allCount > 0 },
-                { id: 'pending', label: 'Pending', count: pendingCount, show: pendingCount > 0 },
-                { id: 'found', label: 'Found', count: foundCount, show: foundCount > 0 },
-                { id: 'not-found', label: 'Not Found', count: notFoundCount, show: notFoundCount > 0 }
-            ];
-
-            // Ensure currentTab is valid, fallback to first available tab if currentTab has 0 items
-            const activeTabConfig = tabsConfig.find(t => t.id === currentTab);
-            if (!activeTabConfig || !activeTabConfig.show) {
-                const firstAvailable = tabsConfig.find(t => t.show);
-                currentTab = firstAvailable ? firstAvailable.id : 'all';
-            }
-
-            tabsConfig.forEach(tab => {
-                if (!tab.show) return; // Tabs created only when there is data in it
-
-                const btn = document.createElement('button');
-                const isActive = currentTab === tab.id;
-                
-                btn.className = `px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border shadow-sm ${
-                    isActive 
-                        ? 'bg-blue-600 text-white border-blue-600 shadow' 
-                        : 'bg-white text-gray-700 border-gray-200 hover:bg-blue-50 hover:border-blue-300'
-                }`;
-
-                btn.innerHTML = `
-                    <span>${tab.label}</span>
-                    <span class="text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? 'bg-blue-700 text-white' : 'bg-gray-100 text-gray-600'}">${tab.count}</span>
-                `;
-
-                btn.onclick = () => {
-                    currentTab = tab.id;
-                    renderTabs();
-                    renderActiveMemoPieces();
-                };
-
-                memoTabs.appendChild(btn);
-            });
-        };
-
-        const renderActiveMemoPieces = () => {
-            if(!isSorted) {
-                activePieces.sort((a, b) => {
-                    if (a.shape !== b.shape) return b.shape.localeCompare(a.shape);
-                    if (parseFloat(a.carat) !== parseFloat(b.carat)) return parseFloat(b.carat) - parseFloat(a.carat);
-                    if (a.color !== b.color) return b.color.localeCompare(a.color);
-                    return b.clarity.localeCompare(a.clarity);
-                });
-                isSorted = true;
-            }
-
-            renderTabs(); // Refresh tab counts and visibility
-
-            memoPiecesList.innerHTML = '';
-            
-            // Filter pieces based on currentTab
-            const filteredPieces = activePieces.filter(piece => {
-                if (currentTab === 'all') return true;
-                return piece.status === currentTab;
-            });
-
-            if (filteredPieces.length === 0) {
-                const emptyMsg = document.createElement('div');
-                emptyMsg.className = 'text-center py-6 text-xs text-gray-400 italic bg-white border border-gray-100 rounded-lg shadow-sm';
-                emptyMsg.textContent = `No items found in this tab.`;
-                memoPiecesList.appendChild(emptyMsg);
-                return;
-            }
-
-            filteredPieces.forEach((piece) => {
-                const index = activePieces.findIndex(p => p.id === piece.id);
-                
-                const row = document.createElement('div');
-                
-                let rowClass = "flex items-center p-2.5 border rounded-lg transition-colors shadow-sm relative ";
-                let foundIconClass = "w-5 h-5 rounded border-[1.5px] flex items-center justify-center transition-colors cursor-pointer ";
-                let notFoundIconClass = "w-5 h-5 rounded border-[1.5px] flex items-center justify-center transition-colors cursor-pointer ";
-                let textClass = "font-mono font-bold text-xs transition-all ";
-                let badgeHTML = "";
-                
-                if (piece.status === 'found') {
-                    rowClass += "bg-green-50 border-green-200";
-                    foundIconClass += "bg-green-500 border-green-500 text-white";
-                    notFoundIconClass += "border-gray-300 text-gray-300 hover:border-red-400 hover:text-red-400 bg-white";
-                    textClass += "text-green-800 line-through opacity-70";
-                    badgeHTML = `<span class="hidden sm:inline-block ml-2 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide bg-green-200 text-green-800">Found</span>`;
-                } else if (piece.status === 'not-found') {
-                    rowClass += "bg-red-50 border-red-200";
-                    notFoundIconClass += "bg-red-500 border-red-500 text-white";
-                    foundIconClass += "border-gray-300 text-gray-300 hover:border-green-400 hover:text-green-400 bg-white";
-                    textClass += "text-red-800 line-through opacity-70";
-                    badgeHTML = `<span class="hidden sm:inline-block ml-2 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide bg-red-200 text-red-800">Missing</span>`;
-                } else {
-                    rowClass += "bg-white border-blue-100 hover:bg-blue-50";
-                    foundIconClass += "border-gray-300 text-gray-300 hover:border-green-400 hover:text-green-400 bg-white";
-                    notFoundIconClass += "border-gray-300 text-gray-300 hover:border-red-400 hover:text-red-400 bg-white";
-                    textClass += "text-gray-800";
-                }
-
-                row.className = rowClass;
-                
-                row.innerHTML = `
-                    <button class="flex-shrink-0 mr-2.5 found-btn focus:outline-none focus:ring-2 focus:ring-green-400 rounded transition-shadow" title="Mark as Found">
-                        <div class="${foundIconClass}">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
-                        </div>
-                    </button>
-
-                    <div class="flex-1 flex flex-col items-center sm:items-start text-center sm:text-left">
-                        <div class="flex items-center justify-center sm:justify-start">
-                            <span class="${textClass}">${piece.id}</span>
-                            ${badgeHTML}
-                        </div>
-                        <span class="text-[10px] ${piece.status === 'pending' ? 'text-gray-500' : 'text-gray-500 opacity-70'} font-medium transition-all mt-0.5">
-                            ${piece.shape} • <span class="${piece.status === 'pending' ? 'text-blue-600' : ''} font-bold">${piece.carat}ct</span> • ${piece.color} • ${piece.clarity}
-                        </span>
-                    </div>
-
-                    <button class="flex-shrink-0 ml-2.5 not-found-btn focus:outline-none focus:ring-2 focus:ring-red-400 rounded transition-shadow" title="Mark as Not Found">
-                        <div class="${notFoundIconClass}">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </div>
-                    </button>
-                `;
-
-                row.querySelector('.found-btn').addEventListener('click', () => {
-                    activePieces[index].status = activePieces[index].status === 'found' ? 'pending' : 'found';
-                    saveMemoStatusToDB(); // Automatically saved into database (localStorage)
-                    renderActiveMemoPieces(); 
-                });
-
-                row.querySelector('.not-found-btn').addEventListener('click', () => {
-                    activePieces[index].status = activePieces[index].status === 'not-found' ? 'pending' : 'not-found';
-                    saveMemoStatusToDB(); // Automatically saved into database (localStorage)
-                    renderActiveMemoPieces();
-                });
-
-                memoPiecesList.appendChild(row);
-            });
-        };
-
-        const initiateFetch = (memoVal, clickedBtn = null) => {
-            if (isProcessing) return;
-            
-            showResetButton(); 
-            hideGlobalAlert();
-            memoInput.value = memoVal; 
-            
-            if (!memoVal.trim() || memoVal.length !== 7 || !memoVal.startsWith('3')) {
-                showGlobalAlert('error', 'Invalid Format: Memo must be 7 digits starting with 3.');
-                return;
-            }
-            
-            isProcessing = true;
-            memoInput.disabled = true;
-            Array.from(memoButtonsContainer.children).forEach(b => b.disabled = true);
-            
-            if (clickedBtn) {
-                clickedBtn.classList.add('bg-blue-50', 'border-blue-400');
-                clickedBtn.innerHTML += `<svg class="animate-spin w-4 h-4 text-blue-600 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="4" stroke-dasharray="32" stroke-linecap="round"></circle></svg>`;
-            } else {
-                fetchBtn.innerHTML = '<svg class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="4" stroke-dasharray="32" stroke-linecap="round"></circle></svg>';
-            }
-            fetchBtn.disabled = true;
-            successSection.classList.add('hidden');
-            
-            if (fetchTimeout) clearTimeout(fetchTimeout);
-
-            fetchTimeout = setTimeout(() => {
-                isProcessing = false;
-                
-                if (memoVal === '3000003') {
-                    showGlobalAlert('error', 'Network Timeout: Failed to fetch memo 3000003.');
-                    memoInput.disabled = false;
-                    fetchBtn.innerHTML = 'Fetch';
-                    fetchBtn.disabled = false;
-                    renderMemos(); 
-                } else {
-                    showGlobalAlert('success', `Data block fetched successfully.`);
-                    
-                    activeMemoId = memoVal;
-                    const foundMemo = memos.find(m => m.id === memoVal);
-                    const customer = foundMemo ? foundMemo.customer : 'Manual Entry Client';
-                    const time = foundMemo ? foundMemo.timestamp : new Date();
-                    
-                    isSorted = false;
-                    currentTab = 'all'; // Default to All tab upon opening
-                    
-                    let rawPieces = foundMemo ? foundMemo.pieces : generatePieces(5);
-                    activePieces = loadMemoStatusFromDB(memoVal, JSON.parse(JSON.stringify(rawPieces))); 
-                    
-                    document.getElementById('active-memo-id').textContent = memoVal;
-                    document.getElementById('active-memo-customer').textContent = customer;
-                    document.getElementById('active-memo-time').textContent = time.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                    
-                    renderActiveMemoPieces();
-                    
-                    memoSelectionWrapper.classList.add('hidden');
-                    activeMemoDetails.classList.remove('hidden');
-                    
-                    successSection.classList.remove('hidden');
-                    resetHardwareUI();
-                }
-            }, 1200);
-        };
-
-        fetchBtn.addEventListener('click', () => initiateFetch(memoInput.value));
-        memoInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') initiateFetch(memoInput.value); });
-
-        const resetHardwareUI = () => {
-            deviceSelectionWrapper.classList.remove('hidden');
-            activeDeviceDisplay.classList.add('hidden');
-            
-            deviceBtns.forEach(btn => {
-                btn.disabled = false;
-                btn.className = 'device-btn flex-1 bg-gray-50 hover:bg-gray-100 border border-gray-300 text-gray-700 font-semibold py-2 px-1 rounded-lg text-xs transition-all shadow-sm';
-                btn.innerHTML = btn.getAttribute('data-id') === 'reader1' ? 'Reader 1 (Main)' : 
-                                btn.getAttribute('data-id') === 'reader2' ? 'Reader 2 (Desk)' : 'Reader 3 (Sec)';
-            });
-            connectionStatusTemp.textContent = 'Awaiting Hardware Selection';
-            connectionStatusTemp.className = 'text-xs font-semibold text-gray-400';
-            ledBtn.classList.add('hidden');
-        };
-
-        deviceBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (isProcessing) return;
-                hideGlobalAlert();
-
-                const readerId = btn.getAttribute('data-id');
-                const readerName = readerId === 'reader1' ? 'Reader 1 (Main)' : readerId === 'reader2' ? 'Reader 2 (Desk)' : 'Reader 3 (Sec)';
-                isProcessing = true;
-
-                deviceBtns.forEach(b => {
-                    b.disabled = true;
-                    b.classList.replace('border-gray-300', 'border-gray-200');
-                    b.classList.replace('text-gray-700', 'text-gray-400');
-                });
-                
-                btn.classList.replace('bg-gray-50', 'bg-amber-50');
-                btn.classList.replace('border-amber-300', 'border-amber-300');
-                btn.classList.replace('text-gray-400', 'text-amber-700');
-                
-                btn.innerHTML = `
-                    <div class="flex items-center justify-center gap-1.5">
-                        <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span></span>
-                        Connecting...
-                    </div>
-                `;
-
-                connectionStatusTemp.textContent = 'Establishing connection...';
-                connectionStatusTemp.className = 'text-xs font-semibold text-amber-600 animate-pulse';
-
-                if (connectionTimeout) clearTimeout(connectionTimeout);
-
-                connectionTimeout = setTimeout(() => {
-                    isProcessing = false;
-                    
-                    if (readerId === 'reader2') {
-                        connectionStatusTemp.textContent = 'Connection Timeout - Reader not responding';
-                        connectionStatusTemp.className = 'text-xs font-semibold text-red-600';
-                        
-                        deviceBtns.forEach(b => {
-                            b.disabled = false;
-                            b.classList.replace('border-gray-200', 'border-gray-300');
-                            b.classList.replace('text-gray-400', 'text-gray-700');
-                        });
-                        btn.innerHTML = readerName;
-                        btn.classList.replace('bg-amber-50', 'bg-red-50');
-                        btn.classList.replace('border-amber-300', 'border-red-300');
-                        btn.classList.replace('text-amber-700', 'text-red-700');
-                    } else {
-                        document.getElementById('active-device-name').textContent = readerName;
-                        deviceSelectionWrapper.classList.add('hidden');
-                        activeDeviceDisplay.classList.remove('hidden');
-                        ledBtn.classList.remove('hidden');
-                    }
-                }, 2000);
-            });
-        });
-
-        ledBtn.addEventListener('click', () => {
-            if (ledBtn.dataset.state === 'off') {
-                ledBtn.dataset.state = 'on';
-                ledBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Turn LED Off';
-                ledBtn.classList.replace('bg-amber-500', 'bg-green-500');
-                ledBtn.classList.replace('hover:bg-amber-600', 'hover:bg-green-600');
-            } else {
-                ledBtn.dataset.state = 'off';
-                ledBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Turn LED On';
-                ledBtn.classList.replace('bg-green-500', 'bg-amber-500');
-                ledBtn.classList.replace('hover:bg-green-600', 'hover:bg-amber-600');
-            }
-        });
-
-        resetBtn.addEventListener('click', () => {
-            if (fetchTimeout) clearTimeout(fetchTimeout);
-            if (connectionTimeout) clearTimeout(connectionTimeout);
-            isProcessing = false;
-
-            activePieces = [];
-            activeMemoId = '';
-            memoPiecesList.innerHTML = '';
-            memoTabs.innerHTML = '';
-            isSorted = false;
-
-            memoInput.value = '';
-            memoInput.disabled = false;
-            fetchBtn.innerHTML = 'Fetch';
-            fetchBtn.disabled = false;
-            
-            memoSelectionWrapper.classList.remove('hidden');
-            activeMemoDetails.classList.add('hidden');
-            
-            hideGlobalAlert();
-            successSection.classList.add('hidden');
-            resetBtn.classList.add('hidden'); 
-            
-            ledBtn.dataset.state = 'off';
-            ledBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Turn LED On';
-            ledBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
-            ledBtn.classList.add('bg-amber-500', 'hover:bg-amber-600');
-            
-            resetHardwareUI();
-            renderMemos();
-            lastActivityTime = Date.now();
-        });
-    </script>
-</body>
-</html>
+                    <div id="hw-active-display" class="hidden items-center justify-between bg-green-50
