@@ -19,12 +19,12 @@
                 extend: {
                     colors: {
                         rajasthan: {
-                            pink: '#fdf2f8', // pastel background
-                            rose: '#e11d48', // vibrant primary
-                            fuchsia: '#c026d3', // vibrant secondary
-                            orange: '#f97316', // accent
-                            gold: '#f59e0b', // warm gold
-                            dark: '#4c0519', // text on pinks
+                            pink: '#fdf2f8', 
+                            rose: '#e11d48', 
+                            fuchsia: '#c026d3', 
+                            orange: '#f97316', 
+                            gold: '#f59e0b', 
+                            dark: '#4c0519', 
                         }
                     },
                     fontFamily: {
@@ -36,11 +36,12 @@
         }
     </script>
     <style>
-        .arch-card {
+        .jharokha-card {
             border-top-left-radius: 2.5rem;
             border-top-right-radius: 2.5rem;
             border-bottom-left-radius: 0.75rem;
             border-bottom-right-radius: 0.75rem;
+            border-bottom: 4px solid #fbbf24; /* Warm gold accent */
         }
         .gradient-text {
             background: linear-gradient(135deg, #c026d3 0%, #e11d48 50%, #f97316 100%);
@@ -58,192 +59,172 @@
         ::-webkit-scrollbar-track { background: #fce7f3; }
         ::-webkit-scrollbar-thumb { background: #f43f5e; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #e11d48; }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
-<body class="bg-rajasthan-pink text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-rose-200 selection:text-rose-900">
+<body class="bg-pink-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-rose-200 selection:text-rose-900">
 
     <!-- Header & Hero -->
-    <header class="bg-gradient-to-r from-rajasthan-fuchsia via-rajasthan-rose to-rajasthan-orange text-white pt-10 pb-12 px-4 sm:px-6 lg:px-8 rounded-b-3xl shadow-xl relative overflow-hidden">
+    <header class="bg-gradient-to-r from-rajasthan-fuchsia via-rajasthan-rose to-rajasthan-orange text-white pt-12 pb-14 px-4 sm:px-6 lg:px-8 rounded-b-[3rem] shadow-xl relative overflow-hidden">
         <!-- Decorative subtle pattern overlay -->
         <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent bg-[length:20px_20px]"></div>
         
         <div class="max-w-6xl mx-auto flex flex-col items-center text-center relative z-10">
             <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white font-medium text-xs tracking-widest uppercase mb-4 shadow-sm">
-                <i class="fa-solid fa-om text-rajasthan-gold"></i>
+                <i class="fa-solid fa-om text-amber-300"></i>
                 <span>Diwali Gathering 2026</span>
-                <i class="fa-solid fa-om text-rajasthan-gold"></i>
+                <i class="fa-solid fa-om text-amber-300"></i>
             </div>
             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold tracking-tight drop-shadow-md">
                 Shah Family Trip
             </h1>
-            <h2 class="text-xl sm:text-2xl font-serif mt-2 text-rose-100 italic">Jaipur • Alwar • Agra</h2>
-            <p class="mt-4 text-sm sm:text-base bg-white/10 px-6 py-2 rounded-full backdrop-blur-md border border-white/20">
+            <h2 class="text-xl sm:text-2xl font-serif mt-3 text-rose-100 italic">Jaipur • Alwar • Agra</h2>
+            <p class="mt-5 text-sm sm:text-base bg-white/10 px-6 py-2 rounded-full backdrop-blur-md border border-white/20">
                 <i class="fa-solid fa-calendar-days mr-2"></i> November 5 – November 16, 2026
             </p>
         </div>
     </header>
 
     <!-- Navigation Tabs -->
-    <nav class="max-w-6xl mx-auto w-full px-4 -mt-6 relative z-20">
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 bg-white/80 backdrop-blur-md p-2 rounded-2xl shadow-lg border border-pink-100">
-            <button onclick="switchTab('tab-jaipur')" id="btn-tab-jaipur" class="tab-btn active w-full sm:w-auto px-6 py-3 rounded-xl text-sm font-semibold text-rose-700 bg-pink-100 border border-pink-200 transition-all flex items-center justify-center gap-2">
+    <nav class="max-w-4xl mx-auto w-full px-4 -mt-7 relative z-20">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 bg-white/90 backdrop-blur-md p-2 rounded-2xl shadow-lg border border-pink-100">
+            <button onclick="switchTab('tab-jaipur')" id="btn-tab-jaipur" class="tab-btn active w-full sm:w-1/2 px-6 py-3 rounded-xl text-sm font-semibold text-rose-700 bg-pink-100 border border-pink-200 transition-all flex items-center justify-center gap-2">
                 <i class="fa-solid fa-chess-rook"></i> Leg 1: Jaipur (Nov 5 - 11)
             </button>
-            <button onclick="switchTab('tab-alwar')" id="btn-tab-alwar" class="tab-btn w-full sm:w-auto px-6 py-3 rounded-xl text-sm font-semibold text-rose-700 bg-pink-100 border border-pink-200 hover:bg-pink-200 transition-all flex items-center justify-center gap-2">
+            <button onclick="switchTab('tab-alwar')" id="btn-tab-alwar" class="tab-btn w-full sm:w-1/2 px-6 py-3 rounded-xl text-sm font-semibold text-rose-700 bg-pink-100 border border-pink-200 hover:bg-pink-200 transition-all flex items-center justify-center gap-2">
                 <i class="fa-solid fa-car-side"></i> Leg 2: Alwar & Agra (Nov 11 - 16)
             </button>
         </div>
     </nav>
 
     <!-- Main Content Area -->
-    <main class="flex-grow max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-10 mt-4 mb-12">
+    <main class="flex-grow max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-10 mt-2 mb-12">
 
         <!-- ========================================== -->
         <!-- TAB 1: JAIPUR (NOV 5 - 11)                 -->
         <!-- ========================================== -->
-        <section id="tab-jaipur" class="tab-content space-y-8 animate-fade-in">
+        <section id="tab-jaipur" class="tab-content space-y-10 animate-fade-in">
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-serif font-bold text-rajasthan-dark gradient-text">Jaipur Gathering</h2>
                 <p class="text-sm font-medium text-rose-600 mt-2 bg-rose-100 inline-block px-4 py-1 rounded-full">
-                    17 Members + 3 Helpers (Mangesh Nirmal, Narayan Jat, Ramu Bahadur Gurung)
+                    November 5 - November 11, 2026
                 </p>
             </div>
 
             <!-- SECTION 1: INBOUND TRAVEL -->
-            <div class="flex items-center gap-4 py-2">
-                <div class="h-px bg-rose-200 flex-grow"></div>
-                <h3 class="font-serif text-2xl font-bold text-rose-800"><i class="fa-solid fa-plane-arrival text-rajasthan-fuchsia mr-2"></i> Section 1: Inbound Travel</h3>
-                <div class="h-px bg-rose-200 flex-grow"></div>
-            </div>
+            <div class="space-y-6">
+                <div class="flex items-center gap-4 py-2">
+                    <div class="h-px bg-rose-200 flex-grow"></div>
+                    <h3 class="font-serif text-2xl font-bold text-rose-800"><i class="fa-solid fa-plane-arrival text-rajasthan-fuchsia mr-2"></i> 1. Inbound Travel</h3>
+                    <div class="h-px bg-rose-200 flex-grow"></div>
+                </div>
 
-            <!-- Nov 5 Arrival -->
-            <div class="space-y-4">
-                <h3 class="text-xl font-serif font-bold text-rose-800 flex items-center gap-2 border-b-2 border-rose-200 pb-2">
-                    <i class="fa-solid fa-plane-arrival text-rajasthan-orange"></i> Arrivals: November 5, 2026
-                </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white arch-card shadow-lg border-t-8 border-rajasthan-fuchsia p-6 hover:-translate-y-1 transition-transform">
-                        <h4 class="font-serif text-xl font-bold text-rajasthan-dark mb-1">Devanshbhai & Shreshthibhabhi</h4>
+                    <!-- Nov 5 Arrival -->
+                    <div class="bg-white jharokha-card shadow-lg border-t-8 border-rajasthan-fuchsia p-6 hover:-translate-y-1 transition-transform relative">
+                        <div class="absolute -top-3 left-6 bg-rajasthan-fuchsia text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">Nov 5</div>
+                        <h4 class="font-serif text-xl font-bold text-rajasthan-dark mb-1 mt-2">Devanshbhai & Shreshthibhabhi</h4>
                         <div class="flex items-center gap-2 text-xs font-semibold text-fuchsia-600 bg-fuchsia-50 w-fit px-2 py-1 rounded mb-4">
                             <i class="fa-solid fa-plane"></i> Air India AI 413
                         </div>
                         <div class="flex justify-between items-center text-sm border-b border-pink-100 pb-3 mb-3">
-                            <div><span class="text-slate-500 text-xs block">From</span> Mumbai (T2)</div>
+                            <div><span class="text-slate-500 text-xs block">From</span> BOM</div>
                             <i class="fa-solid fa-arrow-right text-pink-300"></i>
-                            <div class="text-right"><span class="text-slate-500 text-xs block">To</span> Jaipur</div>
+                            <div class="text-right"><span class="text-slate-500 text-xs block">To</span> JAI</div>
                         </div>
                         <div class="flex justify-between items-end">
                             <div>
-                                <div class="text-xs text-slate-500">Arrival</div>
-                                <div class="font-bold text-rose-600">11:05 PM</div>
+                                <div class="text-xs text-slate-500">Dep: 9:15 PM</div>
+                                <div class="font-bold text-rose-600">Arr: 11:05 PM</div>
                             </div>
-                            <div class="flex flex-col items-end gap-1">
-                                <span class="text-[10px] uppercase tracking-wider font-bold text-slate-400">PNR</span>
-                                <button onclick="copyCode('9BN23T')" class="flex items-center gap-2 bg-pink-50 hover:bg-pink-100 text-rose-700 font-mono font-bold px-3 py-1.5 rounded-lg transition-colors text-sm border border-pink-200 shadow-sm">
-                                    9BN23T <i class="fa-regular fa-copy"></i>
-                                </button>
-                            </div>
+                            <button onclick="copyCode('9BN23T')" class="flex items-center gap-2 bg-pink-50 hover:bg-pink-100 text-rose-700 font-mono font-bold px-3 py-1.5 rounded-lg transition-colors text-xs border border-pink-200 shadow-sm">
+                                PNR: 9BN23T <i class="fa-regular fa-copy"></i>
+                            </button>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Nov 6 Arrivals -->
-            <div class="space-y-4">
-                <h3 class="text-xl font-serif font-bold text-rose-800 flex items-center gap-2 border-b-2 border-rose-200 pb-2 mt-8">
-                    <i class="fa-solid fa-plane-arrival text-rajasthan-orange"></i> Arrivals: November 6, 2026
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    
-                    <!-- Hiteshbhai -->
-                    <div class="bg-white arch-card shadow-lg border-t-8 border-rajasthan-rose p-6 hover:-translate-y-1 transition-transform">
-                        <h4 class="font-serif text-xl font-bold text-rajasthan-dark mb-1">Hiteshbhai & Krinabhabhi</h4>
+                    <!-- Nov 6: Hiteshbhai -->
+                    <div class="bg-white jharokha-card shadow-lg border-t-8 border-rajasthan-rose p-6 hover:-translate-y-1 transition-transform relative">
+                        <div class="absolute -top-3 left-6 bg-rajasthan-rose text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">Nov 6</div>
+                        <h4 class="font-serif text-xl font-bold text-rajasthan-dark mb-1 mt-2">Hiteshbhai & Krinabhabhi</h4>
                         <div class="flex items-center gap-2 text-xs font-semibold text-rose-600 bg-rose-50 w-fit px-2 py-1 rounded mb-4">
-                            <i class="fa-solid fa-plane"></i> Air India AI 2545
+                            <i class="fa-solid fa-plane"></i> 6E 2709 (Leg 1) / AI 2545 (Leg 2)
                         </div>
                         <div class="flex justify-between items-center text-sm border-b border-pink-100 pb-3 mb-3">
-                            <div><span class="text-slate-500 text-xs block">From</span> Delhi (T3)</div>
+                            <div><span class="text-slate-500 text-xs block">From</span> STV &rarr; DEL</div>
                             <i class="fa-solid fa-arrow-right text-pink-300"></i>
-                            <div class="text-right"><span class="text-slate-500 text-xs block">To</span> Jaipur (T2)</div>
+                            <div class="text-right"><span class="text-slate-500 text-xs block">To</span> DEL &rarr; JAI</div>
                         </div>
-                        <div class="flex justify-between items-end">
-                            <div>
-                                <div class="text-xs text-slate-500">Arrival</div>
-                                <div class="font-bold text-rose-600">12:05 PM</div>
-                            </div>
-                        </div>
+                        <div class="text-xs text-slate-500">Arrival in Jaipur</div>
+                        <div class="font-bold text-rose-600">Time Noted Internally</div>
                     </div>
 
-                    <!-- Ramnikbhai -->
-                    <div class="bg-white arch-card shadow-lg border-t-8 border-rajasthan-rose p-6 hover:-translate-y-1 transition-transform">
-                        <h4 class="font-serif text-xl font-bold text-rajasthan-dark mb-1">Ramnikbhai, Rajubhai, Pritibhabhi</h4>
-                        <p class="text-xs text-slate-500 mb-2"><i class="fa-solid fa-user-plus text-rose-400"></i> Helper: Mangesh</p>
-                        <div class="flex items-center gap-2 text-xs font-semibold text-rose-600 bg-rose-50 w-fit px-2 py-1 rounded mb-4">
+                    <!-- Nov 6: Ramnikbhai -->
+                    <div class="bg-white jharokha-card shadow-lg border-t-8 border-rajasthan-orange p-6 hover:-translate-y-1 transition-transform relative">
+                        <div class="absolute -top-3 left-6 bg-rajasthan-orange text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">Nov 6</div>
+                        <h4 class="font-serif text-xl font-bold text-rajasthan-dark mb-1 mt-2">Ramnikbhai, Rajubhai, Pritibhabhi, Mangesh</h4>
+                        <div class="flex items-center gap-2 text-xs font-semibold text-orange-600 bg-orange-50 w-fit px-2 py-1 rounded mb-4">
                             <i class="fa-solid fa-plane"></i> Air India AI 2781
                         </div>
                         <div class="flex justify-between items-center text-sm border-b border-pink-100 pb-3 mb-3">
-                            <div><span class="text-slate-500 text-xs block">From</span> Mumbai (T2)</div>
+                            <div><span class="text-slate-500 text-xs block">From</span> BOM</div>
                             <i class="fa-solid fa-arrow-right text-pink-300"></i>
-                            <div class="text-right"><span class="text-slate-500 text-xs block">To</span> Jaipur</div>
+                            <div class="text-right"><span class="text-slate-500 text-xs block">To</span> JAI</div>
                         </div>
                         <div class="flex justify-between items-end">
                             <div>
-                                <div class="text-xs text-slate-500">Arrival</div>
-                                <div class="font-bold text-rose-600">12:40 PM</div>
+                                <div class="text-xs text-slate-500">Dep: 10:50 AM</div>
+                                <div class="font-bold text-rose-600">Arr: 12:40 PM</div>
                             </div>
-                            <div class="flex flex-col items-end gap-1">
-                                <span class="text-[10px] uppercase tracking-wider font-bold text-slate-400">PNR</span>
-                                <button onclick="copyCode('8ROK6H')" class="flex items-center gap-2 bg-pink-50 hover:bg-pink-100 text-rose-700 font-mono font-bold px-3 py-1.5 rounded-lg transition-colors text-sm border border-pink-200 shadow-sm">
-                                    8ROK6H <i class="fa-regular fa-copy"></i>
-                                </button>
-                            </div>
+                            <button onclick="copyCode('8ROK6H')" class="flex items-center gap-2 bg-pink-50 hover:bg-pink-100 text-rose-700 font-mono font-bold px-3 py-1.5 rounded-lg transition-colors text-xs border border-pink-200 shadow-sm">
+                                PNR: 8ROK6H <i class="fa-regular fa-copy"></i>
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Samvegbhai -->
-                    <div class="bg-white arch-card shadow-lg border-t-8 border-rajasthan-orange p-6 hover:-translate-y-1 transition-transform">
-                        <h4 class="font-serif text-xl font-bold text-rajasthan-dark mb-1">Samvegbhai, Rajvibhabhi, Hitaswiniben</h4>
-                        <div class="flex items-center gap-2 text-xs font-semibold text-orange-600 bg-orange-50 w-fit px-2 py-1 rounded mb-4">
-                            <i class="fa-solid fa-plane"></i> Air India Express
+                    <!-- Nov 6: Samvegbhai -->
+                    <div class="bg-white jharokha-card shadow-lg border-t-8 border-amber-500 p-6 hover:-translate-y-1 transition-transform relative">
+                        <div class="absolute -top-3 left-6 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">Nov 6</div>
+                        <h4 class="font-serif text-xl font-bold text-rajasthan-dark mb-1 mt-2">Samvegbhai, Rajvibhabhi, Hitaswiniben</h4>
+                        <div class="flex items-center gap-2 text-xs font-semibold text-amber-700 bg-amber-50 w-fit px-2 py-1 rounded mb-4">
+                            <i class="fa-solid fa-train-tram"></i> Train 22962 / <i class="fa-solid fa-plane"></i> AI Express
                         </div>
                         <div class="flex justify-between items-center text-sm border-b border-pink-100 pb-3 mb-3">
-                            <div><span class="text-slate-500 text-xs block">From</span> Mumbai (T2)</div>
+                            <div><span class="text-slate-500 text-xs block">From</span> STV &rarr; BCT</div>
                             <i class="fa-solid fa-arrow-right text-pink-300"></i>
-                            <div class="text-right"><span class="text-slate-500 text-xs block">To</span> Jaipur (T2)</div>
-                        </div>
-                        <div class="flex justify-between items-end">
-                            <div>
-                                <div class="text-xs text-slate-500">Arrival</div>
-                                <div class="font-bold text-rose-600">4:30 PM</div>
-                            </div>
+                            <div class="text-right"><span class="text-slate-500 text-xs block">To</span> BOM &rarr; JAI</div>
                         </div>
                     </div>
 
-                    <!-- Sevantikaka (Large Group) -->
-                    <div class="bg-white arch-card shadow-lg border-t-8 border-rajasthan-gold p-6 hover:-translate-y-1 transition-transform md:col-span-2">
-                        <h4 class="font-serif text-xl font-bold text-rajasthan-dark mb-1">Sevantikaka, Rasilakaki, Anilbhai, Sejalbhabhi, Akshatbhai, Dixitabhabhi, Hitanshiben</h4>
-                        <p class="text-xs text-slate-500 mb-2"><i class="fa-solid fa-user-plus text-amber-500"></i> Helpers: Narayan Jat, Ramu Bahadur</p>
-                        <div class="flex items-center gap-2 text-xs font-semibold text-amber-700 bg-amber-50 w-fit px-2 py-1 rounded mb-4">
+                    <!-- Nov 6: Sevantikaka -->
+                    <div class="bg-white jharokha-card shadow-lg border-t-8 border-rose-600 p-6 hover:-translate-y-1 transition-transform relative md:col-span-2">
+                        <div class="absolute -top-3 left-6 bg-rose-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">Nov 6</div>
+                        <h4 class="font-serif text-xl font-bold text-rajasthan-dark mb-1 mt-2">Sevantikaka, Rasilakaki, Anilbhai, Sejalbhabhi, Akshatbhai, Dixitabhabhi, Hitanshiben, Narayan Jat, Ramu Bahadur</h4>
+                        <div class="flex items-center gap-2 text-xs font-semibold text-rose-700 bg-rose-50 w-fit px-2 py-1 rounded mb-4">
                             <i class="fa-solid fa-plane"></i> Indigo 6E 784
                         </div>
                         <div class="flex justify-between items-center text-sm border-b border-pink-100 pb-3 mb-3">
-                            <div><span class="text-slate-500 text-xs block">From</span> Surat</div>
+                            <div><span class="text-slate-500 text-xs block">From</span> STV</div>
                             <i class="fa-solid fa-arrow-right text-pink-300"></i>
-                            <div class="text-right"><span class="text-slate-500 text-xs block">To</span> Jaipur (T2)</div>
+                            <div class="text-right"><span class="text-slate-500 text-xs block">To</span> JAI</div>
                         </div>
-                        <div class="flex justify-between items-end">
+                        <div class="flex justify-between items-end flex-wrap gap-4">
                             <div>
-                                <div class="text-xs text-slate-500">Arrival</div>
-                                <div class="font-bold text-rose-600">5:50 PM</div>
+                                <div class="text-xs text-slate-500">Dep: 4:20 PM</div>
+                                <div class="font-bold text-rose-600">Arr: 5:50 PM</div>
                             </div>
-                            <div class="flex flex-col items-end gap-1">
-                                <span class="text-[10px] uppercase tracking-wider font-bold text-slate-400">PNRs</span>
-                                <div class="flex gap-2 flex-wrap justify-end">
-                                    <button onclick="copyCode('G7ER9F')" class="flex items-center gap-1 bg-pink-50 hover:bg-pink-100 text-rose-700 font-mono font-bold px-2 py-1 rounded transition-colors text-xs border border-pink-200">G7ER9F</button>
-                                    <button onclick="copyCode('MGBJHK')" class="flex items-center gap-1 bg-pink-50 hover:bg-pink-100 text-rose-700 font-mono font-bold px-2 py-1 rounded transition-colors text-xs border border-pink-200">MGBJHK</button>
-                                    <button onclick="copyCode('JD9Y83')" class="flex items-center gap-1 bg-pink-50 hover:bg-pink-100 text-rose-700 font-mono font-bold px-2 py-1 rounded transition-colors text-xs border border-pink-200">JD9Y83</button>
-                                    <button onclick="copyCode('ZBWP3J')" class="flex items-center gap-1 bg-pink-50 hover:bg-pink-100 text-rose-700 font-mono font-bold px-2 py-1 rounded transition-colors text-xs border border-pink-200">ZBWP3J</button>
-                                </div>
+                            <div class="flex gap-2 flex-wrap justify-end">
+                                <button onclick="copyCode('G7ER9F')" class="bg-pink-50 hover:bg-pink-100 text-rose-700 font-mono font-bold px-2 py-1 rounded text-xs border border-pink-200">G7ER9F</button>
+                                <button onclick="copyCode('MGBJHK')" class="bg-pink-50 hover:bg-pink-100 text-rose-700 font-mono font-bold px-2 py-1 rounded text-xs border border-pink-200">MGBJHK</button>
+                                <button onclick="copyCode('JD9Y83')" class="bg-pink-50 hover:bg-pink-100 text-rose-700 font-mono font-bold px-2 py-1 rounded text-xs border border-pink-200">JD9Y83</button>
+                                <button onclick="copyCode('ZBWP3J')" class="bg-pink-50 hover:bg-pink-100 text-rose-700 font-mono font-bold px-2 py-1 rounded text-xs border border-pink-200">ZBWP3J</button>
                             </div>
                         </div>
                     </div>
@@ -251,124 +232,96 @@
             </div>
 
             <!-- SECTION 2: STAY DETAILS -->
-            <div class="flex items-center gap-4 py-6">
-                <div class="h-px bg-rose-200 flex-grow"></div>
-                <h3 class="font-serif text-2xl font-bold text-rose-800"><i class="fa-solid fa-hotel text-rajasthan-orange mr-2"></i> Section 2: Stay Details - The Leela Palace</h3>
-                <div class="h-px bg-rose-200 flex-grow"></div>
-            </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- 9 Villas Block -->
-                <div class="bg-white rounded-3xl p-6 shadow-lg border border-pink-100 lg:col-span-1 hover:-translate-y-1 transition-transform">
-                    <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-xl mb-4">
-                        <i class="fa-solid fa-key"></i>
-                    </div>
-                    <h3 class="font-serif text-xl font-bold text-rajasthan-dark mb-2">9 Blocked Rooms</h3>
-                    <p class="text-xs text-rose-600 font-bold mb-4 bg-rose-50 inline-block px-2 py-1 rounded">301, 304, 306, 307, 308, 309, 310, 311, 313</p>
-                    
-                    <ul class="space-y-4">
-                        <li class="bg-pink-50 p-3 rounded-xl border border-pink-100">
-                            <h4 class="font-bold text-sky-700 text-sm mb-2"><i class="fa-solid fa-water text-sky-500 mr-1"></i> Royal Villa w/ Plunge Pool</h4>
-                            <ul class="text-xs text-slate-700 space-y-1 ml-5 list-disc marker:text-sky-400">
-                                <li><strong>Devansh/Shreshthi</strong> (Nov 5-11, Rm 306)</li>
-                                <li><strong>Hitesh/Krina</strong></li>
-                                <li><strong>Samveg/Rajvi</strong></li>
-                                <li><strong>Akshat/Dixita</strong></li>
-                                <li><strong>Hitanshi/Hitaswini</strong></li>
-                            </ul>
-                        </li>
-                        <li class="bg-pink-50 p-3 rounded-xl border border-pink-100">
-                            <h4 class="font-bold text-emerald-700 text-sm mb-2"><i class="fa-solid fa-leaf text-emerald-500 mr-1"></i> Royal Villa w/ Courtyard</h4>
-                            <ul class="text-xs text-slate-700 space-y-1 ml-5 list-disc marker:text-emerald-400">
-                                <li><strong>Ramniklal/Mangesh</strong> (Rm 309 Twin)</li>
-                                <li><strong>Sevantilal/Rasila</strong></li>
-                                <li><strong>Anil/Sejal</strong></li>
-                                <li><strong>Rajesh/Priti</strong></li>
-                            </ul>
-                        </li>
-                    </ul>
+            <div class="space-y-6">
+                <div class="flex items-center gap-4 py-2 mt-4">
+                    <div class="h-px bg-rose-200 flex-grow"></div>
+                    <h3 class="font-serif text-2xl font-bold text-rose-800"><i class="fa-solid fa-hotel text-rajasthan-orange mr-2"></i> 2. Stay - The Leela Palace</h3>
+                    <div class="h-px bg-rose-200 flex-grow"></div>
                 </div>
+                
+                <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-pink-200">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b border-pink-100">
+                        <div>
+                            <h3 class="font-serif text-2xl font-bold text-rajasthan-dark">The Leela Palace, Jaipur</h3>
+                            <p class="text-sm text-rose-600 mt-1">9 Allocated Rooms: 301, 304, 306, 307, 308, 309, 310, 311, 313</p>
+                        </div>
+                        <i class="fa-solid fa-chess-king text-4xl text-amber-400 opacity-50 mt-4 md:mt-0"></i>
+                    </div>
 
-                <!-- Kitchen Protocols -->
-                <div class="bg-white rounded-3xl p-6 shadow-lg border border-pink-100 lg:col-span-1 hover:-translate-y-1 transition-transform">
-                    <div class="w-12 h-12 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xl mb-4">
-                        <i class="fa-solid fa-utensils"></i>
-                    </div>
-                    <h3 class="font-serif text-xl font-bold text-rajasthan-dark mb-3">Protocols & Dining</h3>
-                    
-                    <div class="space-y-4">
-                        <div class="bg-orange-50 p-4 rounded-xl border border-orange-100">
-                            <h4 class="font-bold text-orange-800 text-sm mb-1">Exclusive Peacock Lounge</h4>
-                            <p class="text-xs text-orange-700">Reserved exclusively for the family's Jain usage from Nov 6 (8 AM) to Nov 11 (2 PM).</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Rooms Left -->
+                        <div>
+                            <h4 class="font-bold text-emerald-700 text-sm mb-3 bg-emerald-50 px-3 py-1.5 rounded-md inline-flex items-center gap-2">
+                                <i class="fa-solid fa-leaf text-emerald-500"></i> Royal Villa w/ Courtyard
+                            </h4>
+                            <ul class="space-y-2 text-sm text-slate-700 pl-2">
+                                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i> <span><strong>Ramniklal & Mangesh</strong> (Twin setup Rm 309)</span></li>
+                                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i> <span><strong>Sevantilal & Rasila</strong></span></li>
+                                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i> <span><strong>Anil & Sejal</strong></span></li>
+                                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i> <span><strong>Rajesh & Priti</strong></span></li>
+                            </ul>
                         </div>
-                        <div class="bg-orange-50 p-4 rounded-xl border border-orange-100">
-                            <h4 class="font-bold text-orange-800 text-sm mb-1">Strictly Veg Kitchen</h4>
-                            <p class="text-xs text-orange-700">Zero non-veg storage or cooking. Personal chef coordinating traditional Gujarati food alongside hotel team.</p>
+                        
+                        <!-- Rooms Right -->
+                        <div>
+                            <h4 class="font-bold text-sky-700 text-sm mb-3 bg-sky-50 px-3 py-1.5 rounded-md inline-flex items-center gap-2">
+                                <i class="fa-solid fa-water text-sky-500"></i> Royal Villa w/ Plunge Pool
+                            </h4>
+                            <ul class="space-y-2 text-sm text-slate-700 pl-2">
+                                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i> <span><strong>Devansh & Shreshthi</strong> (Rm 306)</span></li>
+                                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i> <span><strong>Hitesh & Krina</strong></span></li>
+                                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i> <span><strong>Samveg & Rajvi</strong></span></li>
+                                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i> <span><strong>Akshat & Dixita</strong></span></li>
+                                <li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-500 mt-1 text-xs"></i> <span><strong>Hitanshi & Hitaswini</strong></span></li>
+                            </ul>
                         </div>
                     </div>
-                </div>
 
-                <!-- Elder Comfort -->
-                <div class="bg-white rounded-3xl p-6 shadow-lg border border-pink-100 lg:col-span-1 hover:-translate-y-1 transition-transform">
-                    <div class="w-12 h-12 rounded-full bg-fuchsia-100 text-fuchsia-600 flex items-center justify-center text-xl mb-4">
-                        <i class="fa-solid fa-hands-holding-child"></i>
-                    </div>
-                    <h3 class="font-serif text-xl font-bold text-rajasthan-dark mb-3">Elder Care & Medical</h3>
-                    
-                    <div class="space-y-4">
-                        <div class="bg-fuchsia-50 p-4 rounded-xl border border-fuchsia-100">
-                            <h4 class="font-bold text-fuchsia-800 text-sm mb-1">Bathroom Comfort</h4>
-                            <p class="text-xs text-fuchsia-700">Shower chairs/stools and buckets pre-arranged for Ramnik, Sevantilal, and Anil.</p>
-                        </div>
-                        <div class="bg-fuchsia-50 p-4 rounded-xl border border-fuchsia-100">
-                            <h4 class="font-bold text-fuchsia-800 text-sm mb-1">Boiled Water Schedule</h4>
-                            <p class="text-xs text-fuchsia-700">5 Litres delivered daily at 6:30 AM & 2 PM.</p>
-                        </div>
-                        <div class="bg-fuchsia-50 p-4 rounded-xl border border-fuchsia-100">
-                            <h4 class="font-bold text-fuchsia-800 text-sm mb-1">Doctor On-Call</h4>
-                            <p class="text-xs text-fuchsia-700">Medical assistance available via concierge 24/7.</p>
+                    <!-- Protocols -->
+                    <div class="mt-8 bg-rose-50 rounded-2xl p-5 border border-rose-100">
+                        <h4 class="font-serif text-lg font-bold text-rose-800 mb-3"><i class="fa-solid fa-bell-concierge mr-2"></i> Special Protocols</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-700">
+                            <div class="flex gap-3">
+                                <i class="fa-solid fa-utensils text-rose-400 mt-1"></i>
+                                <div>
+                                    <strong class="text-rose-900 block">Peacock Lounge & Dining</strong>
+                                    Exclusive usage from Nov 6 (8AM) to Nov 11 (2PM). Strict vegetarian kitchen with personal chef coordination.
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <i class="fa-solid fa-hands-holding-child text-rose-400 mt-1"></i>
+                                <div>
+                                    <strong class="text-rose-900 block">Elder Comfort</strong>
+                                    Boiled water delivered at 6:30 AM & 2 PM. Shower chairs allocated for Ramnik, Sevantilal, and Anil.
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- SECTION 3: OUTBOUND TRAVEL -->
-            <div class="flex items-center gap-4 py-6 mt-4">
-                <div class="h-px bg-rose-200 flex-grow"></div>
-                <h3 class="font-serif text-2xl font-bold text-rose-800"><i class="fa-solid fa-plane-departure text-rajasthan-rose mr-2"></i> Section 3: Outbound Travel</h3>
-                <div class="h-px bg-rose-200 flex-grow"></div>
-            </div>
+            <div class="space-y-6">
+                <div class="flex items-center gap-4 py-2 mt-4">
+                    <div class="h-px bg-rose-200 flex-grow"></div>
+                    <h3 class="font-serif text-2xl font-bold text-rose-800"><i class="fa-solid fa-plane-departure text-rajasthan-rose mr-2"></i> 3. Outbound Travel</h3>
+                    <div class="h-px bg-rose-200 flex-grow"></div>
+                </div>
 
-            <!-- Jaipur Departures -->
-            <div class="space-y-4">
-                <h3 class="text-xl font-serif font-bold text-rose-800 flex items-center gap-2 border-b-2 border-rose-200 pb-2">
-                    <i class="fa-solid fa-plane-departure text-rajasthan-orange"></i> Departures: November 11, 2026
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-gradient-to-br from-white to-pink-50 arch-card shadow-lg border-t-8 border-slate-700 p-6 hover:-translate-y-1 transition-transform">
-                        <h4 class="font-serif text-xl font-bold text-rajasthan-dark mb-1">Sevantikaka, Rasilakaki, Hiteshbhai, Krinabhabhi</h4>
-                        <p class="text-xs text-slate-500 mb-2"><i class="fa-solid fa-user-plus text-slate-400"></i> Helpers: Narayan Jat, Ramu Bahadur</p>
-                        <div class="flex items-center gap-2 text-xs font-semibold text-slate-600 bg-slate-100 w-fit px-2 py-1 rounded mb-4">
-                            <i class="fa-solid fa-plane"></i> Indigo 6E 715
-                        </div>
-                        <div class="flex justify-between items-center text-sm border-b border-pink-100 pb-3 mb-3">
-                            <div><span class="text-slate-500 text-xs block">From</span> Jaipur (T2)</div>
-                            <i class="fa-solid fa-arrow-right text-pink-300"></i>
-                            <div class="text-right"><span class="text-slate-500 text-xs block">To</span> Surat</div>
-                        </div>
-                        <div class="flex justify-between items-end">
-                            <div>
-                                <div class="text-xs text-slate-500">Departure</div>
-                                <div class="font-bold text-slate-800">2:20 PM</div>
-                            </div>
-                            <div class="flex flex-col items-end gap-1">
-                                <span class="text-[10px] uppercase tracking-wider font-bold text-slate-400">PNRs</span>
-                                <div class="flex gap-2">
-                                    <button onclick="copyCode('X96KTF')" class="flex items-center gap-1 bg-white hover:bg-slate-50 text-slate-700 font-mono font-bold px-2 py-1 rounded transition-colors text-xs border border-slate-200 shadow-sm">X96KTF</button>
-                                    <button onclick="copyCode('IEML8N')" class="flex items-center gap-1 bg-white hover:bg-slate-50 text-slate-700 font-mono font-bold px-2 py-1 rounded transition-colors text-xs border border-slate-200 shadow-sm">IEML8N</button>
-                                </div>
-                            </div>
-                        </div>
+                <div class="bg-gradient-to-br from-white to-orange-50 jharokha-card shadow-lg border-t-8 border-rajasthan-orange p-6 relative">
+                    <div class="absolute -top-3 left-6 bg-rajasthan-orange text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">Nov 11</div>
+                    <h4 class="font-serif text-xl font-bold text-rajasthan-dark mb-1 mt-2">Sevantikaka, Rasilakaki, Hiteshbhai, Krinabhabhi, Narayan Jat, Ramu Bahadur</h4>
+                    <div class="flex items-center gap-2 text-xs font-semibold text-orange-700 bg-orange-100 w-fit px-2 py-1 rounded mb-4 mt-2">
+                        <i class="fa-solid fa-plane"></i> Indigo 6E 715
+                    </div>
+                    <div class="flex justify-between items-center text-sm border-b border-orange-200 pb-3 mb-3">
+                        <div><span class="text-slate-500 text-xs block">From</span> JAI</div>
+                        <i class="fa-solid fa-arrow-right text-orange-400"></i>
+                        <div class="text-right"><span class="text-slate-500 text-xs block">To</span> STV</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-500">Departure</div>
+                        <div class="font-bold text-orange-700">Dep: 2:20 PM - Arr: 3:45 PM</div>
                     </div>
                 </div>
             </div>
@@ -378,104 +331,188 @@
         <!-- ========================================== -->
         <!-- TAB 2: ALWAR & AGRA (NOV 11 - 16)          -->
         <!-- ========================================== -->
-        <section id="tab-alwar" class="tab-content hidden space-y-8 animate-fade-in">
+        <section id="tab-alwar" class="tab-content hidden space-y-10 animate-fade-in">
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-serif font-bold text-rajasthan-dark gradient-text">Alwar & Agra Road Trip</h2>
                 <p class="text-sm font-medium text-rose-600 mt-2 bg-rose-100 inline-block px-4 py-1 rounded-full">
-                    Continuing travelers embark on a scenic road journey to Delhi
+                    November 11 - November 16, 2026
                 </p>
             </div>
 
-            <!-- Nov 11 Joining -->
-            <div class="space-y-4">
-                <h3 class="text-xl font-serif font-bold text-rose-800 flex items-center gap-2 border-b-2 border-rose-200 pb-2">
-                    <i class="fa-solid fa-users-viewfinder text-rajasthan-fuchsia"></i> Joining Arrivals: November 11, 2026
-                </h3>
+            <!-- SECTION 1: JOINING TRAVEL -->
+            <div class="space-y-6">
+                <div class="flex items-center gap-4 py-2">
+                    <div class="h-px bg-rose-200 flex-grow"></div>
+                    <h3 class="font-serif text-2xl font-bold text-rose-800"><i class="fa-solid fa-users-viewfinder text-rajasthan-fuchsia mr-2"></i> 1. Joining Travel (Nov 11)</h3>
+                    <div class="h-px bg-rose-200 flex-grow"></div>
+                </div>
+
+                <div class="bg-white jharokha-card shadow-lg border-t-8 border-rajasthan-fuchsia p-6 relative">
+                    <div class="absolute -top-3 left-6 bg-rajasthan-fuchsia text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">Nov 11</div>
+                    <h4 class="font-serif text-xl font-bold text-rajasthan-dark mb-1 mt-2">Aadeshkumar, Nirjaraben & Hriday</h4>
+                    <div class="flex items-center gap-2 text-xs font-semibold text-fuchsia-600 bg-fuchsia-50 w-fit px-2 py-1 rounded mb-4">
+                        <i class="fa-solid fa-plane"></i> Indigo 6E 2067
+                    </div>
+                    <div class="flex justify-between items-center text-sm border-b border-pink-100 pb-3 mb-3">
+                        <div><span class="text-slate-500 text-xs block">From</span> Navi Mumbai</div>
+                        <i class="fa-solid fa-arrow-right text-pink-300"></i>
+                        <div class="text-right"><span class="text-slate-500 text-xs block">To</span> Jaipur</div>
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <div class="text-xs text-slate-500">Dep: 9:20 PM</div>
+                            <div class="font-bold text-rose-600">Arr: 10:22 PM</div>
+                        </div>
+                        <button onclick="copyCode('J9UMVP')" class="flex items-center gap-2 bg-pink-50 hover:bg-pink-100 text-rose-700 font-mono font-bold px-3 py-1.5 rounded-lg transition-colors text-xs border border-pink-200 shadow-sm">
+                            PNR: J9UMVP <i class="fa-regular fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: ALWAR STAY -->
+            <div class="space-y-6">
+                <div class="flex items-center gap-4 py-2 mt-4">
+                    <div class="h-px bg-rose-200 flex-grow"></div>
+                    <h3 class="font-serif text-2xl font-bold text-rose-800"><i class="fa-solid fa-building text-amber-500 mr-2"></i> 2. Stay - Sarovar Premiere Alwar</h3>
+                    <div class="h-px bg-rose-200 flex-grow"></div>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white arch-card shadow-lg border-t-8 border-rajasthan-fuchsia p-6 hover:-translate-y-1 transition-transform relative overflow-hidden">
-                        <div class="absolute top-0 right-0 bg-fuchsia-100 text-fuchsia-700 text-[10px] font-bold px-3 py-1 rounded-bl-lg">Joining Road Trip</div>
-                        <h4 class="font-serif text-xl font-bold text-rajasthan-dark mb-1 mt-2">Aadeshkumar, Nirjaraben, Hriday</h4>
-                        <div class="flex items-center gap-2 text-xs font-semibold text-fuchsia-600 bg-fuchsia-50 w-fit px-2 py-1 rounded mb-4">
-                            <i class="fa-solid fa-plane"></i> Indigo 6E 2067
+                    <!-- Booking 1 -->
+                    <div class="bg-white rounded-2xl shadow border border-pink-100 p-6 flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs font-bold text-white bg-slate-800 px-2 py-1 rounded mb-3 inline-block">IDFC FIRST Rewards</span>
+                            <h4 class="font-serif text-lg font-bold text-rajasthan-dark mb-2">3 Deluxe Double City View Rooms</h4>
+                            <p class="text-sm text-slate-600 mb-4"><i class="fa-regular fa-calendar text-rose-400 w-4"></i> Nov 11 - 13, 2026</p>
                         </div>
-                        <div class="flex justify-between items-center text-sm border-b border-pink-100 pb-3 mb-3">
-                            <div><span class="text-slate-500 text-xs block">From</span> Navi Mumbai</div>
-                            <i class="fa-solid fa-arrow-right text-pink-300"></i>
-                            <div class="text-right"><span class="text-slate-500 text-xs block">To</span> Jaipur</div>
+                        <button onclick="copyCode('HB19-223539-6931')" class="bg-pink-50 text-rose-700 border border-pink-200 px-3 py-2 rounded-lg font-mono text-sm font-bold w-fit hover:bg-pink-100 transition">
+                            ID: HB19-223539-6931 <i class="fa-regular fa-copy ml-1"></i>
+                        </button>
+                    </div>
+
+                    <!-- Booking 2 -->
+                    <div class="bg-white rounded-2xl shadow border border-pink-100 p-6 flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs font-bold text-white bg-rose-600 px-2 py-1 rounded mb-3 inline-block">Hotels.com</span>
+                            <h4 class="font-serif text-lg font-bold text-rajasthan-dark mb-2">2 Suites, Hill View</h4>
+                            <p class="text-sm text-slate-600 mb-4"><i class="fa-regular fa-calendar text-rose-400 w-4"></i> Nov 11 - 13, 2026</p>
                         </div>
-                        <div class="flex justify-between items-end">
-                            <div>
-                                <div class="text-xs text-slate-500">Arrival</div>
-                                <div class="font-bold text-rose-600">10:22 PM</div>
-                            </div>
-                            <div class="flex flex-col items-end gap-1">
-                                <span class="text-[10px] uppercase tracking-wider font-bold text-slate-400">PNR</span>
-                                <button onclick="copyCode('J9UMVP')" class="flex items-center gap-2 bg-pink-50 hover:bg-pink-100 text-rose-700 font-mono font-bold px-3 py-1.5 rounded-lg transition-colors text-sm border border-pink-200 shadow-sm">
-                                    J9UMVP <i class="fa-regular fa-copy"></i>
-                                </button>
-                            </div>
+                        <button onclick="copyCode('73569175620041')" class="bg-pink-50 text-rose-700 border border-pink-200 px-3 py-2 rounded-lg font-mono text-sm font-bold w-fit hover:bg-pink-100 transition">
+                            Itinerary: 73569175620041 <i class="fa-regular fa-copy ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 3: OUTBOUND TRAIN -->
+            <div class="space-y-6">
+                <div class="flex items-center gap-4 py-2 mt-4">
+                    <div class="h-px bg-rose-200 flex-grow"></div>
+                    <h3 class="font-serif text-2xl font-bold text-rose-800"><i class="fa-solid fa-train text-rajasthan-rose mr-2"></i> 3. Outbound Train Travel</h3>
+                    <div class="h-px bg-rose-200 flex-grow"></div>
+                </div>
+
+                <div class="bg-white rounded-3xl p-6 shadow-xl border border-pink-200">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b border-pink-100">
+                        <div>
+                            <h3 class="font-serif text-xl font-bold text-rajasthan-dark">Vande Bharat Exp 20171 (Executive Class)</h3>
+                            <p class="text-sm text-rose-600 mt-1">Nov 16 | Dep: 11:05 AM - Arr: 1:16 PM</p>
+                        </div>
+                        <div class="text-right mt-3 md:mt-0">
+                            <span class="block text-sm text-slate-500">Route</span>
+                            <span class="font-bold text-slate-700">Agra Cantt (AGC) &rarr; Hazrat Nizamuddin (NZM)</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Ticket 1 -->
+                        <div class="bg-pink-50 rounded-xl p-4 border border-pink-100 relative">
+                            <button onclick="copyCode('8555265312')" class="absolute top-4 right-4 text-xs font-mono font-bold bg-white text-rose-700 border border-pink-200 px-2 py-1 rounded shadow-sm hover:bg-pink-100 transition">
+                                PNR: 8555265312 <i class="fa-regular fa-copy ml-1"></i>
+                            </button>
+                            <h4 class="font-bold text-rose-800 mb-3 text-sm border-b border-pink-200 pb-2 mr-24">Ticket 1</h4>
+                            <ul class="text-sm text-slate-700 space-y-1">
+                                <li>Anilkumar</li>
+                                <li>Devansh</li>
+                                <li>Hitaswini</li>
+                                <li>Sejal</li>
+                                <li>Shreshthi</li>
+                                <li>Ramnik</li>
+                            </ul>
+                        </div>
+
+                        <!-- Ticket 2 -->
+                        <div class="bg-pink-50 rounded-xl p-4 border border-pink-100 relative">
+                            <button onclick="copyCode('8455265784')" class="absolute top-4 right-4 text-xs font-mono font-bold bg-white text-rose-700 border border-pink-200 px-2 py-1 rounded shadow-sm hover:bg-pink-100 transition">
+                                PNR: 8455265784 <i class="fa-regular fa-copy ml-1"></i>
+                            </button>
+                            <h4 class="font-bold text-rose-800 mb-3 text-sm border-b border-pink-200 pb-2 mr-24">Ticket 2</h4>
+                            <ul class="text-sm text-slate-700 space-y-1">
+                                <li>Rajesh</li>
+                                <li>Priti</li>
+                                <li>Samveg</li>
+                                <li>Rajvi</li>
+                                <li>Hitanshi</li>
+                            </ul>
+                        </div>
+
+                        <!-- Ticket 3 -->
+                        <div class="bg-pink-50 rounded-xl p-4 border border-pink-100 relative">
+                            <button onclick="copyCode('8755265641')" class="absolute top-4 right-4 text-xs font-mono font-bold bg-white text-rose-700 border border-pink-200 px-2 py-1 rounded shadow-sm hover:bg-pink-100 transition">
+                                PNR: 8755265641 <i class="fa-regular fa-copy ml-1"></i>
+                            </button>
+                            <h4 class="font-bold text-rose-800 mb-3 text-sm border-b border-pink-200 pb-2 mr-24">Ticket 3</h4>
+                            <ul class="text-sm text-slate-700 space-y-1">
+                                <li>Aadesh</li>
+                                <li>Nirjara</li>
+                                <li>Hriday</li>
+                                <li>Jaru Khakhlari</li>
+                                <li>Mangesh Nirmal</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Nov 16 Final Departures -->
-            <div class="space-y-4">
-                <h3 class="text-xl font-serif font-bold text-rose-800 flex items-center gap-2 border-b-2 border-rose-200 pb-2 mt-8">
-                    <i class="fa-solid fa-plane-departure text-rajasthan-orange"></i> Final Departures: November 16, 2026
-                </h3>
+            <!-- SECTION 4: FINAL DEPARTURES -->
+            <div class="space-y-6">
+                <div class="flex items-center gap-4 py-2 mt-4">
+                    <div class="h-px bg-rose-200 flex-grow"></div>
+                    <h3 class="font-serif text-2xl font-bold text-rose-800"><i class="fa-solid fa-plane-departure text-rajasthan-orange mr-2"></i> 4. Final Departures (Nov 16)</h3>
+                    <div class="h-px bg-rose-200 flex-grow"></div>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    
-                    <!-- Rajubhai Group -->
-                    <div class="bg-gradient-to-br from-white to-orange-50 arch-card shadow-lg border-t-8 border-rajasthan-orange p-6 hover:-translate-y-1 transition-transform">
-                        <h4 class="font-serif text-xl font-bold text-rajasthan-dark mb-1">Rajubhai, Pritibhabhi, Aadeshkumar, Nirjaraben, Hriday</h4>
+                    <div class="bg-gradient-to-br from-white to-orange-50 jharokha-card shadow-lg border-t-8 border-rajasthan-orange p-6 relative">
+                        <h4 class="font-serif text-xl font-bold text-rajasthan-dark mb-1 mt-2">Rajubhai, Pritibhabhi, Aadeshkumar, Nirjaraben, Hriday</h4>
                         <div class="flex items-center gap-2 text-xs font-semibold text-orange-700 bg-orange-100 w-fit px-2 py-1 rounded mb-4 mt-2">
                             <i class="fa-solid fa-plane"></i> Air India AI 441
                         </div>
                         <div class="flex justify-between items-center text-sm border-b border-orange-200 pb-3 mb-3">
-                            <div><span class="text-slate-500 text-xs block">From</span> Delhi (T3)</div>
-                            <i class="fa-solid fa-arrow-right text-orange-300"></i>
-                            <div class="text-right"><span class="text-slate-500 text-xs block">To</span> Mumbai (T2)</div>
+                            <div><span class="text-slate-500 text-xs block">From</span> DEL T3</div>
+                            <i class="fa-solid fa-arrow-right text-orange-400"></i>
+                            <div class="text-right"><span class="text-slate-500 text-xs block">To</span> BOM T2</div>
                         </div>
-                        <div class="flex justify-between items-end">
-                            <div>
-                                <div class="text-xs text-slate-500">Departure</div>
-                                <div class="font-bold text-orange-700">5:00 PM</div>
-                            </div>
-                            <div class="flex flex-col items-end gap-1">
-                                <span class="text-[10px] uppercase tracking-wider font-bold text-slate-400">PNRs</span>
-                                <div class="flex gap-2">
-                                    <button onclick="copyCode('92T2CM')" class="flex items-center gap-1 bg-white hover:bg-orange-50 text-orange-700 font-mono font-bold px-2 py-1 rounded transition-colors text-xs border border-orange-200 shadow-sm">92T2CM</button>
-                                    <button onclick="copyCode('92VXPW')" class="flex items-center gap-1 bg-white hover:bg-orange-50 text-orange-700 font-mono font-bold px-2 py-1 rounded transition-colors text-xs border border-orange-200 shadow-sm">92VXPW</button>
-                                </div>
-                            </div>
+                        <div>
+                            <div class="text-xs text-slate-500">Departure</div>
+                            <div class="font-bold text-orange-700">Dep: 5:00 PM - Arr: 7:30 PM</div>
                         </div>
                     </div>
 
-                    <!-- Ramnik kaka Group -->
-                    <div class="bg-gradient-to-br from-white to-rose-50 arch-card shadow-lg border-t-8 border-rajasthan-rose p-6 hover:-translate-y-1 transition-transform">
-                        <h4 class="font-serif text-xl font-bold text-rajasthan-dark mb-1">Ramnik kaka, Devanshbhai, Shreshthibhabhi</h4>
-                        <p class="text-xs text-slate-500 mb-2"><i class="fa-solid fa-user-plus text-rose-400"></i> Helper: Mangesh</p>
-                        <div class="flex items-center gap-2 text-xs font-semibold text-rose-700 bg-rose-100 w-fit px-2 py-1 rounded mb-4">
+                    <div class="bg-gradient-to-br from-white to-rose-50 jharokha-card shadow-lg border-t-8 border-rajasthan-rose p-6 relative">
+                        <h4 class="font-serif text-xl font-bold text-rajasthan-dark mb-1 mt-2">Ramnik kaka, Devanshbhai, Shreshthibhabhi, Mangesh</h4>
+                        <div class="flex items-center gap-2 text-xs font-semibold text-rose-700 bg-rose-100 w-fit px-2 py-1 rounded mb-4 mt-2">
                             <i class="fa-solid fa-plane"></i> Air India AI 2555
                         </div>
                         <div class="flex justify-between items-center text-sm border-b border-rose-200 pb-3 mb-3">
-                            <div><span class="text-slate-500 text-xs block">From</span> Delhi (T3)</div>
-                            <i class="fa-solid fa-arrow-right text-rose-300"></i>
-                            <div class="text-right"><span class="text-slate-500 text-xs block">To</span> Mumbai (T2)</div>
+                            <div><span class="text-slate-500 text-xs block">From</span> DEL T3</div>
+                            <i class="fa-solid fa-arrow-right text-rose-400"></i>
+                            <div class="text-right"><span class="text-slate-500 text-xs block">To</span> BOM T2</div>
                         </div>
-                        <div class="flex justify-between items-end">
-                            <div>
-                                <div class="text-xs text-slate-500">Departure</div>
-                                <div class="font-bold text-rose-700">5:30 PM</div>
-                            </div>
-                            <div class="flex flex-col items-end gap-1">
-                                <span class="text-[10px] uppercase tracking-wider font-bold text-slate-400">PNRs</span>
-                                <div class="flex gap-2 flex-wrap justify-end">
-                                    <button onclick="copyCode('2JSH9H')" class="flex items-center gap-1 bg-white hover:bg-rose-50 text-rose-700 font-mono font-bold px-2 py-1 rounded transition-colors text-xs border border-rose-200 shadow-sm">2JSH9H</button>
-                                    <button onclick="copyCode('9R457P')" class="flex items-center gap-1 bg-white hover:bg-rose-50 text-rose-700 font-mono font-bold px-2 py-1 rounded transition-colors text-xs border border-rose-200 shadow-sm">9R457P</button>
-                                </div>
-                            </div>
+                        <div>
+                            <div class="text-xs text-slate-500">Departure</div>
+                            <div class="font-bold text-rose-700">Dep: 5:30 PM - Arr: 8:00 PM</div>
                         </div>
                     </div>
                 </div>
@@ -485,22 +522,19 @@
     </main>
 
     <!-- Global Toast for Copy Feedback -->
-    <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 bg-rajasthan-dark text-white px-6 py-3 rounded-full font-bold text-sm shadow-2xl flex items-center gap-3 translate-y-20 opacity-0 transition-all duration-300 pointer-events-none border border-rose-500">
-        <i class="fa-solid fa-circle-check text-rajasthan-gold"></i>
+    <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 bg-slate-900 text-white px-6 py-3 rounded-full font-bold text-sm shadow-2xl flex items-center gap-3 translate-y-20 opacity-0 transition-all duration-300 pointer-events-none border border-amber-400">
+        <i class="fa-solid fa-circle-check text-amber-400"></i>
         <span id="toast-text">Copied to clipboard!</span>
     </div>
 
     <!-- Scripts -->
     <script>
-        // Tab Switching Logic
         function switchTab(tabId) {
-            // Hide all contents
             document.querySelectorAll('.tab-content').forEach(el => {
                 el.classList.add('hidden');
                 el.classList.remove('animate-fade-in');
             });
             
-            // Reset all buttons
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active', 'text-white', 'border-transparent');
                 btn.classList.add('text-rose-700', 'bg-pink-100', 'border-pink-200');
@@ -508,20 +542,16 @@
                 btn.style.boxShadow = '';
             });
 
-            // Show selected content
             const targetContent = document.getElementById(tabId);
             targetContent.classList.remove('hidden');
-            // Trigger reflow for animation
             void targetContent.offsetWidth; 
             targetContent.classList.add('animate-fade-in');
 
-            // Style active button
             const targetBtn = document.getElementById('btn-' + tabId);
             targetBtn.classList.add('active');
             targetBtn.classList.remove('text-rose-700', 'bg-pink-100', 'border-pink-200');
         }
 
-        // Copy Code Logic
         function copyCode(text) {
             const el = document.createElement('textarea');
             el.value = text;
@@ -529,10 +559,9 @@
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-            showToast(`PNR ${text} copied!`);
+            showToast(`${text} copied!`);
         }
 
-        // Toast Notification
         function showToast(msg) {
             const toast = document.getElementById('toast');
             const toastText = document.getElementById('toast-text');
@@ -547,16 +576,5 @@
             }, 2500);
         }
     </script>
-
-    <style>
-        /* Fade in animation utility */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-            animation: fadeIn 0.4s ease-out forwards;
-        }
-    </style>
 </body>
 </html>
